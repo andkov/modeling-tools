@@ -32,7 +32,7 @@ intervention_labels <- c(
   ,"training_for_work"= "Training for Work"           
   ,"work_foundation"  = "Work Foundations"            
   ,"career_planning"  = "Career Planning WS"          
-  ,"workshop_noncp"   = "Workshop nonCP"              
+  ,"workshop_noncp"   = "Workshop nonCP"               
 )
 
 intervention_names <- intervention_labels %>%  names()
@@ -60,7 +60,7 @@ ds1 <-
   ds0 %>% 
   mutate(
     intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
-    ,outcome = factor(outcome, levels = outcome_names, labels = outcome_labels)
+    ,outcome    = factor(outcome, levels = outcome_names, labels = outcome_labels)
   )
 ds1 %>% count(intervention)
 ds1 %>% count(outcome)
