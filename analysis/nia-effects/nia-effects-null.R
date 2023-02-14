@@ -31,13 +31,11 @@ base::source("./scripts/common-functions.R") # project-level
 prints_folder <- paste0("./analysis/nia-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-path_data_input <- "./data-private/raw/nia-3-cra-effects.csv"
+path_data_input <- "./analysis/nia-effects/nia-3-cra-effects-null.csv"
 
 intervention_labels <- c(
-  # "assessment_ea"    = "Employability"               
-  # ,"assessment_ni"    = "Needs Identification"        
-  # ,"assessment_snd"   = "Service Needs Determination" 
-   "english_as_second"= "English as Second"           
+    "ab_job_corps"    = "Alberta Job Corps"
+  , "english_as_second"= "English as Second"           
   ,"exposure_course"  = "Exposure Course"             
   ,"job_placement"    = "Job Placement"               
   ,"training_for_work"= "Training for Work"           
@@ -48,9 +46,7 @@ intervention_labels <- c(
 intervention_names <- intervention_labels %>%  names()
 
 outcome_labels <- c(
-  "return1_12m"    = "Return to IS within 12 months"
-  ,"spell_duration"    = "Duration of IS spell (months)"
-  ,"earnings_total_delta" = "Total earnings (delta)"
+   "earnings_total_delta" = "Total earnings (delta)"
   ,"income_net_delta" = "Net income (delta)"
   ,"income_taxable_delta" = "Taxable income (delta)"
   ,"income_total_delta" = "Total income (delta)"
@@ -61,7 +57,7 @@ outcome_names <- outcome_labels %>%  names()
 # ---- declare-functions -------------------------------------------------------
 
 # ---- load-data ---------------------------------------------------------------
-ds0 <- readr::read_csv(path_data_input)
+ds0 <- readr::read_csv(path_data_input) %>% janitor::clean_names()
 ds0 %>% glimpse()
 # ---- inspect-data ------------------------------------------------------------
 ds0 %>% count(intervention)
@@ -82,7 +78,6 @@ ds1 %>% count(outcome)
 # ---- graph-1 -----------------------------------------------------------------
 d <- 
   ds1 %>% 
-  filter(!outcome %in% c("Return to IS within 12 months","Duration of IS spell (months)")) %>% 
   # filter(intervention == "career_planning")
   group_by(intervention, outcome) %>% 
   mutate(
@@ -131,7 +126,7 @@ g1 <-
     ,title = "Net impact of intervention on reported income after the first Income Support spell"
   )
 # g1
-g1 %>% quick_save("1",h=5,w=11)
+g1 %>% quick_save("1-net-impact-null",h=5,w=11)
 # ---- graph-2 -----------------------------------------------------------------
 g2 <- 
   d %>% 
@@ -163,8 +158,8 @@ g2 <-
     ,title = "Observed group difference in reported income the first Income Support spell"
   )
 # g2
-g2 %>% quick_save("2",h=5,w=11)
-d
+g2 %>% quick_save("2-observed-diff",h=5,w=11)
+
 # ---- save-to-disk ------------------------------------------------------------
 
 # ---- publish ------------------------------------------------------------

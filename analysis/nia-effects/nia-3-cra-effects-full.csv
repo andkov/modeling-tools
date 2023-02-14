@@ -1,0 +1,1089 @@
+intervention,outcome,term,estimate,std.error,statistic,p.value,conf.low,conf.high,var_name,value_level
+ab_job_corps,income_net_delta,(Intercept),10952.41157,5095.564386,2.149401076,0.03160804,965.0149615,20939.80818,NA,(Intercept)
+ab_job_corps,income_net_delta,txTRUE,-2011.44304,850.8071464,-2.36415861,0.018075379,-3679.040144,-343.8459369,tx,TRUE
+ab_job_corps,income_net_delta,gender2Men,4084.841456,1865.142318,2.190096389,0.028522462,429.1294185,7740.553493,gender2,Men
+ab_job_corps,income_net_delta,gender2Women,-1989.099932,1873.862547,-1.061497245,0.288469793,-5661.903774,1683.703909,gender2,Women
+ab_job_corps,income_net_delta,age_in_years,39.57089929,35.998415,1.099240044,0.271669373,-30.98663284,110.1284314,age_in_years,
+ab_job_corps,income_net_delta,marital3never married,-210.8924086,894.197529,-0.235845439,0.813553702,-1963.535432,1541.750615,marital3,never married
+ab_job_corps,income_net_delta,marital3apart,-2251.550292,2226.490215,-1.011255418,0.311899743,-6615.510618,2112.410035,marital3,apart
+ab_job_corps,income_net_delta,marital3together,99.23948655,1290.556517,0.076896661,0.938706103,-2430.274186,2628.753159,marital3,together
+ab_job_corps,income_net_delta,education4Less HS,124.0410066,2589.183243,0.047907388,0.961790268,-4950.80409,5198.886104,education4,Less HS
+ab_job_corps,income_net_delta,education4High School,-58.51226555,2217.733397,-0.026383814,0.978951323,-4405.309075,4288.284544,education4,High School
+ab_job_corps,income_net_delta,education4Post HS,1681.462132,2430.327756,0.691866407,0.489024869,-3082.023392,6444.947656,education4,Post HS
+ab_job_corps,income_net_delta,education4University Degree,4651.971376,2761.073493,1.684841562,0.092026215,-759.7816624,10063.72441,education4,University Degree
+ab_job_corps,income_net_delta,dependent41 dependent,2039.364379,1213.184334,1.681001248,0.092769749,-338.4984413,4417.227199,dependent4,1 dependent
+ab_job_corps,income_net_delta,dependent42 dependents,-780.473067,1453.415326,-0.536992457,0.591275532,-3629.192895,2068.246761,dependent4,2 dependents
+ab_job_corps,income_net_delta,dependent43+ dependents,-492.0231082,1656.714234,-0.296987313,0.766477593,-3739.212403,2755.166187,dependent4,3+ dependents
+ab_job_corps,income_net_delta,disability2With Disability,-499.6718492,1010.826573,-0.494320057,0.621082623,-2480.909867,1481.566169,disability2,With Disability
+ab_job_corps,income_net_delta,ethnicityCaucasian,-2436.00745,1205.530485,-2.020693363,0.043317545,-4798.868591,-73.14630848,ethnicity,Caucasian
+ab_job_corps,income_net_delta,ethnicityVisible Minority,4066.104636,3539.860553,1.148662376,0.250701452,-2872.084859,11004.29413,ethnicity,Visible Minority
+ab_job_corps,income_net_delta,ethnicityIndigenous,-2781.168384,1345.347667,-2.067248826,0.03871653,-5418.073681,-144.2630858,ethnicity,Indigenous
+ab_job_corps,income_net_delta,immigrationborn in Canada,-635.1205402,1200.75205,-0.528935628,0.596852766,-2988.615864,1718.374784,immigration,born in Canada
+ab_job_corps,income_net_delta,immigrationimmigrant,425.0369925,2408.20205,0.17649557,0.859905439,-4295.081756,5145.155741,immigration,immigrant
+ab_job_corps,income_net_delta,region7North Central,427.871872,2028.060419,0.2109759,0.832907051,-3547.162534,4402.906278,region7,North Central
+ab_job_corps,income_net_delta,region7North East,3720.61906,2976.761744,1.249888093,0.211347058,-2113.886777,9555.124897,region7,North East
+ab_job_corps,income_net_delta,region7Edmonton,-262.6199383,1609.834714,-0.163134722,0.870413109,-3417.924541,2892.684664,region7,Edmonton
+ab_job_corps,income_net_delta,region7Central,1982.337988,2036.659206,0.973328273,0.33039551,-2009.550193,5974.226169,region7,Central
+ab_job_corps,income_net_delta,region7Calgary,-2489.651156,1709.854383,-1.45606034,0.145383054,-5840.996086,861.6937749,region7,Calgary
+ab_job_corps,income_net_delta,region7South,52.89245032,1914.734812,0.027623904,0.977962241,-3700.021756,3805.806656,region7,South
+ab_job_corps,income_net_delta,year_before2013,-65.013757,3913.83834,-0.016611253,0.986746823,-7736.20635,7606.178836,year_before,2013
+ab_job_corps,income_net_delta,year_before2014,-1461.011884,3756.367223,-0.388942773,0.697320357,-8823.558292,5901.534524,year_before,2014
+ab_job_corps,income_net_delta,year_before2015,1793.212935,3712.775619,0.482984462,0.629109165,-5483.893157,9070.319027,year_before,2015
+ab_job_corps,income_net_delta,year_before2016,5962.056529,3810.881947,1.564482084,0.117711568,-1507.339706,13431.45276,year_before,2016
+ab_job_corps,income_net_delta,year_before2017,5566.357475,3992.291503,1.394276312,0.163241201,-2258.604709,13391.31966,year_before,2017
+ab_job_corps,income_net_delta,spell_duration,38.52497358,52.31068368,0.736464731,0.461451839,-64.00489461,141.0548418,spell_duration,
+ab_job_corps,income_net_delta,income_net_before,-0.631527055,0.033861364,-18.65037282,2.49E-77,-0.697895929,-0.565158182,income_net_before,
+ab_job_corps,earnings_total_delta,(Intercept),6513.344376,5395.904579,1.207090355,0.227403819,-4062.724341,17089.41309,NA,(Intercept)
+ab_job_corps,earnings_total_delta,txTRUE,-1385.88305,896.2055539,-1.546389714,0.122017648,-3142.461838,370.6957371,tx,TRUE
+ab_job_corps,earnings_total_delta,gender2Men,8452.481087,2106.818347,4.011964817,6.03E-05,4323.079743,12581.88243,gender2,Men
+ab_job_corps,earnings_total_delta,gender2Women,4080.557776,2110.644044,1.933323522,0.053202744,-56.34200036,8217.457553,gender2,Women
+ab_job_corps,earnings_total_delta,age_in_years,-15.59978664,37.20112129,-0.419336464,0.674972293,-88.51464445,57.31507117,age_in_years,
+ab_job_corps,earnings_total_delta,marital3never married,561.9847469,945.9211398,0.594113741,0.552439087,-1292.037471,2416.006965,marital3,never married
+ab_job_corps,earnings_total_delta,marital3apart,-3139.627027,2320.355919,-1.353079931,0.176037028,-7687.565799,1408.311745,marital3,apart
+ab_job_corps,earnings_total_delta,marital3together,1064.630642,1245.280744,0.854932229,0.392593309,-1376.141712,3505.402996,marital3,together
+ab_job_corps,earnings_total_delta,education4Less HS,-1650.587421,2430.386022,-0.679146196,0.497048796,-6414.187148,3113.012306,education4,Less HS
+ab_job_corps,earnings_total_delta,education4High School,-920.1208169,2014.915305,-0.456654835,0.647921406,-4869.390567,3029.148933,education4,High School
+ab_job_corps,earnings_total_delta,education4Post HS,1355.121885,2268.440349,0.597380436,0.550256478,-3091.06145,5801.30522,education4,Post HS
+ab_job_corps,earnings_total_delta,education4University Degree,4817.958213,2656.290502,1.813791906,0.069716558,-388.4183025,10024.33473,education4,University Degree
+ab_job_corps,earnings_total_delta,dependent41 dependent,1106.441318,1218.276854,0.908201871,0.363776535,-1281.402932,3494.285568,dependent4,1 dependent
+ab_job_corps,earnings_total_delta,dependent42 dependents,-1180.546803,1625.481746,-0.726275029,0.467674036,-4366.519867,2005.426262,dependent4,2 dependents
+ab_job_corps,earnings_total_delta,dependent43+ dependents,-1770.740167,1622.739131,-1.091204454,0.275188886,-4951.337657,1409.857322,dependent4,3+ dependents
+ab_job_corps,earnings_total_delta,disability2With Disability,-5542.18322,1075.919959,-5.15111108,2.60E-07,-7651.00543,-3433.36101,disability2,With Disability
+ab_job_corps,earnings_total_delta,ethnicityCaucasian,-2171.309088,1319.581032,-1.645453394,0.099883468,-4757.711325,415.0931491,ethnicity,Caucasian
+ab_job_corps,earnings_total_delta,ethnicityVisible Minority,2482.172088,3268.533388,0.759414635,0.447608618,-3924.211347,8888.555524,ethnicity,Visible Minority
+ab_job_corps,earnings_total_delta,ethnicityIndigenous,-3006.239042,1469.145897,-2.04624949,0.040737744,-5885.791068,-126.6870158,ethnicity,Indigenous
+ab_job_corps,earnings_total_delta,immigrationborn in Canada,-479.1390936,1342.0401,-0.357022934,0.721076344,-3109.561503,2151.283316,immigration,born in Canada
+ab_job_corps,earnings_total_delta,immigrationimmigrant,-1028.817155,2054.462351,-0.500771968,0.616534114,-5055.599816,2997.965507,immigration,immigrant
+ab_job_corps,earnings_total_delta,region7North Central,977.2889986,2144.193213,0.455784018,0.64854754,-3225.367745,5179.945743,region7,North Central
+ab_job_corps,earnings_total_delta,region7North East,3204.119295,3085.148345,1.038562473,0.299013957,-2842.826203,9251.064793,region7,North East
+ab_job_corps,earnings_total_delta,region7Edmonton,144.7950485,1625.557421,0.08907409,0.929023433,-3041.326341,3330.916438,region7,Edmonton
+ab_job_corps,earnings_total_delta,region7Central,3140.929027,2153.777012,1.458335292,0.144755264,-1080.512132,7362.370186,region7,Central
+ab_job_corps,earnings_total_delta,region7Calgary,-1497.04152,1716.405846,-0.872195537,0.383106459,-4861.227434,1867.144394,region7,Calgary
+ab_job_corps,earnings_total_delta,region7South,164.6700998,1880.379113,0.087572819,0.930216604,-3520.906326,3850.246526,region7,South
+ab_job_corps,earnings_total_delta,year_before2013,-2050.027642,4041.624862,-0.50722858,0.611996978,-9971.684084,5871.628801,year_before,2013
+ab_job_corps,earnings_total_delta,year_before2014,-3528.457747,3858.591621,-0.914441873,0.360489704,-11091.36579,4034.450295,year_before,2014
+ab_job_corps,earnings_total_delta,year_before2015,1029.006946,3802.867662,0.270587104,0.786709881,-6424.681148,8482.69504,year_before,2015
+ab_job_corps,earnings_total_delta,year_before2016,4798.550448,3855.813053,1.244497693,0.213323057,-2758.911551,12356.01245,year_before,2016
+ab_job_corps,earnings_total_delta,year_before2017,2429.330227,4117.237987,0.590038816,0.555167648,-5640.529282,10499.18974,year_before,2017
+ab_job_corps,earnings_total_delta,spell_duration,-159.936456,54.39067771,-2.940512285,0.0032784,-266.5431494,-53.3297626,spell_duration,
+ab_job_corps,earnings_total_delta,earnings_total_before,-0.657645251,0.050835699,-12.93668151,3.28E-38,-0.757284123,-0.558006378,earnings_total_before,
+ab_job_corps,income_total_delta,(Intercept),11390.74134,5283.403948,2.155947463,0.031093155,1035.175853,21746.30682,NA,(Intercept)
+ab_job_corps,income_total_delta,txTRUE,-2160.223791,870.2929738,-2.482179974,0.013061821,-3866.013462,-454.4341205,tx,TRUE
+ab_job_corps,income_total_delta,gender2Men,4214.654074,1864.790486,2.260122038,0.02381853,559.631633,7869.676515,gender2,Men
+ab_job_corps,income_total_delta,gender2Women,-1849.435826,1878.23757,-0.984665548,0.324793779,-5530.814791,1831.943138,gender2,Women
+ab_job_corps,income_total_delta,age_in_years,38.40415696,36.85643765,1.041993188,0.297420546,-33.8351148,110.6434287,age_in_years,
+ab_job_corps,income_total_delta,marital3never married,-189.4922957,908.4973999,-0.208577697,0.834778885,-1970.163319,1591.178728,marital3,never married
+ab_job_corps,income_total_delta,marital3apart,-2255.607388,2235.628539,-1.008936569,0.313010588,-6637.478993,2126.264217,marital3,apart
+ab_job_corps,income_total_delta,marital3together,102.2656331,1306.614989,0.078267611,0.937615536,-2458.72293,2663.254196,marital3,together
+ab_job_corps,income_total_delta,education4Less HS,-42.70272164,2622.163564,-0.016285301,0.987006858,-5182.189834,5096.78439,education4,Less HS
+ab_job_corps,income_total_delta,education4High School,-193.6444881,2262.661241,-0.085582625,0.931798599,-4628.500667,4241.211691,education4,High School
+ab_job_corps,income_total_delta,education4Post HS,1687.188615,2491.054395,0.677298986,0.498219825,-3195.322199,6569.699429,education4,Post HS
+ab_job_corps,income_total_delta,education4University Degree,4984.956762,2820.339352,1.767502467,0.077151026,-542.958411,10512.87193,education4,University Degree
+ab_job_corps,income_total_delta,dependent41 dependent,2198.983858,1261.624932,1.74297749,0.081344512,-273.8233953,4671.791111,dependent4,1 dependent
+ab_job_corps,income_total_delta,dependent42 dependents,-558.7147983,1477.178589,-0.378231043,0.705260786,-3454.011043,2336.581447,dependent4,2 dependents
+ab_job_corps,income_total_delta,dependent43+ dependents,-440.6587153,1665.606496,-0.264563519,0.791346962,-3705.277002,2823.959571,dependent4,3+ dependents
+ab_job_corps,income_total_delta,disability2With Disability,-605.8722842,1021.630546,-0.59304441,0.553154471,-2608.286282,1396.541714,disability2,With Disability
+ab_job_corps,income_total_delta,ethnicityCaucasian,-2448.582935,1222.415277,-2.003069644,0.045175918,-4844.538569,-52.62730073,ethnicity,Caucasian
+ab_job_corps,income_total_delta,ethnicityVisible Minority,3880.825256,3550.769165,1.092953407,0.274420224,-3078.74531,10840.39582,ethnicity,Visible Minority
+ab_job_corps,income_total_delta,ethnicityIndigenous,-2843.165727,1371.381961,-2.073212137,0.03815833,-5531.098704,-155.2327493,ethnicity,Indigenous
+ab_job_corps,income_total_delta,immigrationborn in Canada,-608.9714686,1221.723795,-0.498452654,0.618167516,-3003.571784,1785.628847,immigration,born in Canada
+ab_job_corps,income_total_delta,immigrationimmigrant,373.8513537,2423.405877,0.154266917,0.877399987,-4376.067164,5123.769872,immigration,immigrant
+ab_job_corps,income_total_delta,region7North Central,310.6906975,2051.956583,0.151411926,0.879651475,-3711.180615,4332.56201,region7,North Central
+ab_job_corps,income_total_delta,region7North East,3852.147037,3104.143016,1.240969574,0.214623586,-2232.028353,9936.322427,region7,North East
+ab_job_corps,income_total_delta,region7Edmonton,-292.3352942,1641.556683,-0.178084191,0.858657675,-3509.815521,2925.144932,region7,Edmonton
+ab_job_corps,income_total_delta,region7Central,1924.879922,2120.814916,0.907613346,0.364087497,-2231.954943,6081.714788,region7,Central
+ab_job_corps,income_total_delta,region7Calgary,-2497.891618,1734.130141,-1.440429158,0.149753114,-5896.817463,901.0342278,region7,Calgary
+ab_job_corps,income_total_delta,region7South,-133.2317202,1946.299828,-0.068453852,0.945424665,-3948.013918,3681.550477,region7,South
+ab_job_corps,income_total_delta,year_before2013,-293.0846082,4170.466852,-0.070276211,0.943974135,-8467.273636,7881.10442,year_before,2013
+ab_job_corps,income_total_delta,year_before2014,-1749.401137,3987.644193,-0.438705424,0.660877144,-9565.254511,6066.452238,year_before,2014
+ab_job_corps,income_total_delta,year_before2015,1574.691807,3936.103483,0.40006362,0.689111595,-6140.140861,9289.524475,year_before,2015
+ab_job_corps,income_total_delta,year_before2016,5869.229609,4023.326039,1.458800394,0.144627172,-2016.560815,13755.02003,year_before,2016
+ab_job_corps,income_total_delta,year_before2017,5612.021003,4208.842045,1.333388363,0.182411272,-2637.384085,13861.42609,year_before,2017
+ab_job_corps,income_total_delta,spell_duration,36.72492827,53.26074244,0.689530911,0.490492853,-67.66707195,141.1169285,spell_duration,
+ab_job_corps,income_total_delta,income_total_before,-0.630022129,0.034375941,-18.32741468,9.48E-75,-0.697399583,-0.562644674,income_total_before,
+ab_job_corps,income_taxable_delta,(Intercept),7760.002026,5159.15112,1.504123807,0.132556648,-2352.025712,17872.02976,NA,(Intercept)
+ab_job_corps,income_taxable_delta,txTRUE,-1756.586893,876.5407603,-2.003999098,0.045076257,-3474.622336,-38.55144944,tx,TRUE
+ab_job_corps,income_taxable_delta,gender2Men,7321.786683,2288.189075,3.199817167,0.00137612,2836.895496,11806.67787,gender2,Men
+ab_job_corps,income_taxable_delta,gender2Women,1939.825047,2281.132544,0.850378051,0.395119549,-2531.235215,6410.88531,gender2,Women
+ab_job_corps,income_taxable_delta,age_in_years,-3.371251777,37.29614716,-0.090391422,0.927976583,-76.47236198,69.72985842,age_in_years,
+ab_job_corps,income_taxable_delta,marital3never married,-91.9192336,903.2719954,-0.101762519,0.918945639,-1862.348372,1678.509905,marital3,never married
+ab_job_corps,income_taxable_delta,marital3apart,-3452.545608,2613.634934,-1.320974695,0.186516652,-8575.316454,1670.225237,marital3,apart
+ab_job_corps,income_taxable_delta,marital3together,273.487179,1272.670325,0.214892399,0.829852204,-2220.969239,2767.943597,marital3,together
+ab_job_corps,income_taxable_delta,education4Less HS,-940.9404982,2180.571095,-0.431511039,0.666098936,-5214.898535,3333.017539,education4,Less HS
+ab_job_corps,income_taxable_delta,education4High School,-810.198245,1794.476911,-0.451495497,0.651634688,-4327.404832,2707.008342,education4,High School
+ab_job_corps,income_taxable_delta,education4Post HS,1648.0315,2028.708342,0.812355067,0.416592304,-2328.272846,5624.335847,education4,Post HS
+ab_job_corps,income_taxable_delta,education4University Degree,4960.09585,2542.022462,1.951239977,0.051034824,-22.31328034,9942.504981,education4,University Degree
+ab_job_corps,income_taxable_delta,dependent41 dependent,1442.871216,1216.244755,1.18633294,0.23549723,-940.9900843,3826.732517,dependent4,1 dependent
+ab_job_corps,income_taxable_delta,dependent42 dependents,-791.0975458,1382.346226,-0.572286111,0.567131073,-3500.520677,1918.325586,dependent4,2 dependents
+ab_job_corps,income_taxable_delta,dependent43+ dependents,-2032.04491,1773.064108,-1.146063981,0.251774894,-5507.282023,1443.192203,dependent4,3+ dependents
+ab_job_corps,income_taxable_delta,disability2With Disability,-5546.537572,1079.191428,-5.13953079,2.77E-07,-7661.771919,-3431.303225,disability2,With Disability
+ab_job_corps,income_taxable_delta,ethnicityCaucasian,-2223.348484,1218.332824,-1.824910599,0.068021279,-4611.302437,164.6054697,ethnicity,Caucasian
+ab_job_corps,income_taxable_delta,ethnicityVisible Minority,2656.509369,3675.590375,0.722743586,0.469841262,-4547.712985,9860.731722,ethnicity,Visible Minority
+ab_job_corps,income_taxable_delta,ethnicityIndigenous,-2587.142601,1336.101274,-1.936337201,0.052832792,-5205.924806,31.6396037,ethnicity,Indigenous
+ab_job_corps,income_taxable_delta,immigrationborn in Canada,-644.6242008,1310.849851,-0.491760517,0.622891097,-3213.913167,1924.664766,immigration,born in Canada
+ab_job_corps,income_taxable_delta,immigrationimmigrant,1075.008704,2570.698137,0.418177727,0.675819214,-3963.605259,6113.622666,immigration,immigrant
+ab_job_corps,income_taxable_delta,region7North Central,1163.735921,1976.422519,0.58880928,0.555992233,-2710.087285,5037.559127,region7,North Central
+ab_job_corps,income_taxable_delta,region7North East,3738.01363,2971.63356,1.257898578,0.208435094,-2086.440876,9562.468135,region7,North East
+ab_job_corps,income_taxable_delta,region7Edmonton,456.302647,1572.586657,0.290160574,0.77169476,-2625.995104,3538.600398,region7,Edmonton
+ab_job_corps,income_taxable_delta,region7Central,3120.704727,2046.354984,1.525006536,0.127264634,-890.1873522,7131.596806,region7,Central
+ab_job_corps,income_taxable_delta,region7Calgary,-778.3006609,1677.401732,-0.463991807,0.642655904,-4066.037819,2509.436497,region7,Calgary
+ab_job_corps,income_taxable_delta,region7South,1245.07145,1906.179653,0.65317634,0.513646004,-2491.074492,4981.217391,region7,South
+ab_job_corps,income_taxable_delta,year_before2013,-723.2791799,3972.43297,-0.182074609,0.855525011,-8509.318286,7062.759926,year_before,2013
+ab_job_corps,income_taxable_delta,year_before2014,-2609.584195,3794.18669,-0.687784869,0.491591881,-10046.25743,4827.089041,year_before,2014
+ab_job_corps,income_taxable_delta,year_before2015,1181.181003,3755.258115,0.314540563,0.753112,-6179.191534,8541.553541,year_before,2015
+ab_job_corps,income_taxable_delta,year_before2016,5581.78761,3811.732531,1.464370221,0.143099944,-1889.275785,13052.85101,year_before,2016
+ab_job_corps,income_taxable_delta,year_before2017,3755.828071,4022.310578,0.933748899,0.350438544,-4127.972031,11639.62817,year_before,2017
+ab_job_corps,income_taxable_delta,spell_duration,-138.0581777,53.25333991,-2.59247923,0.009531835,-242.4356688,-33.68068653,spell_duration,
+ab_job_corps,income_taxable_delta,income_taxable_before,-0.609207474,0.034916574,-17.44751597,6.08E-68,-0.677644577,-0.54077037,income_taxable_before,
+career_planning,income_net_delta,(Intercept),21509.74335,2530.469422,8.500297679,1.95E-17,16549.97839,26469.50832,NA,(Intercept)
+career_planning,income_net_delta,txTRUE,1044.019708,292.5065359,3.569218394,3.58E-04,470.7017077,1617.337709,tx,TRUE
+career_planning,income_net_delta,gender2Men,591.4335503,1370.828654,0.431442361,0.666148862,-2095.414935,3278.282035,gender2,Men
+career_planning,income_net_delta,gender2Women,-4252.332483,1371.185227,-3.101209377,0.001928534,-6939.879858,-1564.785109,gender2,Women
+career_planning,income_net_delta,age_in_years,42.21755638,11.97299555,3.52606465,4.22E-04,18.75027265,65.68484011,age_in_years,
+career_planning,income_net_delta,marital3never married,330.4299835,328.6857791,1.005306601,0.31475475,-313.7999756,974.6599425,marital3,never married
+career_planning,income_net_delta,marital3apart,-499.0714984,745.0765316,-0.66982582,0.502972337,-1959.434721,961.291724,marital3,apart
+career_planning,income_net_delta,marital3together,-402.4240407,470.6894686,-0.854967165,0.392573967,-1324.983751,520.1356695,marital3,together
+career_planning,income_net_delta,education4Less HS,-7056.589337,1290.700231,-5.467256584,4.60E-08,-9586.384692,-4526.793982,education4,Less HS
+career_planning,income_net_delta,education4High School,-6969.575706,1208.846843,-5.765474548,8.20E-09,-9338.936967,-4600.214444,education4,High School
+career_planning,income_net_delta,education4Post HS,-4387.433705,1233.587815,-3.556644815,3.76E-04,-6805.28771,-1969.5797,education4,Post HS
+career_planning,income_net_delta,education4University Degree,-3304.271124,1284.821864,-2.571773734,0.010121141,-5822.544775,-785.9974721,education4,University Degree
+career_planning,income_net_delta,dependent41 dependent,735.4855277,423.8303943,1.735329834,0.082689381,-95.22956548,1566.200621,dependent4,1 dependent
+career_planning,income_net_delta,dependent42 dependents,393.8831384,534.6244898,0.73674728,0.461279966,-653.9903477,1441.756624,dependent4,2 dependents
+career_planning,income_net_delta,dependent43+ dependents,112.8283754,660.0081099,0.170949983,0.864263878,-1180.799231,1406.455982,dependent4,3+ dependents
+career_planning,income_net_delta,disability2With Disability,-3145.957519,351.9375557,-8.938965074,4.08E-19,-3835.761373,-2456.153665,disability2,With Disability
+career_planning,income_net_delta,ethnicityCaucasian,-1146.458304,445.3225512,-2.574444749,0.010043341,-2019.298406,-273.6182016,ethnicity,Caucasian
+career_planning,income_net_delta,ethnicityVisible Minority,442.3930616,1004.80243,0.440278654,0.659737455,-1527.03753,2411.823653,ethnicity,Visible Minority
+career_planning,income_net_delta,ethnicityIndigenous,-5035.076705,663.3667857,-7.590185119,3.26E-14,-6335.287375,-3734.866034,ethnicity,Indigenous
+career_planning,income_net_delta,immigrationborn in Canada,-1188.924009,430.8051813,-2.759771843,0.005786559,-2033.309808,-344.5382096,immigration,born in Canada
+career_planning,income_net_delta,immigrationimmigrant,672.5197121,712.0908579,0.944429639,0.344955312,-723.1910044,2068.230429,immigration,immigrant
+career_planning,income_net_delta,region7North Central,-522.0010313,1047.509468,-0.498325836,0.618256884,-2575.138175,1531.136113,region7,North Central
+career_planning,income_net_delta,region7North East,2082.998311,1285.562645,1.6203009,0.105174801,-436.7272844,4602.723905,region7,North East
+career_planning,income_net_delta,region7Edmonton,-529.6190172,696.9874724,-0.759868775,0.447337087,-1895.72683,836.4887959,region7,Edmonton
+career_planning,income_net_delta,region7Central,-1644.772763,767.0927746,-2.144164067,0.032025189,-3148.288213,-141.2573141,region7,Central
+career_planning,income_net_delta,region7Calgary,-2493.273979,711.1450258,-3.505999323,4.55E-04,-3887.130848,-1099.41711,region7,Calgary
+career_planning,income_net_delta,region7South,-2536.205307,789.7648402,-3.211342387,0.001322111,-4084.158407,-988.2522074,region7,South
+career_planning,income_net_delta,year_before2013,1985.377967,1557.370285,1.274827179,0.202377131,-1067.095426,5037.851359,year_before,2013
+career_planning,income_net_delta,year_before2014,804.4544084,1535.152825,0.524022361,0.600265619,-2204.472368,3813.381185,year_before,2014
+career_planning,income_net_delta,year_before2015,3594.432019,1540.272495,2.333633841,0.019619369,575.4705984,6613.393441,year_before,2015
+career_planning,income_net_delta,year_before2016,4377.917438,1569.817295,2.788806985,0.005292524,1301.047685,7454.787191,year_before,2016
+career_planning,income_net_delta,year_before2017,5621.717277,1592.377262,3.530392835,4.15E-04,2500.629588,8742.804966,year_before,2017
+career_planning,income_net_delta,spell_duration,-50.37287017,19.02566887,-2.647626768,0.008108777,-87.66351873,-13.0822216,spell_duration,
+career_planning,income_net_delta,income_net_before,-0.645572261,0.013729175,-47.02192624,0,-0.672481688,-0.618662835,income_net_before,
+career_planning,earnings_total_delta,(Intercept),21627.46647,2591.566943,8.345324257,7.31E-17,16547.94928,26706.98366,NA,(Intercept)
+career_planning,earnings_total_delta,txTRUE,1837.419481,321.0526043,5.723110344,1.05E-08,1208.15068,2466.688282,tx,TRUE
+career_planning,earnings_total_delta,gender2Men,573.9813197,1475.020393,0.389134498,0.697178533,-2317.084822,3465.047462,gender2,Men
+career_planning,earnings_total_delta,gender2Women,-3967.521423,1472.154939,-2.695043379,0.007040612,-6852.971225,-1082.07162,gender2,Women
+career_planning,earnings_total_delta,age_in_years,-43.97987562,12.41418561,-3.542711299,3.96E-04,-68.31189969,-19.64785156,age_in_years,
+career_planning,earnings_total_delta,marital3never married,513.8324681,356.8860996,1.439765989,0.14994071,-185.6706195,1213.335556,marital3,never married
+career_planning,earnings_total_delta,marital3apart,-214.1720368,795.2381977,-0.269318095,0.787686168,-1772.853015,1344.508941,marital3,apart
+career_planning,earnings_total_delta,marital3together,-171.9145723,519.6000152,-0.330859444,0.740752228,-1190.339822,846.5106771,marital3,together
+career_planning,earnings_total_delta,education4Less HS,-8572.426023,1441.942035,-5.945055914,2.78E-09,-11398.658,-5746.194049,education4,Less HS
+career_planning,earnings_total_delta,education4High School,-8152.587686,1356.090289,-6.011832512,1.85E-09,-10810.54871,-5494.626659,education4,High School
+career_planning,earnings_total_delta,education4Post HS,-4596.389255,1385.169193,-3.318287239,9.06E-04,-7311.345451,-1881.43306,education4,Post HS
+career_planning,earnings_total_delta,education4University Degree,-3584.547778,1449.965767,-2.47216028,0.013433671,-6426.506409,-742.589146,education4,University Degree
+career_planning,earnings_total_delta,dependent41 dependent,1681.052773,459.4680064,3.658693857,2.54E-04,780.4873275,2581.618218,dependent4,1 dependent
+career_planning,earnings_total_delta,dependent42 dependents,1056.76368,582.6812877,1.813622133,0.06974271,-85.30198306,2198.829342,dependent4,2 dependents
+career_planning,earnings_total_delta,dependent43+ dependents,710.833306,738.9716062,0.961922353,0.33609388,-737.5641543,2159.230766,dependent4,3+ dependents
+career_planning,earnings_total_delta,disability2With Disability,-7930.629748,385.5447976,-20.56993065,1.40E-93,-8686.304393,-7174.955104,disability2,With Disability
+career_planning,earnings_total_delta,ethnicityCaucasian,-1204.354299,484.5971892,-2.485268849,0.012949038,-2154.173388,-254.5352094,ethnicity,Caucasian
+career_planning,earnings_total_delta,ethnicityVisible Minority,214.6387195,1152.136072,0.186296328,0.852213243,-2043.568424,2472.845863,ethnicity,Visible Minority
+career_planning,earnings_total_delta,ethnicityIndigenous,-4847.268333,704.1759392,-6.883604029,5.91E-12,-6227.465668,-3467.070997,ethnicity,Indigenous
+career_planning,earnings_total_delta,immigrationborn in Canada,-1650.138242,472.0815923,-3.495451356,4.74E-04,-2575.426539,-724.8499447,immigration,born in Canada
+career_planning,earnings_total_delta,immigrationimmigrant,-345.8372686,779.1986816,-0.443837081,0.657162553,-1873.08051,1181.405973,immigration,immigrant
+career_planning,earnings_total_delta,region7North Central,-855.2392835,1168.596824,-0.731851453,0.464263127,-3145.709793,1435.231226,region7,North Central
+career_planning,earnings_total_delta,region7North East,-486.254994,1394.195716,-0.348770971,0.727262922,-3218.903336,2246.393348,region7,North East
+career_planning,earnings_total_delta,region7Edmonton,-772.4901895,739.8531067,-1.044112923,0.296438867,-2222.615406,677.6350272,region7,Edmonton
+career_planning,earnings_total_delta,region7Central,-1548.966631,811.9275282,-1.907764642,0.056428127,-3140.358992,42.42573129,region7,Central
+career_planning,earnings_total_delta,region7Calgary,-2131.905435,758.2347861,-2.811669254,0.004930689,-3618.05907,-645.7518009,region7,Calgary
+career_planning,earnings_total_delta,region7South,-3344.293375,830.1362099,-4.028607999,5.62E-05,-4971.375076,-1717.211674,region7,South
+career_planning,earnings_total_delta,year_before2013,2732.578961,1361.787105,2.006612452,0.044797033,63.4520726,5401.705849,year_before,2013
+career_planning,earnings_total_delta,year_before2014,1120.893309,1322.397907,0.847621811,0.396653221,-1471.030053,3712.816671,year_before,2014
+career_planning,earnings_total_delta,year_before2015,4568.591542,1326.936161,3.442962575,5.76E-04,1967.773122,7169.409961,year_before,2015
+career_planning,earnings_total_delta,year_before2016,5232.928186,1366.637565,3.82905338,1.29E-04,2554.29431,7911.562062,year_before,2016
+career_planning,earnings_total_delta,year_before2017,4556.89304,1397.535858,3.260662698,0.001112364,1817.697962,7296.088118,year_before,2017
+career_planning,earnings_total_delta,spell_duration,-203.8088161,20.01126555,-10.18470399,2.47E-24,-243.0312516,-164.5863805,spell_duration,
+career_planning,earnings_total_delta,earnings_total_before,-0.661668607,0.015509663,-42.66170242,0,-0.692067821,-0.631269393,earnings_total_before,
+career_planning,income_total_delta,(Intercept),22027.93493,2599.038938,8.47541551,2.41E-17,16933.77249,27122.09737,NA,(Intercept)
+career_planning,income_total_delta,txTRUE,1091.171771,302.9237559,3.602133372,3.16E-04,497.4358339,1684.907707,tx,TRUE
+career_planning,income_total_delta,gender2Men,538.4865945,1400.443664,0.384511429,0.70060128,-2206.407836,3283.381025,gender2,Men
+career_planning,income_total_delta,gender2Women,-4310.447229,1400.970202,-3.076758679,0.002093927,-7056.373684,-1564.520774,gender2,Women
+career_planning,income_total_delta,age_in_years,41.13890559,12.32013321,3.339160778,8.41E-04,16.9912259,65.28658528,age_in_years,
+career_planning,income_total_delta,marital3never married,355.0793299,338.9912063,1.047458823,0.294893751,-309.3494495,1019.508109,marital3,never married
+career_planning,income_total_delta,marital3apart,-480.2801516,774.7004069,-0.619955982,0.535289968,-1998.706695,1038.146392,marital3,apart
+career_planning,income_total_delta,marital3together,-407.6408714,486.8906395,-0.837232919,0.402466191,-1361.955164,546.6734213,marital3,together
+career_planning,income_total_delta,education4Less HS,-7541.43418,1335.646137,-5.646281578,1.65E-08,-10159.32431,-4923.544052,education4,Less HS
+career_planning,income_total_delta,education4High School,-7364.023623,1254.956834,-5.867949736,4.44E-09,-9823.761286,-4904.285961,education4,High School
+career_planning,income_total_delta,education4Post HS,-4615.49725,1280.579129,-3.604226515,3.13E-04,-7125.455065,-2105.539436,education4,Post HS
+career_planning,income_total_delta,education4University Degree,-3296.310115,1338.48416,-2.462718808,0.013792592,-5919.762818,-672.8574114,education4,University Degree
+career_planning,income_total_delta,dependent41 dependent,1118.757261,439.7027963,2.544348753,0.010951548,256.9319786,1980.582544,dependent4,1 dependent
+career_planning,income_total_delta,dependent42 dependents,819.0300583,553.3401834,1.48015648,0.13883863,-265.5265194,1903.586636,dependent4,2 dependents
+career_planning,income_total_delta,dependent43+ dependents,485.3590677,697.356751,0.695998235,0.486433601,-881.4725379,1852.190673,dependent4,3+ dependents
+career_planning,income_total_delta,disability2With Disability,-3299.265536,363.288804,-9.081660374,1.11E-19,-4011.318038,-2587.213034,disability2,With Disability
+career_planning,income_total_delta,ethnicityCaucasian,-1180.33548,460.6920454,-2.562092165,0.01040766,-2083.300063,-277.3708968,ethnicity,Caucasian
+career_planning,income_total_delta,ethnicityVisible Minority,503.6906933,1053.765315,0.477991339,0.632658737,-1561.708021,2569.089408,ethnicity,Visible Minority
+career_planning,income_total_delta,ethnicityIndigenous,-5233.732738,683.2118483,-7.660482984,1.89E-14,-6572.840084,-3894.625393,ethnicity,Indigenous
+career_planning,income_total_delta,immigrationborn in Canada,-1255.442654,443.9499932,-2.827892045,0.00468767,-2125.592518,-385.2927902,immigration,born in Canada
+career_planning,income_total_delta,immigrationimmigrant,642.9611998,739.3599259,0.869618676,0.384513558,-806.1973739,2092.119773,immigration,immigrant
+career_planning,income_total_delta,region7North Central,-482.6815271,1073.383329,-0.44968234,0.652941715,-2586.531897,1621.168843,region7,North Central
+career_planning,income_total_delta,region7North East,2136.251043,1316.785484,1.622322746,0.104741404,-444.6718702,4717.173955,region7,North East
+career_planning,income_total_delta,region7Edmonton,-506.270128,712.4499019,-0.71060453,0.47733309,-1902.684577,890.1443211,region7,Edmonton
+career_planning,income_total_delta,region7Central,-1663.033846,787.0469064,-2.113004743,0.034605961,-3205.659748,-120.4079448,region7,Central
+career_planning,income_total_delta,region7Calgary,-2459.451927,728.0035331,-3.378351636,7.30E-04,-3886.35177,-1032.552085,region7,Calgary
+career_planning,income_total_delta,region7South,-2641.329986,806.6571943,-3.274414467,0.001059627,-4222.3924,-1060.267573,region7,South
+career_planning,income_total_delta,year_before2013,2099.890106,1586.928719,1.323241605,0.1857619,-1010.518342,5210.298553,year_before,2013
+career_planning,income_total_delta,year_before2014,957.2108388,1562.45067,0.612634278,0.540121345,-2105.220199,4019.641877,year_before,2014
+career_planning,income_total_delta,year_before2015,3737.029253,1566.6736,2.385327265,0.017068128,666.3211987,6807.737307,year_before,2015
+career_planning,income_total_delta,year_before2016,4591.257676,1598.116524,2.872917967,0.004068936,1458.920932,7723.594421,year_before,2016
+career_planning,income_total_delta,year_before2017,5823.767915,1620.185378,3.594507144,3.25E-04,2648.175827,8999.360004,year_before,2017
+career_planning,income_total_delta,spell_duration,-55.35233532,19.687375,-2.811565041,0.004932286,-93.93993965,-16.76473098,spell_duration,
+career_planning,income_total_delta,income_total_before,-0.64401005,0.013877339,-46.40731543,0,-0.671209881,-0.616810219,income_total_before,
+career_planning,income_taxable_delta,(Intercept),19232.06473,2574.217565,7.471033136,8.10E-14,14186.55262,24277.57683,NA,(Intercept)
+career_planning,income_taxable_delta,txTRUE,1487.400797,303.9884201,4.892952161,9.97E-07,891.5780998,2083.223494,tx,TRUE
+career_planning,income_taxable_delta,gender2Men,551.5540211,1451.063026,0.380103422,0.703870475,-2292.555256,3395.663299,gender2,Men
+career_planning,income_taxable_delta,gender2Women,-3965.940356,1450.259869,-2.734641177,0.006247323,-6808.475432,-1123.405279,gender2,Women
+career_planning,income_taxable_delta,age_in_years,10.75590961,12.43073665,0.865267274,0.386896812,-13.60855478,35.120374,age_in_years,
+career_planning,income_taxable_delta,marital3never married,551.3045222,343.6409705,1.604303821,0.108654255,-122.2378775,1224.846922,marital3,never married
+career_planning,income_taxable_delta,marital3apart,-238.9857269,773.5750508,-0.308936705,0.757371134,-1755.206552,1277.235099,marital3,apart
+career_planning,income_taxable_delta,marital3together,-286.6486104,488.3316346,-0.586995783,0.557209542,-1243.787279,670.4900582,marital3,together
+career_planning,income_taxable_delta,education4Less HS,-7885.891521,1324.118842,-5.955576851,2.61E-09,-10481.18794,-5290.595097,education4,Less HS
+career_planning,income_taxable_delta,education4High School,-7704.236699,1237.105971,-6.227628739,4.78E-10,-10128.98635,-5279.487045,education4,High School
+career_planning,income_taxable_delta,education4Post HS,-4625.366099,1263.816557,-3.659839771,2.53E-04,-7102.468975,-2148.263223,education4,Post HS
+career_planning,income_taxable_delta,education4University Degree,-3671.568846,1316.133915,-2.789662059,0.00527857,-6251.214671,-1091.92302,education4,University Degree
+career_planning,income_taxable_delta,dependent41 dependent,872.2170081,437.0602826,1.995644635,0.045978753,15.57109929,1728.862917,dependent4,1 dependent
+career_planning,income_taxable_delta,dependent42 dependents,695.1243863,551.0312283,1.261497263,0.207136414,-384.9065985,1775.155371,dependent4,2 dependents
+career_planning,income_taxable_delta,dependent43+ dependents,129.0199326,680.5887428,0.189571065,0.849646135,-1204.946079,1462.985945,dependent4,3+ dependents
+career_planning,income_taxable_delta,disability2With Disability,-7370.356618,375.158684,-19.64597098,1.45E-85,-8105.674296,-6635.038941,disability2,With Disability
+career_planning,income_taxable_delta,ethnicityCaucasian,-948.923591,461.2442276,-2.057312665,0.039662023,-1852.970461,-44.87672068,ethnicity,Caucasian
+career_planning,income_taxable_delta,ethnicityVisible Minority,118.5395962,1030.984218,0.11497712,0.90846378,-1902.207764,2139.286957,ethnicity,Visible Minority
+career_planning,income_taxable_delta,ethnicityIndigenous,-5058.572367,676.9013136,-7.473131261,7.98E-14,-6385.310953,-3731.833782,ethnicity,Indigenous
+career_planning,income_taxable_delta,immigrationborn in Canada,-1135.281253,449.3340051,-2.526586549,0.011521166,-2015.983876,-254.5786305,immigration,born in Canada
+career_planning,income_taxable_delta,immigrationimmigrant,915.2828411,744.7417018,1.228993675,0.219080731,-544.4241089,2374.989791,immigration,immigrant
+career_planning,income_taxable_delta,region7North Central,442.0995301,1103.679101,0.400568906,0.688739481,-1721.131091,2605.330151,region7,North Central
+career_planning,income_taxable_delta,region7North East,1899.531552,1296.065755,1.465613565,0.142760718,-640.7803254,4439.84343,region7,North East
+career_planning,income_taxable_delta,region7Edmonton,510.7983318,702.721202,0.726886182,0.467299538,-866.5476929,1888.144357,region7,Edmonton
+career_planning,income_taxable_delta,region7Central,-603.5933981,772.637694,-0.78121143,0.434682343,-2117.976988,910.7901915,region7,Central
+career_planning,income_taxable_delta,region7Calgary,-1247.080445,717.8962928,-1.737131752,0.082370895,-2654.169917,160.0090273,region7,Calgary
+career_planning,income_taxable_delta,region7South,-1712.069124,798.6814019,-2.143619621,0.032068826,-3277.498843,-146.6394049,region7,South
+career_planning,income_taxable_delta,year_before2013,2960.19704,1506.827942,1.964522263,0.049475822,6.787536184,5913.606544,year_before,2013
+career_planning,income_taxable_delta,year_before2014,1483.381975,1481.739387,1.001108554,0.316779819,-1420.853514,4387.617465,year_before,2014
+career_planning,income_taxable_delta,year_before2015,4158.202659,1483.453431,2.803055742,0.0050643,1250.607612,7065.797706,year_before,2015
+career_planning,income_taxable_delta,year_before2016,4984.345495,1512.715311,3.294965984,9.85E-04,2019.396644,7949.294347,year_before,2016
+career_planning,income_taxable_delta,year_before2017,5861.623835,1539.779787,3.806793597,1.41E-04,2843.628131,8879.61954,year_before,2017
+career_planning,income_taxable_delta,spell_duration,-180.5701109,19.76734969,-9.134765852,6.82E-20,-219.314467,-141.8257548,spell_duration,
+career_planning,income_taxable_delta,income_taxable_before,-0.626333084,0.014040797,-44.60808659,0,-0.653853295,-0.598812873,income_taxable_before,
+english_as_second,income_net_delta,(Intercept),17122.05485,3196.427639,5.356622074,8.52E-08,10856.99996,23387.10974,NA,(Intercept)
+english_as_second,income_net_delta,txTRUE,583.9194856,467.0657331,1.250186953,0.211237891,-331.5376387,1499.37661,tx,TRUE
+english_as_second,income_net_delta,gender2Men,4619.090996,1918.499307,2.407658413,0.016059272,858.7983134,8379.383678,gender2,Men
+english_as_second,income_net_delta,gender2Women,-4128.83445,1891.156688,-2.183232344,0.029023954,-7835.535114,-422.1337851,gender2,Women
+english_as_second,income_net_delta,age_in_years,-40.64712951,17.93955777,-2.265782135,0.023469549,-75.80898106,-5.485277964,age_in_years,
+english_as_second,income_net_delta,marital3never married,1152.740712,542.5220622,2.124781262,0.033610411,89.38784369,2216.09358,marital3,never married
+english_as_second,income_net_delta,marital3apart,1911.55795,904.6674105,2.112995259,0.034606773,138.3937728,3684.722126,marital3,apart
+english_as_second,income_net_delta,marital3together,-1668.173018,586.017777,-2.846625279,0.004420572,-2816.778259,-519.5677773,marital3,together
+english_as_second,income_net_delta,education4Less HS,-4354.074195,1298.705068,-3.352627401,8.01E-04,-6899.559172,-1808.589219,education4,Less HS
+english_as_second,income_net_delta,education4High School,-4340.238205,1245.638755,-3.484347437,4.94E-04,-6781.712268,-1898.764142,education4,High School
+english_as_second,income_net_delta,education4Post HS,-1467.043495,1316.090593,-1.114697956,0.264985948,-4046.60441,1112.517421,education4,Post HS
+english_as_second,income_net_delta,education4University Degree,-1168.244558,1354.04642,-0.862780286,0.388262969,-3822.199568,1485.710451,education4,University Degree
+english_as_second,income_net_delta,dependent41 dependent,976.4308239,646.5578855,1.510198616,0.130999912,-290.8341039,2243.695752,dependent4,1 dependent
+english_as_second,income_net_delta,dependent42 dependents,-760.0937452,728.0813571,-1.043968147,0.296505846,-2187.146124,666.9586335,dependent4,2 dependents
+english_as_second,income_net_delta,dependent43+ dependents,-272.6425103,678.3512599,-0.401919369,0.687745314,-1602.223016,1056.937996,dependent4,3+ dependents
+english_as_second,income_net_delta,disability2With Disability,-2192.47339,655.6644958,-3.343895246,8.27E-04,-3477.587436,-907.3593449,disability2,With Disability
+english_as_second,income_net_delta,ethnicityCaucasian,-465.1754389,716.7260278,-0.649028249,0.516323495,-1869.971171,939.6202928,ethnicity,Caucasian
+english_as_second,income_net_delta,ethnicityVisible Minority,-776.1198664,1288.209112,-0.602479721,0.546857954,-3301.032584,1748.792851,ethnicity,Visible Minority
+english_as_second,income_net_delta,ethnicityIndigenous,-5018.826856,1209.036535,-4.151096109,3.32E-05,-7388.559918,-2649.093795,ethnicity,Indigenous
+english_as_second,income_net_delta,immigrationborn in Canada,-1001.672267,653.3953277,-1.533026369,0.125276527,-2282.338703,278.9941691,immigration,born in Canada
+english_as_second,income_net_delta,immigrationimmigrant,551.9199151,609.1020344,0.906120623,0.364876958,-641.9308801,1745.77071,immigration,immigrant
+english_as_second,income_net_delta,region7North Central,83.77199457,1010.669498,0.082887625,0.93394127,-1897.158154,2064.702144,region7,North Central
+english_as_second,income_net_delta,region7North East,79.72145025,1280.20096,0.062272606,0.950346025,-2429.495146,2588.938046,region7,North East
+english_as_second,income_net_delta,region7Edmonton,-55.74697623,819.4013715,-0.068033784,0.945759049,-1661.788203,1550.294251,region7,Edmonton
+english_as_second,income_net_delta,region7Central,-607.9450438,1072.692838,-0.566746623,0.570889222,-2710.44204,1494.551952,region7,Central
+english_as_second,income_net_delta,region7Calgary,-1558.674677,841.2170417,-1.852880528,0.063906156,-3207.475005,90.12565128,region7,Calgary
+english_as_second,income_net_delta,region7South,-859.2185467,1021.479028,-0.841151432,0.400267663,-2861.335566,1142.898473,region7,South
+english_as_second,income_net_delta,year_before2013,4966.017317,2092.860013,2.372837785,0.017656274,863.9745575,9068.060077,year_before,2013
+english_as_second,income_net_delta,year_before2014,4870.028449,2049.371989,2.376351621,0.017489033,853.2229861,8886.833911,year_before,2014
+english_as_second,income_net_delta,year_before2015,4758.902101,2007.646552,2.370388402,0.01777368,823.8792367,8693.924965,year_before,2015
+english_as_second,income_net_delta,year_before2016,4902.936708,2034.332992,2.410095461,0.015952411,915.6079482,8890.265468,year_before,2016
+english_as_second,income_net_delta,year_before2017,6351.756199,2075.065704,3.060990399,0.002207387,2284.590599,10418.9218,year_before,2017
+english_as_second,income_net_delta,spell_duration,-39.63777982,28.09748205,-1.410723557,0.158333191,-94.7093432,15.43378355,spell_duration,
+english_as_second,income_net_delta,income_net_before,-0.652596551,0.016557583,-39.41375776,0,-0.685049707,-0.620143396,income_net_before,
+english_as_second,earnings_total_delta,(Intercept),18551.8816,3243.37574,5.719929818,1.07E-08,12194.80761,24908.9556,NA,(Intercept)
+english_as_second,earnings_total_delta,txTRUE,-34.90527952,509.6933151,-0.068482906,0.945401537,-1033.913221,964.1026619,tx,TRUE
+english_as_second,earnings_total_delta,gender2Men,2349.498272,1597.326247,1.470894426,0.141326801,-781.2895137,5480.286057,gender2,Men
+english_as_second,earnings_total_delta,gender2Women,-4646.382655,1556.023173,-2.986062634,0.002827498,-7696.215684,-1596.549626,gender2,Women
+english_as_second,earnings_total_delta,age_in_years,-124.6331127,19.05543046,-6.540556139,6.20E-11,-161.9820945,-87.28413085,age_in_years,
+english_as_second,earnings_total_delta,marital3never married,2317.336398,601.9726609,3.849570835,1.18E-04,1137.459302,3497.213495,marital3,never married
+english_as_second,earnings_total_delta,marital3apart,2064.905395,1024.416225,2.015689859,0.043838466,57.03141799,4072.779373,marital3,apart
+english_as_second,earnings_total_delta,marital3together,-467.0032991,579.7518383,-0.805522757,0.42052242,-1603.327189,669.3205909,marital3,together
+english_as_second,earnings_total_delta,education4Less HS,-4887.40876,1403.689693,-3.481829912,4.98E-04,-7638.665465,-2136.152055,education4,Less HS
+english_as_second,earnings_total_delta,education4High School,-5826.705422,1348.195871,-4.32185378,1.55E-05,-8469.193251,-3184.217593,education4,High School
+english_as_second,earnings_total_delta,education4Post HS,-2641.95059,1427.869445,-1.850274616,0.064280659,-5440.600038,156.6988582,education4,Post HS
+english_as_second,earnings_total_delta,education4University Degree,-1997.079353,1469.332497,-1.359174562,0.174098226,-4876.997119,882.838413,education4,University Degree
+english_as_second,earnings_total_delta,dependent41 dependent,623.1471303,704.4342349,0.884606539,0.376373698,-757.5564693,2003.85073,dependent4,1 dependent
+english_as_second,earnings_total_delta,dependent42 dependents,290.6894058,806.2576065,0.360541598,0.71844388,-1289.589809,1870.968621,dependent4,2 dependents
+english_as_second,earnings_total_delta,dependent43+ dependents,-1827.812582,733.5676749,-2.491675471,0.012717857,-3265.618241,-390.0069231,dependent4,3+ dependents
+english_as_second,earnings_total_delta,disability2With Disability,-7344.604118,733.1971552,-10.01722943,1.36E-23,-8781.683551,-5907.524684,disability2,With Disability
+english_as_second,earnings_total_delta,ethnicityCaucasian,-1488.283749,798.1663135,-1.864628616,0.062240112,-3052.703885,76.13638819,ethnicity,Caucasian
+english_as_second,earnings_total_delta,ethnicityVisible Minority,-446.4366761,1470.192978,-0.303658556,0.761389467,-3328.040999,2435.167647,ethnicity,Visible Minority
+english_as_second,earnings_total_delta,ethnicityIndigenous,-6083.627991,1499.502355,-4.057097991,4.98E-05,-9022.679214,-3144.576769,ethnicity,Indigenous
+english_as_second,earnings_total_delta,immigrationborn in Canada,-46.95468491,725.099455,-0.064756199,0.948368409,-1468.162483,1374.253113,immigration,born in Canada
+english_as_second,earnings_total_delta,immigrationimmigrant,1126.349445,616.5216252,1.826942314,0.067715194,-82.04388023,2334.742769,immigration,immigrant
+english_as_second,earnings_total_delta,region7North Central,-391.7170524,1059.266445,-0.369800303,0.711533064,-2467.898079,1684.463974,region7,North Central
+english_as_second,earnings_total_delta,region7North East,-2279.523039,1367.211649,-1.667278831,0.09546607,-4959.282131,400.2360521,region7,North East
+english_as_second,earnings_total_delta,region7Edmonton,-505.7696191,986.7226052,-0.512575284,0.608251012,-2439.763433,1428.224195,region7,Edmonton
+english_as_second,earnings_total_delta,region7Central,-741.6508821,1160.582178,-0.639033492,0.522804461,-3016.412544,1533.11078,region7,Central
+english_as_second,earnings_total_delta,region7Calgary,-1163.378977,1010.095767,-1.151751165,0.24942958,-3143.184603,816.4266493,region7,Calgary
+english_as_second,earnings_total_delta,region7South,-1066.8117,1240.347378,-0.860091068,0.389743517,-3497.914569,1364.291168,region7,South
+english_as_second,earnings_total_delta,year_before2013,4667.695524,2276.077767,2.05076276,0.040295948,206.5427142,9128.848333,year_before,2013
+english_as_second,earnings_total_delta,year_before2014,3667.87916,2232.399862,1.643020689,0.100385777,-707.6641801,8043.4225,year_before,2014
+english_as_second,earnings_total_delta,year_before2015,4738.427981,2187.186147,2.166449338,0.030282202,451.5043241,9025.351639,year_before,2015
+english_as_second,earnings_total_delta,year_before2016,5409.125378,2209.684766,2.447917214,0.014372334,1078.104028,9740.146728,year_before,2016
+english_as_second,earnings_total_delta,year_before2017,5773.186282,2264.029647,2.549960549,0.01077686,1335.648001,10210.72456,year_before,2017
+english_as_second,earnings_total_delta,spell_duration,-148.343399,27.52133791,-5.39012309,7.08E-08,-202.2857096,-94.40108832,spell_duration,
+english_as_second,earnings_total_delta,earnings_total_before,-0.646798785,0.023821331,-27.15208459,5.07E-161,-0.693489016,-0.600108554,earnings_total_before,
+english_as_second,income_total_delta,(Intercept),17550.43425,3242.307826,5.412945096,6.23E-08,11195.45338,23905.41512,NA,(Intercept)
+english_as_second,income_total_delta,txTRUE,580.0801687,486.0631193,1.193425598,0.232709151,-372.6121697,1532.772507,tx,TRUE
+english_as_second,income_total_delta,gender2Men,4574.657072,1932.278364,2.367493813,0.017913307,787.357192,8361.956952,gender2,Men
+english_as_second,income_total_delta,gender2Women,-4356.976515,1904.135172,-2.288165556,0.022132587,-8089.115238,-624.8377909,gender2,Women
+english_as_second,income_total_delta,age_in_years,-48.49389875,18.34624502,-2.64326017,0.008214092,-84.45286453,-12.53493297,age_in_years,
+english_as_second,income_total_delta,marital3never married,1124.841036,557.258221,2.018527486,0.043542392,32.60503499,2217.077037,marital3,never married
+english_as_second,income_total_delta,marital3apart,1930.569976,940.8786549,2.051879874,0.040187226,86.4311179,3774.708834,marital3,apart
+english_as_second,income_total_delta,marital3together,-1733.598493,603.7799095,-2.871242428,0.004090564,-2917.017829,-550.1791574,marital3,together
+english_as_second,income_total_delta,education4Less HS,-4568.83984,1326.19008,-3.445086724,5.71E-04,-7168.195929,-1969.483751,education4,Less HS
+english_as_second,income_total_delta,education4High School,-4516.489577,1271.266299,-3.55274861,3.82E-04,-7008.194081,-2024.785074,education4,High School
+english_as_second,income_total_delta,education4Post HS,-1452.867154,1345.666443,-1.079663657,0.280297884,-4090.39726,1184.662952,education4,Post HS
+english_as_second,income_total_delta,education4University Degree,-841.9656336,1392.488267,-0.604648278,0.54541583,-3571.267346,1887.336078,education4,University Degree
+english_as_second,income_total_delta,dependent41 dependent,1250.14561,674.0323437,1.854726441,0.063641967,-70.96974374,2571.260963,dependent4,1 dependent
+english_as_second,income_total_delta,dependent42 dependents,-460.1381191,754.2614767,-0.6100512,0.541831033,-1938.503997,1018.227759,dependent4,2 dependents
+english_as_second,income_total_delta,dependent43+ dependents,-186.6745716,699.8320662,-0.266741952,0.789669097,-1558.357839,1185.008696,dependent4,3+ dependents
+english_as_second,income_total_delta,disability2With Disability,-2379.188621,679.564958,-3.501046652,4.64E-04,-3711.147997,-1047.229246,disability2,With Disability
+english_as_second,income_total_delta,ethnicityCaucasian,-425.1578211,749.1692329,-0.567505715,0.570373532,-1893.542811,1043.227168,ethnicity,Caucasian
+english_as_second,income_total_delta,ethnicityVisible Minority,-724.9848963,1324.413343,-0.54740078,0.584106188,-3320.858548,1870.888756,ethnicity,Visible Minority
+english_as_second,income_total_delta,ethnicityIndigenous,-5178.562408,1231.972464,-4.203472529,2.63E-05,-7593.250297,-2763.87452,ethnicity,Indigenous
+english_as_second,income_total_delta,immigrationborn in Canada,-1008.255791,681.2436713,-1.480022249,0.138874448,-2343.505474,326.9938929,immigration,born in Canada
+english_as_second,income_total_delta,immigrationimmigrant,615.1891019,626.0863191,0.982594705,0.325812339,-611.9511925,1842.329396,immigration,immigrant
+english_as_second,income_total_delta,region7North Central,105.8713806,1017.999165,0.103999477,0.917170236,-1889.425045,2101.167806,region7,North Central
+english_as_second,income_total_delta,region7North East,-4.301778037,1284.403614,-0.003349242,0.997327712,-2521.755651,2513.152095,region7,North East
+english_as_second,income_total_delta,region7Edmonton,4.967920957,828.0368165,0.005999638,0.995213037,-1617.998932,1627.934774,region7,Edmonton
+english_as_second,income_total_delta,region7Central,-652.6329434,1075.026305,-0.607085557,0.543797258,-2759.703576,1454.43769,region7,Central
+english_as_second,income_total_delta,region7Calgary,-1448.088348,849.8232913,-1.703987597,0.088390445,-3113.757078,217.5803822,region7,Calgary
+english_as_second,income_total_delta,region7South,-761.8414779,1044.613897,-0.729304368,0.465819372,-2809.30325,1285.620295,region7,South
+english_as_second,income_total_delta,year_before2013,5206.394817,2130.266712,2.444010784,0.01452888,1031.034262,9381.755372,year_before,2013
+english_as_second,income_total_delta,year_before2014,5206.668537,2082.962522,2.499645809,0.012435355,1124.025036,9289.312039,year_before,2014
+english_as_second,income_total_delta,year_before2015,4909.418663,2037.99081,2.408950344,0.016002545,914.9205137,8903.916812,year_before,2015
+english_as_second,income_total_delta,year_before2016,5123.45128,2068.088915,2.47738443,0.013238642,1069.96031,9176.94225,year_before,2016
+english_as_second,income_total_delta,year_before2017,6540.03803,2108.297557,3.102046962,0.001923087,2407.73741,10672.33865,year_before,2017
+english_as_second,income_total_delta,spell_duration,-42.87362684,28.79663596,-1.488841506,0.136536256,-99.31554429,13.5682906,spell_duration,
+english_as_second,income_total_delta,income_total_before,-0.644605388,0.017257793,-37.35155439,1.19E-300,-0.678430968,-0.610779808,income_total_before,
+english_as_second,income_taxable_delta,(Intercept),18231.94863,3202.481051,5.693069948,1.26E-08,11955.02895,24508.86831,NA,(Intercept)
+english_as_second,income_taxable_delta,txTRUE,461.1090189,483.9131778,0.952875516,0.340658366,-487.3693959,1409.587434,tx,TRUE
+english_as_second,income_taxable_delta,gender2Men,3985.804631,1801.70853,2.212236088,0.026955458,454.4239429,7517.185319,gender2,Men
+english_as_second,income_taxable_delta,gender2Women,-4024.246814,1758.564043,-2.288370919,0.022120634,-7471.063541,-577.4300878,gender2,Women
+english_as_second,income_taxable_delta,age_in_years,-102.4591344,18.29456993,-5.60052162,2.15E-08,-138.3168161,-66.60145273,age_in_years,
+english_as_second,income_taxable_delta,marital3never married,2257.337946,563.1000544,4.00876883,6.11E-05,1153.651848,3361.024044,marital3,never married
+english_as_second,income_taxable_delta,marital3apart,2382.779476,969.1975992,2.458507407,0.013955402,483.1349846,4282.423968,marital3,apart
+english_as_second,income_taxable_delta,marital3together,-940.1192544,582.5134248,-1.613901439,0.106555956,-2081.855903,201.6173941,marital3,together
+english_as_second,income_taxable_delta,education4Less HS,-5438.092536,1474.13894,-3.68899592,2.25E-04,-8327.431015,-2548.754057,education4,Less HS
+english_as_second,income_taxable_delta,education4High School,-6348.078067,1421.010065,-4.467299862,7.94E-06,-9133.283008,-3562.873126,education4,High School
+english_as_second,income_taxable_delta,education4Post HS,-3118.944054,1485.610958,-2.099435278,0.035784212,-6030.767891,-207.1202165,education4,Post HS
+english_as_second,income_taxable_delta,education4University Degree,-2822.759084,1520.410673,-1.856576736,0.063378056,-5802.790982,157.2728128,education4,University Degree
+english_as_second,income_taxable_delta,dependent41 dependent,773.8587021,670.5853781,1.154004736,0.248504477,-540.5005375,2088.217942,dependent4,1 dependent
+english_as_second,income_taxable_delta,dependent42 dependents,-431.4876939,757.7198501,-0.569455444,0.569049998,-1916.632045,1053.656657,dependent4,2 dependents
+english_as_second,income_taxable_delta,dependent43+ dependents,-1492.527425,691.9787674,-2.156897718,0.031019017,-2848.818087,-136.2367623,dependent4,3+ dependents
+english_as_second,income_taxable_delta,disability2With Disability,-7283.392144,658.2848035,-11.06419608,2.04E-28,-8573.642039,-5993.142249,disability2,With Disability
+english_as_second,income_taxable_delta,ethnicityCaucasian,-1524.698709,724.9626663,-2.103141003,0.035459092,-2945.638399,-103.7590197,ethnicity,Caucasian
+english_as_second,income_taxable_delta,ethnicityVisible Minority,-1188.831241,1323.333352,-0.898361126,0.368997956,-3782.588091,1404.92561,ethnicity,Visible Minority
+english_as_second,income_taxable_delta,ethnicityIndigenous,-5960.098475,1427.856798,-4.174157018,3.00E-05,-8758.723136,-3161.473815,ethnicity,Indigenous
+english_as_second,income_taxable_delta,immigrationborn in Canada,-937.799854,685.7580221,-1.367537563,0.171463837,-2281.897745,406.2980371,immigration,born in Canada
+english_as_second,income_taxable_delta,immigrationimmigrant,548.3389363,618.609367,0.886405809,0.375403721,-664.1463994,1760.824272,immigration,immigrant
+english_as_second,income_taxable_delta,region7North Central,920.0352319,1089.914253,0.844135426,0.39859831,-1216.216043,3056.286507,region7,North Central
+english_as_second,income_taxable_delta,region7North East,-569.7816739,1245.44555,-0.45749224,0.647319531,-3010.877051,1871.313703,region7,North East
+english_as_second,income_taxable_delta,region7Edmonton,668.6085837,830.866692,0.804712224,0.420990099,-959.9048753,2297.122043,region7,Edmonton
+english_as_second,income_taxable_delta,region7Central,573.4039677,1104.109645,0.519336073,0.603529006,-1590.670528,2737.478463,region7,Central
+english_as_second,income_taxable_delta,region7Calgary,-406.2159767,857.4384155,-0.47375528,0.635676772,-2086.810485,1274.378532,region7,Calgary
+english_as_second,income_taxable_delta,region7South,-431.3647332,1064.391135,-0.405269002,0.685281754,-2517.590243,1654.860777,region7,South
+english_as_second,income_taxable_delta,year_before2013,4808.086063,2062.558941,2.331126625,0.019751163,765.4339421,8850.738184,year_before,2013
+english_as_second,income_taxable_delta,year_before2014,4313.4377,2021.351696,2.13393726,0.032853414,351.5525102,8275.32289,year_before,2014
+english_as_second,income_taxable_delta,year_before2015,4605.639957,1975.140961,2.331803172,0.019715524,734.3286277,8476.951286,year_before,2015
+english_as_second,income_taxable_delta,year_before2016,5198.653131,2003.161152,2.595224616,0.00945604,1272.42173,9124.884531,year_before,2016
+english_as_second,income_taxable_delta,year_before2017,6722.492822,2058.863585,3.265147273,0.001094905,2687.083663,10757.90198,year_before,2017
+english_as_second,income_taxable_delta,spell_duration,-122.0406234,27.37178354,-4.458628835,8.27E-06,-175.6898048,-68.39144196,spell_duration,
+english_as_second,income_taxable_delta,income_taxable_before,-0.620736324,0.018173041,-34.15698636,2.09E-252,-0.656355807,-0.58511684,income_taxable_before,
+exposure_course,income_net_delta,(Intercept),17855.47681,3181.302277,5.612631323,2.00E-08,11620.0679,24090.88572,NA,(Intercept)
+exposure_course,income_net_delta,txTRUE,1678.137481,426.3873282,3.935711429,8.31E-05,842.410752,2513.86421,tx,TRUE
+exposure_course,income_net_delta,gender2Men,1874.868737,1677.628577,1.117570815,0.263756423,-1413.313042,5163.050516,gender2,Men
+exposure_course,income_net_delta,gender2Women,-3193.029382,1683.385214,-1.896790678,0.057862094,-6492.494272,106.4355078,gender2,Women
+exposure_course,income_net_delta,age_in_years,18.44623863,17.9006298,1.030479868,0.302790446,-16.6393134,53.53179067,age_in_years,
+exposure_course,income_net_delta,marital3never married,70.63142128,490.0999991,0.144116346,0.885409255,-889.973273,1031.236116,marital3,never married
+exposure_course,income_net_delta,marital3apart,-1010.998786,1068.658017,-0.946045199,0.344130713,-3105.58746,1083.589889,marital3,apart
+exposure_course,income_net_delta,marital3together,-141.6697279,684.0291084,-0.207110671,0.835924384,-1482.378918,1199.039462,marital3,together
+exposure_course,income_net_delta,education4Less HS,-6734.120935,1583.790533,-4.251901242,2.12E-05,-9838.378483,-3629.863388,education4,Less HS
+exposure_course,income_net_delta,education4High School,-6761.720564,1469.301207,-4.601997556,4.20E-06,-9641.577001,-3881.864127,education4,High School
+exposure_course,income_net_delta,education4Post HS,-4155.863227,1515.233975,-2.742720462,0.00609571,-7125.748704,-1185.977751,education4,Post HS
+exposure_course,income_net_delta,education4University Degree,-3062.089006,1648.695052,-1.8572804,0.063277929,-6293.560562,169.3825506,education4,University Degree
+exposure_course,income_net_delta,dependent41 dependent,1312.415055,617.2521617,2.126221885,0.033490323,102.5898656,2522.240244,dependent4,1 dependent
+exposure_course,income_net_delta,dependent42 dependents,1865.74452,845.773698,2.20596186,0.027391804,208.0130652,3523.475976,dependent4,2 dependents
+exposure_course,income_net_delta,dependent43+ dependents,203.3999463,923.4595688,0.220258637,0.825670751,-1606.597194,2013.397087,dependent4,3+ dependents
+exposure_course,income_net_delta,disability2With Disability,-3899.274061,477.5352223,-8.165416662,3.29E-16,-4835.25157,-2963.296552,disability2,With Disability
+exposure_course,income_net_delta,ethnicityCaucasian,-872.3178821,614.9155952,-1.418597754,0.156023383,-2077.563359,332.9275952,ethnicity,Caucasian
+exposure_course,income_net_delta,ethnicityVisible Minority,603.071147,1418.036661,0.425286005,0.670630268,-2176.305871,3382.448165,ethnicity,Visible Minority
+exposure_course,income_net_delta,ethnicityIndigenous,-5017.757725,867.2063536,-5.786117345,7.25E-09,-6717.497566,-3318.017884,ethnicity,Indigenous
+exposure_course,income_net_delta,immigrationborn in Canada,-1766.536541,605.3377994,-2.918265707,0.003521619,-2953.009369,-580.0637132,immigration,born in Canada
+exposure_course,income_net_delta,immigrationimmigrant,-89.51454269,1029.34431,-0.086962683,0.930701569,-2107.047654,1928.018569,immigration,immigrant
+exposure_course,income_net_delta,region7North Central,-63.08180245,1136.048841,-0.055527368,0.955718578,-2289.757688,2163.594083,region7,North Central
+exposure_course,income_net_delta,region7North East,2069.143454,1654.445218,1.250656976,0.211066285,-1173.598529,5311.885437,region7,North East
+exposure_course,income_net_delta,region7Edmonton,404.6817443,884.7710342,0.457385842,0.647395991,-1329.485182,2138.84867,region7,Edmonton
+exposure_course,income_net_delta,region7Central,-494.4442935,955.2908526,-0.517585081,0.604750387,-2366.831315,1377.942728,region7,Central
+exposure_course,income_net_delta,region7Calgary,-2525.037319,1058.215566,-2.386127552,0.017031034,-4599.158606,-450.9160325,region7,Calgary
+exposure_course,income_net_delta,region7South,-3168.764088,997.8915316,-3.175459444,0.001497023,-5124.649197,-1212.87898,region7,South
+exposure_course,income_net_delta,year_before2013,2877.838968,2247.234034,1.280613823,0.200336073,-1526.779613,7282.45755,year_before,2013
+exposure_course,income_net_delta,year_before2014,1639.043886,2223.495391,0.737147418,0.461036625,-2719.046534,5997.134306,year_before,2014
+exposure_course,income_net_delta,year_before2015,6883.658018,2219.055303,3.102066906,0.001922957,2534.270251,11233.04579,year_before,2015
+exposure_course,income_net_delta,year_before2016,7438.228988,2263.385562,3.286328725,0.001015817,3001.953126,11874.50485,year_before,2016
+exposure_course,income_net_delta,year_before2017,7370.060283,2291.5395,3.216204775,0.001299917,2878.602203,11861.51836,year_before,2017
+exposure_course,income_net_delta,spell_duration,-75.17080208,24.97650801,-3.009660199,0.002616878,-124.125201,-26.2164032,spell_duration,
+exposure_course,income_net_delta,income_net_before,-0.612973195,0.015533532,-39.4612899,0,-0.643419193,-0.582527198,income_net_before,
+exposure_course,earnings_total_delta,(Intercept),19802.66012,3305.281716,5.991217034,2.10E-09,13324.24931,26281.07093,NA,(Intercept)
+exposure_course,earnings_total_delta,txTRUE,2135.324285,449.3013477,4.75254369,2.02E-06,1254.685671,3015.962899,tx,TRUE
+exposure_course,earnings_total_delta,gender2Men,293.1315723,1836.167357,0.159643167,0.873162903,-3305.789027,3892.052172,gender2,Men
+exposure_course,earnings_total_delta,gender2Women,-4246.103582,1841.142176,-2.306233401,0.021102205,-7854.774916,-637.4322488,gender2,Women
+exposure_course,earnings_total_delta,age_in_years,-57.14910921,18.25769842,-3.130137649,0.001748383,-92.93452206,-21.36369635,age_in_years,
+exposure_course,earnings_total_delta,marital3never married,377.999895,510.0976139,0.741034431,0.458676507,-621.8004793,1377.800269,marital3,never married
+exposure_course,earnings_total_delta,marital3apart,-1101.763533,1097.243258,-1.004119665,0.315326444,-3252.379788,1048.852723,marital3,apart
+exposure_course,earnings_total_delta,marital3together,362.7683673,742.1970593,0.488776347,0.625002474,-1091.951038,1817.487773,marital3,together
+exposure_course,earnings_total_delta,education4Less HS,-8356.752964,1704.895861,-4.90162077,9.54E-07,-11698.3791,-5015.126825,education4,Less HS
+exposure_course,earnings_total_delta,education4High School,-8112.152222,1586.634245,-5.112805453,3.19E-07,-11221.9835,-5002.320949,education4,High School
+exposure_course,earnings_total_delta,education4Post HS,-4322.91772,1636.544077,-2.641491776,0.00825709,-7530.573148,-1115.262291,education4,Post HS
+exposure_course,earnings_total_delta,education4University Degree,-3664.708219,1781.339768,-2.057276375,0.039665511,-7156.165771,-173.2506672,education4,University Degree
+exposure_course,earnings_total_delta,dependent41 dependent,1970.458055,659.8030874,2.986433516,0.002824071,677.2322958,3263.683813,dependent4,1 dependent
+exposure_course,earnings_total_delta,dependent42 dependents,2646.129396,924.9153861,2.860942131,0.004225825,833.2788276,4458.979964,dependent4,2 dependents
+exposure_course,earnings_total_delta,dependent43+ dependents,802.3214024,1061.199684,0.756051302,0.449622474,-1277.648808,2882.291613,dependent4,3+ dependents
+exposure_course,earnings_total_delta,disability2With Disability,-8940.288132,497.8876538,-17.95643669,7.71E-72,-9916.156767,-7964.419496,disability2,With Disability
+exposure_course,earnings_total_delta,ethnicityCaucasian,-696.4741155,650.5188054,-1.070644092,0.284335346,-1971.502517,578.5542856,ethnicity,Caucasian
+exposure_course,earnings_total_delta,ethnicityVisible Minority,901.7927929,1643.942034,0.548555104,0.583313579,-2320.362764,4123.948349,ethnicity,Visible Minority
+exposure_course,earnings_total_delta,ethnicityIndigenous,-5590.903792,886.3226595,-6.307977949,2.85E-10,-7328.111931,-3853.695653,ethnicity,Indigenous
+exposure_course,earnings_total_delta,immigrationborn in Canada,-1935.12437,651.6972997,-2.96936073,0.002985805,-3212.462641,-657.7860988,immigration,born in Canada
+exposure_course,earnings_total_delta,immigrationimmigrant,-1379.877399,1093.338359,-1.262077185,0.206927684,-3522.839982,763.0851845,immigration,immigrant
+exposure_course,earnings_total_delta,region7North Central,-85.9250495,1193.768299,-0.071977996,0.942619745,-2425.732097,2253.881998,region7,North Central
+exposure_course,earnings_total_delta,region7North East,652.2901397,1600.382898,0.407583798,0.683581238,-2484.488737,3789.069016,region7,North East
+exposure_course,earnings_total_delta,region7Edmonton,50.62662612,959.8271182,0.052745568,0.957934871,-1830.651556,1931.904809,region7,Edmonton
+exposure_course,earnings_total_delta,region7Central,-18.49336251,1032.310117,-0.017914542,0.985707109,-2041.839508,2004.852783,region7,Central
+exposure_course,earnings_total_delta,region7Calgary,-2332.63577,1149.084742,-2.029994555,0.042363079,-4584.862254,-80.40928585,region7,Calgary
+exposure_course,earnings_total_delta,region7South,-3168.742697,1072.248145,-2.955232621,0.003125984,-5270.368087,-1067.117307,region7,South
+exposure_course,earnings_total_delta,year_before2013,2783.553232,2273.095845,1.224564832,0.220745762,-1671.754957,7238.86142,year_before,2013
+exposure_course,earnings_total_delta,year_before2014,1077.210267,2249.970983,0.478766293,0.632107271,-3332.772783,5487.193316,year_before,2014
+exposure_course,earnings_total_delta,year_before2015,7493.340828,2240.807187,3.344036413,8.26E-04,3101.318981,11885.36267,year_before,2015
+exposure_course,earnings_total_delta,year_before2016,7696.708019,2279.938275,3.375840523,7.37E-04,3227.988545,12165.42749,year_before,2016
+exposure_course,earnings_total_delta,year_before2017,6225.654652,2327.453385,2.674878343,0.007478393,1663.804721,10787.50458,year_before,2017
+exposure_course,earnings_total_delta,spell_duration,-241.0976399,26.2246159,-9.193562294,3.96E-20,-292.4983524,-189.6969274,spell_duration,
+exposure_course,earnings_total_delta,earnings_total_before,-0.639820084,0.018575691,-34.44394467,1.42E-256,-0.676228769,-0.603411399,earnings_total_before,
+exposure_course,income_total_delta,(Intercept),17929.91093,3250.710906,5.515689166,3.49E-08,11558.45987,24301.36198,NA,(Intercept)
+exposure_course,income_total_delta,txTRUE,1694.423478,441.6067003,3.83695147,1.25E-04,828.8665095,2559.980446,tx,TRUE
+exposure_course,income_total_delta,gender2Men,1933.532712,1692.012546,1.142741356,0.253152193,-1382.841901,5249.907325,gender2,Men
+exposure_course,income_total_delta,gender2Women,-3119.088724,1698.37935,-1.83650886,0.066289155,-6447.942385,209.7649377,gender2,Women
+exposure_course,income_total_delta,age_in_years,17.26290516,18.49323748,0.933471231,0.350581825,-18.98416843,53.50997875,age_in_years,
+exposure_course,income_total_delta,marital3never married,106.816504,503.0446761,0.212339995,0.831842776,-879.159987,1092.792995,marital3,never married
+exposure_course,income_total_delta,marital3apart,-969.3347587,1104.385791,-0.877713899,0.380103778,-3133.950505,1195.280987,marital3,apart
+exposure_course,income_total_delta,marital3together,-104.7253226,705.1128258,-0.148522788,0.881930882,-1486.758972,1277.308327,marital3,together
+exposure_course,income_total_delta,education4Less HS,-7190.556183,1640.879586,-4.382135194,1.18E-05,-10406.70929,-3974.403079,education4,Less HS
+exposure_course,income_total_delta,education4High School,-7193.753476,1529.289475,-4.703984166,2.56E-06,-10191.18798,-4196.318969,education4,High School
+exposure_course,income_total_delta,education4Post HS,-4438.306318,1575.417254,-2.817225917,0.004846196,-7526.152089,-1350.460547,education4,Post HS
+exposure_course,income_total_delta,education4University Degree,-3150.02122,1713.481082,-1.838375254,0.066013846,-6508.474544,208.4321042,education4,University Degree
+exposure_course,income_total_delta,dependent41 dependent,1607.404675,636.4718503,2.525492171,0.011557107,359.9085553,2854.900795,dependent4,1 dependent
+exposure_course,income_total_delta,dependent42 dependents,2254.135411,863.2071176,2.611349426,0.00902162,562.2341444,3946.036678,dependent4,2 dependents
+exposure_course,income_total_delta,dependent43+ dependents,432.2920648,979.8645213,0.441175341,0.659088225,-1488.259783,2352.843913,dependent4,3+ dependents
+exposure_course,income_total_delta,disability2With Disability,-4044.057724,492.7589112,-8.206970248,2.33E-16,-5009.873933,-3078.241514,disability2,With Disability
+exposure_course,income_total_delta,ethnicityCaucasian,-937.3709749,631.5093215,-1.484334345,0.137727386,-2175.14045,300.3985005,ethnicity,Caucasian
+exposure_course,income_total_delta,ethnicityVisible Minority,721.137651,1490.964925,0.483671774,0.628621228,-2201.180057,3643.455359,ethnicity,Visible Minority
+exposure_course,income_total_delta,ethnicityIndigenous,-5245.741826,884.1367986,-5.933178931,2.99E-09,-6978.665639,-3512.818013,ethnicity,Indigenous
+exposure_course,income_total_delta,immigrationborn in Canada,-1801.065918,622.7104107,-2.892300959,0.003826182,-3021.589372,-580.5424637,immigration,born in Canada
+exposure_course,income_total_delta,immigrationimmigrant,52.91580742,1064.122407,0.049727181,0.960340021,-2032.782992,2138.614607,immigration,immigrant
+exposure_course,income_total_delta,region7North Central,57.97684582,1166.314509,0.049709444,0.960354155,-2228.020286,2343.973978,region7,North Central
+exposure_course,income_total_delta,region7North East,2195.177806,1694.062072,1.295807186,0.195048699,-1125.213914,5515.569526,region7,North East
+exposure_course,income_total_delta,region7Edmonton,501.5191396,902.3740517,0.555777439,0.578365828,-1267.150013,2270.188292,region7,Edmonton
+exposure_course,income_total_delta,region7Central,-388.0139779,975.9067341,-0.397593299,0.690931924,-2300.808493,1524.780537,region7,Central
+exposure_course,income_total_delta,region7Calgary,-2322.375381,1085.198369,-2.140046877,0.032356445,-4449.383441,-195.3673219,region7,Calgary
+exposure_course,income_total_delta,region7South,-3181.049481,1016.426622,-3.129640068,0.001751346,-5173.263694,-1188.835268,region7,South
+exposure_course,income_total_delta,year_before2013,3185.886168,2297.113337,1.386908567,0.16547665,-1316.496732,7688.269069,year_before,2013
+exposure_course,income_total_delta,year_before2014,1950.783753,2270.601644,0.859148393,0.390263318,-2499.635758,6401.203265,year_before,2014
+exposure_course,income_total_delta,year_before2015,7290.452317,2264.748775,3.219099795,0.001286867,2851.504534,11729.4001,year_before,2015
+exposure_course,income_total_delta,year_before2016,7949.861861,2312.882077,3.437210198,5.88E-04,3416.571952,12483.15177,year_before,2016
+exposure_course,income_total_delta,year_before2017,7827.214087,2340.209197,3.344664271,8.25E-04,3240.362538,12414.06564,year_before,2017
+exposure_course,income_total_delta,spell_duration,-79.10578238,25.53969185,-3.09736636,0.001953709,-129.1640316,-29.04753318,spell_duration,
+exposure_course,income_total_delta,income_total_before,-0.60917414,0.015517084,-39.25828756,0,-0.6395879,-0.57876038,income_total_before,
+exposure_course,income_taxable_delta,(Intercept),15719.13737,3237.155048,4.855849392,1.20E-06,9374.25604,22064.01871,NA,(Intercept)
+exposure_course,income_taxable_delta,txTRUE,2065.45946,441.5862939,4.677363152,2.91E-06,1199.942488,2930.976431,tx,TRUE
+exposure_course,income_taxable_delta,gender2Men,1351.02538,1777.915834,0.759892765,0.447322746,-2133.721202,4835.771962,gender2,Men
+exposure_course,income_taxable_delta,gender2Women,-3292.699331,1784.322762,-1.84534962,0.064993392,-6790.003604,204.6049424,gender2,Women
+exposure_course,income_taxable_delta,age_in_years,-6.192441722,18.54380298,-0.33393591,0.738429508,-42.5386246,30.15374116,age_in_years,
+exposure_course,income_taxable_delta,marital3never married,415.3757112,505.4049074,0.82186719,0.411156928,-575.226875,1405.978297,marital3,never married
+exposure_course,income_taxable_delta,marital3apart,-1059.055668,1113.5802,-0.951036726,0.341590941,-3241.692619,1123.581283,marital3,apart
+exposure_course,income_taxable_delta,marital3together,66.65091176,708.1889459,0.094114589,0.925018559,-1321.411988,1454.713812,marital3,together
+exposure_course,income_taxable_delta,education4Less HS,-7586.776743,1641.241109,-4.62258513,3.80E-06,-10803.63844,-4369.915048,education4,Less HS
+exposure_course,income_taxable_delta,education4High School,-7412.244686,1523.794042,-4.864334996,1.15E-06,-10398.90805,-4425.581326,education4,High School
+exposure_course,income_taxable_delta,education4Post HS,-4123.658249,1573.632004,-2.620471774,0.008783828,-7208.004898,-1039.311599,education4,Post HS
+exposure_course,income_taxable_delta,education4University Degree,-3306.944149,1698.679563,-1.946773377,0.051568246,-6636.386232,22.49793454,education4,University Degree
+exposure_course,income_taxable_delta,dependent41 dependent,1382.70599,628.2275921,2.200963484,0.027743768,151.3687623,2614.043218,dependent4,1 dependent
+exposure_course,income_taxable_delta,dependent42 dependents,2083.805124,869.5890353,2.396310256,0.016565202,379.395185,3788.215063,dependent4,2 dependents
+exposure_course,income_taxable_delta,dependent43+ dependents,10.68887692,958.6228065,0.011150243,0.991103628,-1868.228833,1889.606587,dependent4,3+ dependents
+exposure_course,income_taxable_delta,disability2With Disability,-8324.336729,502.4408035,-16.56779599,1.83E-61,-9309.129619,-7339.543839,disability2,With Disability
+exposure_course,income_taxable_delta,ethnicityCaucasian,-763.26152,630.9956219,-1.209614605,0.226433291,-2000.024135,473.501095,ethnicity,Caucasian
+exposure_course,income_taxable_delta,ethnicityVisible Minority,181.4150594,1460.15444,0.124243747,0.901122851,-2680.513551,3043.34367,ethnicity,Visible Minority
+exposure_course,income_taxable_delta,ethnicityIndigenous,-5544.517942,886.1313333,-6.256993443,3.96E-10,-7281.351079,-3807.684806,ethnicity,Indigenous
+exposure_course,income_taxable_delta,immigrationborn in Canada,-1688.717395,629.2632946,-2.683641982,0.007285221,-2922.084618,-455.3501721,immigration,born in Canada
+exposure_course,income_taxable_delta,immigrationimmigrant,356.0157109,1106.776735,0.321668951,0.747705026,-1813.286328,2525.31775,immigration,immigrant
+exposure_course,income_taxable_delta,region7North Central,784.3675973,1154.180452,0.679588357,0.496768708,-1477.846567,3046.581762,region7,North Central
+exposure_course,income_taxable_delta,region7North East,2376.058711,1626.432277,1.460902335,0.144049365,-811.7774101,5563.894833,region7,North East
+exposure_course,income_taxable_delta,region7Edmonton,1454.64769,896.1232553,1.623267426,0.104539393,-301.7697912,3211.065171,region7,Edmonton
+exposure_course,income_taxable_delta,region7Central,688.2037717,966.0810231,0.712366515,0.476241611,-1205.332175,2581.739719,region7,Central
+exposure_course,income_taxable_delta,region7Calgary,-1359.113903,1068.551107,-1.271922226,0.203407457,-3453.493033,735.2652277,region7,Calgary
+exposure_course,income_taxable_delta,region7South,-2153.798389,1010.70285,-2.130990716,0.033095418,-4134.793908,-172.8028704,region7,South
+exposure_course,income_taxable_delta,year_before2013,4121.664563,2296.00669,1.79514484,0.072637466,-378.5492894,8621.878415,year_before,2013
+exposure_course,income_taxable_delta,year_before2014,2448.764368,2275.365915,1.076206843,0.281840643,-2010.993198,6908.521935,year_before,2014
+exposure_course,income_taxable_delta,year_before2015,7915.099414,2264.679795,3.495019222,4.74E-04,3476.286833,12353.912,year_before,2015
+exposure_course,income_taxable_delta,year_before2016,8439.556207,2308.117321,3.656467602,2.56E-04,3915.605302,12963.50711,year_before,2016
+exposure_course,income_taxable_delta,year_before2017,8209.644375,2346.647145,3.498457104,4.68E-04,3610.174333,12809.11442,year_before,2017
+exposure_course,income_taxable_delta,spell_duration,-219.8247331,26.55271132,-8.278805523,1.28E-16,-271.8685184,-167.7809478,spell_duration,
+exposure_course,income_taxable_delta,income_taxable_before,-0.605501684,0.016027718,-37.77840851,2.10E-307,-0.636916296,-0.574087072,income_taxable_before,
+job_placement,income_net_delta,(Intercept),19214.17742,2510.60844,7.653195581,2.00E-14,14293.34033,24135.01451,NA,(Intercept)
+job_placement,income_net_delta,txTRUE,1232.118758,343.4736412,3.587229441,3.35E-04,558.9043268,1905.333189,tx,TRUE
+job_placement,income_net_delta,gender2Men,2213.311764,1228.091509,1.802236843,0.071514971,-193.7693842,4620.392912,gender2,Men
+job_placement,income_net_delta,gender2Women,-2866.815597,1224.995132,-2.34026693,0.019274393,-5267.827791,-465.8034022,gender2,Women
+job_placement,income_net_delta,age_in_years,22.68962876,13.79814746,1.644396744,0.1001014,-4.354985087,49.7342426,age_in_years,
+job_placement,income_net_delta,marital3never married,-84.69229318,392.4907197,-0.215781645,0.829158954,-853.9810681,684.5964817,marital3,never married
+job_placement,income_net_delta,marital3apart,-929.4581033,820.6239671,-1.132623638,0.257378491,-2537.89564,678.9794332,marital3,apart
+job_placement,income_net_delta,marital3together,-518.5470616,557.2506603,-0.930545441,0.352093838,-1610.768243,573.6741202,marital3,together
+job_placement,income_net_delta,education4Less HS,-3840.983501,1237.470162,-3.103899891,0.001911087,-6266.446977,-1415.520026,education4,Less HS
+job_placement,income_net_delta,education4High School,-4492.394494,1129.146463,-3.978575536,6.94E-05,-6705.541596,-2279.247391,education4,High School
+job_placement,income_net_delta,education4Post HS,-1297.635737,1162.039138,-1.116688496,0.264133618,-3575.253067,979.9815923,education4,Post HS
+job_placement,income_net_delta,education4University Degree,-93.20045444,1248.629783,-0.074642184,0.940499748,-2540.536984,2354.136075,education4,University Degree
+job_placement,income_net_delta,dependent41 dependent,901.4365436,497.0595375,1.81353837,0.069755616,-72.80896953,1875.682057,dependent4,1 dependent
+job_placement,income_net_delta,dependent42 dependents,785.9113102,641.9771377,1.224204514,0.220881622,-472.3752707,2044.197891,dependent4,2 dependents
+job_placement,income_net_delta,dependent43+ dependents,970.8056737,754.252344,1.287109919,0.198062729,-507.5423037,2449.153651,dependent4,3+ dependents
+job_placement,income_net_delta,disability2With Disability,-3587.577601,383.7039185,-9.34985917,9.17E-21,-4339.64409,-2835.511112,disability2,With Disability
+job_placement,income_net_delta,ethnicityCaucasian,-1440.823727,493.8798778,-2.917356612,0.003531899,-2408.837051,-472.8104035,ethnicity,Caucasian
+job_placement,income_net_delta,ethnicityVisible Minority,-48.17278992,1221.048371,-0.039451991,0.968530207,-2441.449262,2345.103682,ethnicity,Visible Minority
+job_placement,income_net_delta,ethnicityIndigenous,-5405.620319,706.5359349,-7.65087811,2.04E-14,-6790.443288,-4020.79735,ethnicity,Indigenous
+job_placement,income_net_delta,immigrationborn in Canada,-1604.415524,485.6477018,-3.303661314,9.55E-04,-2556.293637,-652.5374117,immigration,born in Canada
+job_placement,income_net_delta,immigrationimmigrant,-185.6058325,822.8660003,-0.225560216,0.821544531,-1798.437794,1427.226129,immigration,immigrant
+job_placement,income_net_delta,region7North Central,446.1670076,1173.133732,0.38032067,0.703709224,-1853.195924,2745.529939,region7,North Central
+job_placement,income_net_delta,region7North East,674.044809,1327.751204,0.50765897,0.611695064,-1928.37111,3276.460728,region7,North East
+job_placement,income_net_delta,region7Edmonton,-286.9696202,802.6306493,-0.357536334,0.72069204,-1860.139935,1286.200694,region7,Edmonton
+job_placement,income_net_delta,region7Central,-1686.310038,892.5669516,-1.889281286,0.058860698,-3435.7571,63.13702443,region7,Central
+job_placement,income_net_delta,region7Calgary,-2453.144462,837.9202668,-2.927658584,0.003416992,-4095.483053,-810.805871,region7,Calgary
+job_placement,income_net_delta,region7South,-1971.520287,887.9777377,-2.220236165,0.026407801,-3711.972409,-231.068165,region7,South
+job_placement,income_net_delta,year_before2013,968.1737117,1694.577824,0.571336234,0.567774654,-2353.228891,4289.576314,year_before,2013
+job_placement,income_net_delta,year_before2014,-13.12017491,1663.779725,-0.007885764,0.993708171,-3274.157957,3247.917607,year_before,2014
+job_placement,income_net_delta,year_before2015,2969.471081,1660.608305,1.788182723,0.073753391,-285.3506626,6224.292824,year_before,2015
+job_placement,income_net_delta,year_before2016,3971.886692,1711.608737,2.320557617,0.020315267,617.1031971,7326.670187,year_before,2016
+job_placement,income_net_delta,year_before2017,4458.817107,1724.094067,2.586179717,0.009707804,1079.562143,7838.07207,year_before,2017
+job_placement,income_net_delta,spell_duration,-57.5415131,20.00919099,-2.875754104,0.004032564,-96.75988247,-18.32314372,spell_duration,
+job_placement,income_net_delta,income_net_before,-0.638371438,0.012782553,-49.94083909,0,-0.663425469,-0.613317406,income_net_before,
+job_placement,earnings_total_delta,(Intercept),20135.77193,2656.797672,7.578963255,3.55E-14,14928.40135,25343.14251,NA,(Intercept)
+job_placement,earnings_total_delta,txTRUE,1856.899829,365.8745191,5.075236816,3.89E-07,1139.77928,2574.020379,tx,TRUE
+job_placement,earnings_total_delta,gender2Men,1557.930115,1405.585471,1.108385187,0.26770154,-1197.042348,4312.902578,gender2,Men
+job_placement,earnings_total_delta,gender2Women,-3113.805846,1400.515527,-2.223328328,0.026198713,-5858.84113,-368.7705621,gender2,Women
+job_placement,earnings_total_delta,age_in_years,-62.23831845,14.00260056,-4.44476854,8.82E-06,-89.683664,-34.7929729,age_in_years,
+job_placement,earnings_total_delta,marital3never married,120.7108715,412.2229328,0.292829103,0.769654159,-687.2533912,928.6751342,marital3,never married
+job_placement,earnings_total_delta,marital3apart,-1041.592636,896.5143326,-1.161824856,0.245312899,-2798.776635,715.5913636,marital3,apart
+job_placement,earnings_total_delta,marital3together,-34.72232227,606.871635,-0.057215266,0.954373976,-1224.201495,1154.75685,marital3,together
+job_placement,earnings_total_delta,education4Less HS,-5594.005071,1397.200982,-4.003722545,6.25E-05,-8332.543787,-2855.466356,education4,Less HS
+job_placement,earnings_total_delta,education4High School,-5980.097424,1286.957668,-4.646693183,3.38E-06,-8502.557289,-3457.637559,education4,High School
+job_placement,earnings_total_delta,education4Post HS,-1647.975207,1322.336857,-1.246259754,0.212675664,-4239.778911,943.8284965,education4,Post HS
+job_placement,earnings_total_delta,education4University Degree,-682.0170477,1424.260252,-0.478857039,0.632042708,-3473.592414,2109.558319,education4,University Degree
+job_placement,earnings_total_delta,dependent41 dependent,1646.556089,541.9419268,3.0382519,0.00238094,584.3402964,2708.771882,dependent4,1 dependent
+job_placement,earnings_total_delta,dependent42 dependents,1578.47175,718.8290538,2.195893087,0.028104782,169.5540498,2987.38945,dependent4,2 dependents
+job_placement,earnings_total_delta,dependent43+ dependents,945.1820392,847.5481385,1.115195699,0.264772642,-716.027351,2606.391429,dependent4,3+ dependents
+job_placement,earnings_total_delta,disability2With Disability,-7920.437722,414.427723,-19.11174683,4.29E-81,-8732.723413,-7108.152032,disability2,With Disability
+job_placement,earnings_total_delta,ethnicityCaucasian,-1093.773344,529.7594067,-2.064660543,0.038960959,-2132.111181,-55.43550741,ethnicity,Caucasian
+job_placement,earnings_total_delta,ethnicityVisible Minority,197.0165586,1383.421252,0.142412558,0.886754794,-2514.513642,2908.546759,ethnicity,Visible Minority
+job_placement,earnings_total_delta,ethnicityIndigenous,-4922.416392,740.5316021,-6.647138864,3.02E-11,-6373.871472,-3470.961312,ethnicity,Indigenous
+job_placement,earnings_total_delta,immigrationborn in Canada,-1926.269741,534.8040898,-3.60182313,3.16E-04,-2974.495246,-878.0442355,immigration,born in Canada
+job_placement,earnings_total_delta,immigrationimmigrant,-927.5817538,895.106584,-1.036280785,0.300076846,-2682.006541,826.8430332,immigration,immigrant
+job_placement,earnings_total_delta,region7North Central,-147.4906875,1147.510435,-0.128531021,0.897729337,-2396.631501,2101.650126,region7,North Central
+job_placement,earnings_total_delta,region7North East,-1318.184249,1267.266673,-1.040179053,0.29826242,-3802.049415,1165.680917,region7,North East
+job_placement,earnings_total_delta,region7Edmonton,-552.2227348,881.9547072,-0.626135028,0.531229617,-2280.86961,1176.42414,region7,Edmonton
+job_placement,earnings_total_delta,region7Central,-1295.03568,977.1257388,-1.325352131,0.185061248,-3210.219466,620.1481057,region7,Central
+job_placement,earnings_total_delta,region7Calgary,-2024.595832,925.5351039,-2.18748681,0.028712233,-3838.661058,-210.5306061,region7,Calgary
+job_placement,earnings_total_delta,region7South,-2606.812082,967.9974784,-2.692994704,0.007084014,-4504.104316,-709.5198489,region7,South
+job_placement,earnings_total_delta,year_before2013,1662.830574,1661.288183,1.000928431,0.316866899,-1593.323743,4918.984891,year_before,2013
+job_placement,earnings_total_delta,year_before2014,88.59129609,1630.978126,0.054317893,0.95668214,-3108.15477,3285.337362,year_before,2014
+job_placement,earnings_total_delta,year_before2015,4140.560011,1618.198324,2.558746941,0.010508324,968.8625831,7312.25744,year_before,2015
+job_placement,earnings_total_delta,year_before2016,4607.275306,1655.863213,2.782400908,0.005398125,1361.754028,7852.796584,year_before,2016
+job_placement,earnings_total_delta,year_before2017,3223.847739,1690.220145,1.907353754,0.056481279,-89.01373579,6536.709214,year_before,2017
+job_placement,earnings_total_delta,spell_duration,-231.4890171,20.90841911,-11.07156958,1.88E-28,-272.4698895,-190.5081446,spell_duration,
+job_placement,earnings_total_delta,earnings_total_before,-0.666341383,0.015417392,-43.22010955,0,-0.696559746,-0.636123021,earnings_total_before,
+job_placement,income_total_delta,(Intercept),19282.9974,2595.136592,7.430436404,1.10E-13,14196.48364,24369.51117,NA,(Intercept)
+job_placement,income_total_delta,txTRUE,1324.306336,357.3870652,3.705523969,2.11E-04,623.821347,2024.791325,tx,TRUE
+job_placement,income_total_delta,gender2Men,2257.41937,1240.755226,1.819391385,0.068858513,-174.4828889,4689.321629,gender2,Men
+job_placement,income_total_delta,gender2Women,-2802.750447,1238.101389,-2.26374873,0.023594407,-5229.451138,-376.0497566,gender2,Women
+job_placement,income_total_delta,age_in_years,21.94592669,14.31261077,1.533327989,0.12520223,-6.107044379,49.99889776,age_in_years,
+job_placement,income_total_delta,marital3never married,-27.06136852,406.8581344,-0.066513033,0.946969683,-824.510531,770.387794,marital3,never married
+job_placement,income_total_delta,marital3apart,-731.7609678,900.4498391,-0.812661557,0.416416512,-2496.65863,1033.136694,marital3,apart
+job_placement,income_total_delta,marital3together,-514.3815927,572.9782664,-0.897733165,0.369332721,-1637.429162,608.6659763,marital3,together
+job_placement,income_total_delta,education4Less HS,-4324.346536,1305.482612,-3.312450503,9.26E-04,-6883.11562,-1765.577452,education4,Less HS
+job_placement,income_total_delta,education4High School,-4934.132172,1201.311598,-4.10728755,4.01E-05,-7288.72422,-2579.540124,education4,High School
+job_placement,income_total_delta,education4Post HS,-1517.554787,1234.002532,-1.229782555,0.218785099,-3936.221645,901.1120716,education4,Post HS
+job_placement,income_total_delta,education4University Degree,-91.94520508,1326.560834,-0.06931096,0.944742416,-2692.027977,2508.137567,education4,University Degree
+job_placement,income_total_delta,dependent41 dependent,1224.969794,513.3947543,2.386019304,0.017036047,218.7069665,2231.232622,dependent4,1 dependent
+job_placement,income_total_delta,dependent42 dependents,1284.38246,664.1421336,1.93389697,0.053132183,-17.34790621,2586.112826,dependent4,2 dependents
+job_placement,income_total_delta,dependent43+ dependents,1160.220476,777.5416364,1.492165077,0.135663024,-363.7749282,2684.215879,dependent4,3+ dependents
+job_placement,income_total_delta,disability2With Disability,-3678.539865,402.1613662,-9.146925024,6.10E-20,-4466.783278,-2890.296451,disability2,With Disability
+job_placement,income_total_delta,ethnicityCaucasian,-1516.633331,508.0392147,-2.985268238,0.002834851,-2512.399207,-520.867456,ethnicity,Caucasian
+job_placement,income_total_delta,ethnicityVisible Minority,2.517084876,1279.53201,0.001967192,0.998430418,-2505.388358,2510.422528,ethnicity,Visible Minority
+job_placement,income_total_delta,ethnicityIndigenous,-5558.078064,728.7522935,-7.626841265,2.45E-14,-6986.44549,-4129.710638,ethnicity,Indigenous
+job_placement,income_total_delta,immigrationborn in Canada,-1652.555351,500.4213067,-3.302328116,9.60E-04,-2633.389991,-671.7207104,immigration,born in Canada
+job_placement,income_total_delta,immigrationimmigrant,-156.4513121,847.1883548,-0.184671226,0.853487765,-1816.95552,1504.052895,immigration,immigrant
+job_placement,income_total_delta,region7North Central,689.3010825,1251.785142,0.550654469,0.58187335,-1764.220007,3142.822172,region7,North Central
+job_placement,income_total_delta,region7North East,665.7032573,1350.645213,0.49287796,0.622101274,-1981.585326,3312.991841,region7,North East
+job_placement,income_total_delta,region7Edmonton,-235.4169047,821.0735984,-0.286718395,0.774329297,-1844.735726,1373.901917,region7,Edmonton
+job_placement,income_total_delta,region7Central,-1692.412392,914.4189475,-1.850806347,0.064204096,-3484.689754,99.86497023,region7,Central
+job_placement,income_total_delta,region7Calgary,-2353.234107,859.0693478,-2.739283054,0.006159806,-4037.025271,-669.4429419,region7,Calgary
+job_placement,income_total_delta,region7South,-1993.816832,909.6122731,-2.191941436,0.028388941,-3776.673027,-210.9606368,region7,South
+job_placement,income_total_delta,year_before2013,1221.784952,1745.077001,0.700132402,0.483848313,-2198.596935,4642.166839,year_before,2013
+job_placement,income_total_delta,year_before2014,336.2759641,1713.94722,0.19619972,0.844454751,-3023.090999,3695.642927,year_before,2014
+job_placement,income_total_delta,year_before2015,3327.756394,1707.257941,1.949181968,0.051280024,-18.49946338,6674.01225,year_before,2015
+job_placement,income_total_delta,year_before2016,4431.432998,1761.266552,2.516049029,0.011871386,979.3193048,7883.546691,year_before,2016
+job_placement,income_total_delta,year_before2017,4952.668502,1771.867941,2.795167963,0.005189515,1479.775899,8425.561105,year_before,2017
+job_placement,income_total_delta,spell_duration,-62.00418283,20.5465566,-3.017740833,0.002548118,-102.2757983,-21.73256733,spell_duration,
+job_placement,income_total_delta,income_total_before,-0.633962446,0.013557083,-46.76245207,0,-0.66053457,-0.607390323,income_total_before,
+job_placement,income_taxable_delta,(Intercept),17030.66693,2528.681325,6.734999291,1.66E-11,12074.40667,21986.9272,NA,(Intercept)
+job_placement,income_taxable_delta,txTRUE,1878.738752,357.4399382,5.256096343,1.48E-07,1178.150131,2579.327373,tx,TRUE
+job_placement,income_taxable_delta,gender2Men,1753.355996,1329.460834,1.318847424,0.18722697,-852.4108273,4359.12282,gender2,Men
+job_placement,income_taxable_delta,gender2Women,-3022.735979,1325.960338,-2.279657914,0.022632736,-5621.641769,-423.8301888,gender2,Women
+job_placement,income_taxable_delta,age_in_years,-5.665443599,14.39397074,-0.393598382,0.693879477,-33.87788165,22.54699445,age_in_years,
+job_placement,income_taxable_delta,marital3never married,271.0270941,407.8767749,0.664482782,0.506384837,-528.4186218,1070.47281,marital3,never married
+job_placement,income_taxable_delta,marital3apart,-937.5533269,877.9381793,-1.067903583,0.285569848,-2658.327736,783.2210822,marital3,apart
+job_placement,income_taxable_delta,marital3together,-316.8893398,572.6371023,-0.553385973,0.580001946,-1439.268221,805.4895413,marital3,together
+job_placement,income_taxable_delta,education4Less HS,-4544.599027,1281.231304,-3.547055878,3.90E-04,-7055.835116,-2033.362939,education4,Less HS
+job_placement,income_taxable_delta,education4High School,-5190.875782,1166.708799,-4.449161426,8.64E-06,-7477.645729,-2904.105835,education4,High School
+job_placement,income_taxable_delta,education4Post HS,-1586.168275,1202.13858,-1.319455428,0.187023747,-3942.381223,770.0446721,education4,Post HS
+job_placement,income_taxable_delta,education4University Degree,-590.082556,1291.244477,-0.456987477,0.647682296,-3120.944642,1940.77953,education4,University Degree
+job_placement,income_taxable_delta,dependent41 dependent,1107.329943,506.451068,2.186450011,0.028787932,114.6768639,2099.983023,dependent4,1 dependent
+job_placement,income_taxable_delta,dependent42 dependents,1332.625646,662.8775553,2.010364713,0.044398675,33.37387583,2631.877416,dependent4,2 dependents
+job_placement,income_taxable_delta,dependent43+ dependents,615.4549679,778.8597546,0.790199987,0.42941523,-911.123971,2142.033907,dependent4,3+ dependents
+job_placement,income_taxable_delta,disability2With Disability,-7653.915941,404.1637845,-18.93765903,1.16E-79,-8446.08413,-6861.747752,disability2,With Disability
+job_placement,income_taxable_delta,ethnicityCaucasian,-1043.438907,508.6431782,-2.0514163,0.040232313,-2040.388561,-46.48925241,ethnicity,Caucasian
+job_placement,income_taxable_delta,ethnicityVisible Minority,-369.1408097,1274.09617,-0.289727588,0.77202601,-2866.39191,2128.110291,ethnicity,Visible Minority
+job_placement,income_taxable_delta,ethnicityIndigenous,-5173.194336,728.4612558,-7.101536691,1.25E-12,-6600.991323,-3745.397349,ethnicity,Indigenous
+job_placement,income_taxable_delta,immigrationborn in Canada,-1521.884905,506.7473876,-3.003241737,0.002672698,-2515.118776,-528.6510334,immigration,born in Canada
+job_placement,income_taxable_delta,immigrationimmigrant,375.7053589,864.5164071,0.434584417,0.663866233,-1318.762139,2070.172857,immigration,immigrant
+job_placement,income_taxable_delta,region7North Central,1102.228918,1207.351979,0.912930891,0.361283877,-1264.202384,3468.66022,region7,North Central
+job_placement,income_taxable_delta,region7North East,778.09363,1279.230642,0.608251244,0.543023983,-1729.221127,3285.408387,region7,North East
+job_placement,income_taxable_delta,region7Edmonton,754.7697466,832.4247251,0.906712311,0.364563902,-876.7974849,2386.336978,region7,Edmonton
+job_placement,income_taxable_delta,region7Central,-544.574851,925.8307532,-0.588201298,0.556400196,-2359.219555,1270.069853,region7,Central
+job_placement,income_taxable_delta,region7Calgary,-1055.794107,869.5166321,-1.214231066,0.224665998,-2760.062134,648.4739202,region7,Calgary
+job_placement,income_taxable_delta,region7South,-1069.7352,916.6939248,-1.166949154,0.24323721,-2866.471558,727.0011585,region7,South
+job_placement,income_taxable_delta,year_before2013,1766.671784,1597.2817,1.106048973,0.268711353,-1364.02869,4897.372258,year_before,2013
+job_placement,income_taxable_delta,year_before2014,321.4444597,1562.512685,0.205722784,0.837008409,-2741.108128,3383.997048,year_before,2014
+job_placement,income_taxable_delta,year_before2015,3566.75305,1554.190271,2.294926894,0.021741984,520.5125428,6612.993558,year_before,2015
+job_placement,income_taxable_delta,year_before2016,4469.007425,1603.345823,2.787301005,0.00531718,1326.421162,7611.593688,year_before,2016
+job_placement,income_taxable_delta,year_before2017,4595.903089,1620.555334,2.836005036,0.004570251,1419.585879,7772.220299,year_before,2017
+job_placement,income_taxable_delta,spell_duration,-196.4650357,20.82374262,-9.434665002,4.11E-21,-237.2799408,-155.6501307,spell_duration,
+job_placement,income_taxable_delta,income_taxable_before,-0.618163122,0.01328956,-46.5149412,0,-0.644210896,-0.592115348,income_taxable_before,
+training_for_work,income_net_delta,(Intercept),18835.54444,2710.364022,6.949451912,3.72E-12,13523.18286,24147.90601,NA,(Intercept)
+training_for_work,income_net_delta,txTRUE,44.35983149,315.1719758,0.14074802,0.888069651,-573.3828334,662.1024964,tx,TRUE
+training_for_work,income_net_delta,gender2Men,4877.800567,1307.615216,3.730302699,1.91E-04,2314.851543,7440.749592,gender2,Men
+training_for_work,income_net_delta,gender2Women,-164.7904975,1301.839824,-0.126582775,0.899271208,-2716.419651,2386.838656,gender2,Women
+training_for_work,income_net_delta,age_in_years,34.65376376,13.16513753,2.632237125,0.008485416,8.849860607,60.45766691,age_in_years,
+training_for_work,income_net_delta,marital3never married,100.8768165,366.7174425,0.275080497,0.783255683,-617.8958777,819.6495106,marital3,never married
+training_for_work,income_net_delta,marital3apart,352.4215832,896.0515477,0.393305033,0.694096102,-1403.85535,2108.698516,marital3,apart
+training_for_work,income_net_delta,marital3together,-867.9483699,512.5778161,-1.693300691,0.090405305,-1872.609984,136.7132446,marital3,together
+training_for_work,income_net_delta,education4Less HS,-7872.451065,1574.620101,-4.999587559,5.77E-07,-10958.7344,-4786.167728,education4,Less HS
+training_for_work,income_net_delta,education4High School,-7653.464369,1516.63772,-5.046336557,4.52E-07,-10626.10121,-4680.827528,education4,High School
+training_for_work,income_net_delta,education4Post HS,-4963.193225,1542.398643,-3.217840763,0.001292527,-7986.321933,-1940.064518,education4,Post HS
+training_for_work,income_net_delta,education4University Degree,-4137.758423,1602.854679,-2.58149318,0.009840588,-7279.382035,-996.1348115,education4,University Degree
+training_for_work,income_net_delta,dependent41 dependent,882.7966201,440.3121364,2.004933653,0.044976237,19.77701998,1745.81622,dependent4,1 dependent
+training_for_work,income_net_delta,dependent42 dependents,433.7806861,586.632527,0.739441927,0.459642624,-716.0294757,1583.590848,dependent4,2 dependents
+training_for_work,income_net_delta,dependent43+ dependents,184.1464948,661.6415024,0.27831763,0.780769848,-1112.68259,1480.975579,dependent4,3+ dependents
+training_for_work,income_net_delta,disability2With Disability,-2575.230537,382.3618682,-6.735061078,1.66E-11,-3324.666583,-1825.79449,disability2,With Disability
+training_for_work,income_net_delta,ethnicityCaucasian,-1436.287445,466.38184,-3.079638447,0.002073793,-2350.404127,-522.1707636,ethnicity,Caucasian
+training_for_work,income_net_delta,ethnicityVisible Minority,-966.1976423,1040.282719,-0.928783709,0.353006269,-3005.170231,1072.774946,ethnicity,Visible Minority
+training_for_work,income_net_delta,ethnicityIndigenous,-5602.729767,601.7343149,-9.310969356,1.32E-20,-6782.139701,-4423.319832,ethnicity,Indigenous
+training_for_work,income_net_delta,immigrationborn in Canada,-815.9047501,440.2440992,-1.85330082,0.063845924,-1678.790996,46.98149585,immigration,born in Canada
+training_for_work,income_net_delta,immigrationimmigrant,1578.719611,780.9345511,2.021577364,0.043226056,48.07403452,3109.365188,immigration,immigrant
+training_for_work,income_net_delta,region7North Central,-927.0202832,968.2355176,-0.957432635,0.338354178,-2824.779078,970.7385113,region7,North Central
+training_for_work,income_net_delta,region7North East,286.4276163,1414.574633,0.202483213,0.839539914,-2486.163764,3059.018997,region7,North East
+training_for_work,income_net_delta,region7Edmonton,-733.0262107,773.4419512,-0.947745606,0.343264167,-2248.986159,782.9337375,region7,Edmonton
+training_for_work,income_net_delta,region7Central,-1771.841251,858.3319974,-2.064284282,0.038996601,-3454.187196,-89.49530582,region7,Central
+training_for_work,income_net_delta,region7Calgary,-2615.226378,802.2418451,-3.25989774,0.001115368,-4187.634629,-1042.818126,region7,Calgary
+training_for_work,income_net_delta,region7South,-2022.617547,897.2267354,-2.254299239,0.024182232,-3781.197869,-264.0372256,region7,South
+training_for_work,income_net_delta,year_before2013,698.4904628,1701.241102,0.410576997,0.681384727,-2635.972284,4032.953209,year_before,2013
+training_for_work,income_net_delta,year_before2014,-220.8519051,1673.221121,-0.131992061,0.894991173,-3500.394992,3058.691182,year_before,2014
+training_for_work,income_net_delta,year_before2015,2982.904552,1680.754014,1.774741888,0.075947408,-311.4031386,6277.212243,year_before,2015
+training_for_work,income_net_delta,year_before2016,3689.481273,1721.220943,2.143525669,0.032076362,315.8576847,7063.104862,year_before,2016
+training_for_work,income_net_delta,year_before2017,5007.764257,1749.456466,2.862468631,0.004205527,1578.798541,8436.729973,year_before,2017
+training_for_work,income_net_delta,spell_duration,-71.457097,19.41965631,-3.679627273,2.34E-04,-109.5199679,-33.39422605,spell_duration,
+training_for_work,income_net_delta,income_net_before,-0.612040826,0.01334207,-45.87300217,0,-0.63819152,-0.585890131,income_net_before,
+training_for_work,earnings_total_delta,(Intercept),18277.97024,2613.240136,6.994370701,2.70E-12,13155.97321,23399.96728,NA,(Intercept)
+training_for_work,earnings_total_delta,txTRUE,1313.426543,338.7774692,3.876959546,1.06E-04,649.4166924,1977.436394,tx,TRUE
+training_for_work,earnings_total_delta,gender2Men,3619.893282,1371.456278,2.639452195,0.008306932,931.8146431,6307.971921,gender2,Men
+training_for_work,earnings_total_delta,gender2Women,-1021.512084,1364.351897,-0.748715992,0.454032393,-3695.666011,1652.641842,gender2,Women
+training_for_work,earnings_total_delta,age_in_years,-31.70572387,13.73302148,-2.30872164,0.02096363,-58.62268964,-4.788758104,age_in_years,
+training_for_work,earnings_total_delta,marital3never married,-22.87434726,387.818276,-0.058982128,0.95296661,-783.0050496,737.256355,marital3,never married
+training_for_work,earnings_total_delta,marital3apart,-27.79249559,937.0042858,-0.029661012,0.97633754,-1864.337522,1808.752531,marital3,apart
+training_for_work,earnings_total_delta,marital3together,-603.6717998,552.9728921,-1.091684255,0.274977868,-1687.50848,480.1648804,marital3,together
+training_for_work,earnings_total_delta,education4Less HS,-9603.695658,1639.189972,-5.858805766,4.70E-09,-12816.53709,-6390.854228,education4,Less HS
+training_for_work,earnings_total_delta,education4High School,-8979.106472,1573.487202,-5.706501114,1.16E-08,-12063.16931,-5895.043636,education4,High School
+training_for_work,earnings_total_delta,education4Post HS,-5409.260686,1601.302839,-3.37803728,7.31E-04,-8547.842664,-2270.678709,education4,Post HS
+training_for_work,earnings_total_delta,education4University Degree,-4910.483867,1675.388189,-2.930952897,0.003380973,-8194.274445,-1626.693289,education4,University Degree
+training_for_work,earnings_total_delta,dependent41 dependent,1735.307965,478.5673674,3.626047414,2.88E-04,797.3074334,2673.308496,dependent4,1 dependent
+training_for_work,earnings_total_delta,dependent42 dependents,1036.305022,637.5923969,1.625340934,0.104097075,-213.3873892,2285.997433,dependent4,2 dependents
+training_for_work,earnings_total_delta,dependent43+ dependents,1135.140269,736.7118826,1.540819818,0.123367815,-308.8280931,2579.108631,dependent4,3+ dependents
+training_for_work,earnings_total_delta,disability2With Disability,-7372.763387,405.6281835,-18.17616153,1.48E-73,-8167.801824,-6577.72495,disability2,With Disability
+training_for_work,earnings_total_delta,ethnicityCaucasian,-1717.569989,494.5638765,-3.472898185,5.15E-04,-2686.923963,-748.216016,ethnicity,Caucasian
+training_for_work,earnings_total_delta,ethnicityVisible Minority,-1782.715169,1191.585793,-1.496086291,0.134638321,-4118.244468,552.8141286,ethnicity,Visible Minority
+training_for_work,earnings_total_delta,ethnicityIndigenous,-6056.475989,617.9159719,-9.80145564,1.17E-22,-7267.602258,-4845.349719,ethnicity,Indigenous
+training_for_work,earnings_total_delta,immigrationborn in Canada,-1212.415537,476.7044759,-2.543327362,0.010983612,-2146.764768,-278.066306,immigration,born in Canada
+training_for_work,earnings_total_delta,immigrationimmigrant,1461.915365,847.8047623,1.724353801,0.084650995,-199.7970128,3123.627742,immigration,immigrant
+training_for_work,earnings_total_delta,region7North Central,-894.8992977,994.472895,-0.89987299,0.368192756,-2844.083817,1054.285222,region7,North Central
+training_for_work,earnings_total_delta,region7North East,-1427.91271,1381.051307,-1.033931689,0.301173766,-4134.797775,1278.972356,region7,North East
+training_for_work,earnings_total_delta,region7Edmonton,-901.5178389,765.9302169,-1.177023466,0.239192489,-2402.754654,599.7189767,region7,Edmonton
+training_for_work,earnings_total_delta,region7Central,-1453.505255,852.9566296,-1.704078736,0.088373419,-3125.315384,218.3048736,region7,Central
+training_for_work,earnings_total_delta,region7Calgary,-2117.067801,797.37367,-2.655051051,0.007932487,-3679.934342,-554.201259,region7,Calgary
+training_for_work,earnings_total_delta,region7South,-2718.174134,898.5237489,-3.025155581,0.002486482,-4479.296625,-957.0516427,region7,South
+training_for_work,earnings_total_delta,year_before2013,2624.86153,1426.538019,1.840022134,0.065771699,-171.1782992,5420.901359,year_before,2013
+training_for_work,earnings_total_delta,year_before2014,1265.179555,1388.844796,0.9109582,0.362322374,-1456.980888,3987.339998,year_before,2014
+training_for_work,earnings_total_delta,year_before2015,5574.330286,1392.57948,4.002881248,6.27E-05,2844.849796,8303.810775,year_before,2015
+training_for_work,earnings_total_delta,year_before2016,6365.62793,1434.496036,4.43753609,9.12E-06,3553.990247,9177.265613,year_before,2016
+training_for_work,earnings_total_delta,year_before2017,5832.542086,1479.86729,3.941260222,8.12E-05,2931.975939,8733.108233,year_before,2017
+training_for_work,earnings_total_delta,spell_duration,-223.2276134,19.70969659,-11.32577624,1.08E-29,-261.8589685,-184.5962584,spell_duration,
+training_for_work,earnings_total_delta,earnings_total_before,-0.632793924,0.01553248,-40.74004496,0,-0.66323786,-0.602349988,earnings_total_before,
+training_for_work,income_total_delta,(Intercept),19011.84254,2767.754849,6.869048589,6.55E-12,13586.99393,24436.69116,NA,(Intercept)
+training_for_work,income_total_delta,txTRUE,53.51719188,325.3425506,0.164494905,0.869342311,-584.1599801,691.1943639,tx,TRUE
+training_for_work,income_total_delta,gender2Men,4918.236504,1348.868006,3.646195537,2.66E-04,2274.431278,7562.041729,gender2,Men
+training_for_work,income_total_delta,gender2Women,-115.4648134,1343.252955,-0.085959099,0.931499321,-2748.264439,2517.334812,gender2,Women
+training_for_work,income_total_delta,age_in_years,33.57442432,13.58925617,2.470659461,0.013490167,6.939241107,60.20960753,age_in_years,
+training_for_work,income_total_delta,marital3never married,99.21836207,377.6676663,0.262713414,0.792772703,-641.016965,839.4536891,marital3,never married
+training_for_work,income_total_delta,marital3apart,270.8217374,921.2224524,0.293980826,0.768773938,-1534.790615,2076.43409,marital3,apart
+training_for_work,income_total_delta,marital3together,-891.7154999,528.8481973,-1.68614643,0.091774668,-1928.26735,144.8363505,marital3,together
+training_for_work,income_total_delta,education4Less HS,-8175.311231,1618.221084,-5.052036037,4.39E-07,-11347.05327,-5003.569193,education4,Less HS
+training_for_work,income_total_delta,education4High School,-7863.163819,1561.302066,-5.036286051,4.77E-07,-10923.34357,-4802.984065,education4,High School
+training_for_work,income_total_delta,education4Post HS,-5016.995165,1588.10204,-3.159113859,0.001583564,-8129.703342,-1904.286988,education4,Post HS
+training_for_work,income_total_delta,education4University Degree,-3992.812859,1652.839372,-2.415729518,0.015707756,-7232.407355,-753.2183631,education4,University Degree
+training_for_work,income_total_delta,dependent41 dependent,1204.913664,456.2519471,2.64089539,0.008271637,310.6517518,2099.175576,dependent4,1 dependent
+training_for_work,income_total_delta,dependent42 dependents,761.8562106,600.6841882,1.268314075,0.204692503,-415.4954566,1939.207878,dependent4,2 dependents
+training_for_work,income_total_delta,dependent43+ dependents,483.3373033,695.7143207,0.694735309,0.487224854,-880.2751097,1846.949716,dependent4,3+ dependents
+training_for_work,income_total_delta,disability2With Disability,-2736.999282,394.0995301,-6.944944293,3.84E-12,-3509.441354,-1964.557211,disability2,With Disability
+training_for_work,income_total_delta,ethnicityCaucasian,-1463.74533,482.1884835,-3.035628972,0.002401744,-2408.843314,-518.6473469,ethnicity,Caucasian
+training_for_work,income_total_delta,ethnicityVisible Minority,-990.1752981,1082.944133,-0.914336453,0.360545077,-3112.765015,1132.414419,ethnicity,Visible Minority
+training_for_work,income_total_delta,ethnicityIndigenous,-5827.700319,614.7781567,-9.479354879,2.68E-21,-7032.676415,-4622.724224,ethnicity,Indigenous
+training_for_work,income_total_delta,immigrationborn in Canada,-900.677881,454.3141408,-1.982500213,0.047429475,-1791.141658,-10.21410385,immigration,born in Canada
+training_for_work,income_total_delta,immigrationimmigrant,1575.87841,804.8638554,1.957944066,0.050242868,-1.669027909,3153.425848,immigration,immigrant
+training_for_work,income_total_delta,region7North Central,-793.6930217,993.7698015,-0.798668887,0.42448673,-2741.499466,1154.113422,region7,North Central
+training_for_work,income_total_delta,region7North East,271.7785872,1445.789784,0.187979325,0.850893723,-2561.995043,3105.552218,region7,North East
+training_for_work,income_total_delta,region7Edmonton,-638.457652,789.9315182,-0.808244306,0.418954313,-2186.737444,909.8221398,region7,Edmonton
+training_for_work,income_total_delta,region7Central,-1728.375664,877.6881901,-1.969236551,0.04893218,-3448.66009,-8.091238472,region7,Central
+training_for_work,income_total_delta,region7Calgary,-2556.199327,819.4379906,-3.119454255,0.00181303,-4162.312328,-950.0863253,region7,Calgary
+training_for_work,income_total_delta,region7South,-2045.949171,919.4004421,-2.225308013,0.026065602,-3847.990351,-243.9079909,region7,South
+training_for_work,income_total_delta,year_before2013,899.916607,1716.0441,0.52441345,0.599993638,-2463.560278,4263.393492,year_before,2013
+training_for_work,income_total_delta,year_before2014,-60.08660627,1685.320233,-0.035652931,0.971559263,-3363.344166,3243.170954,year_before,2014
+training_for_work,income_total_delta,year_before2015,3198.930237,1693.355449,1.889107357,0.058883995,-120.076489,6517.936963,year_before,2015
+training_for_work,income_total_delta,year_before2016,3940.146,1736.438306,2.269096452,0.023267267,536.6961093,7343.59589,year_before,2016
+training_for_work,income_total_delta,year_before2017,5275.92567,1765.805642,2.987829206,0.00281121,1814.915279,8736.93606,year_before,2017
+training_for_work,income_total_delta,spell_duration,-77.66489619,19.8651511,-3.909605106,9.26E-05,-116.6009448,-38.72884755,spell_duration,
+training_for_work,income_total_delta,income_total_before,-0.609255781,0.013299324,-45.81103538,0,-0.635322691,-0.583188871,income_total_before,
+training_for_work,income_taxable_delta,(Intercept),15823.56125,2596.209062,6.094871743,1.10E-09,10734.94542,20912.17708,NA,(Intercept)
+training_for_work,income_taxable_delta,txTRUE,625.2764356,322.4145953,1.939355242,0.052464462,-6.661892004,1257.214763,tx,TRUE
+training_for_work,income_taxable_delta,gender2Men,4524.284507,1422.408576,3.180720774,0.001470107,1736.33846,7312.230555,gender2,Men
+training_for_work,income_taxable_delta,gender2Women,-76.67645957,1415.536835,-0.05416776,0.956801752,-2851.153774,2697.800855,gender2,Women
+training_for_work,income_taxable_delta,age_in_years,8.93345853,13.50170488,0.66165411,0.508196376,-17.53012261,35.39703967,age_in_years,
+training_for_work,income_taxable_delta,marital3never married,215.1452497,372.807711,0.57709442,0.563878618,-515.5644787,945.8549781,marital3,never married
+training_for_work,income_taxable_delta,marital3apart,253.6290787,929.4798652,0.272872053,0.784952847,-1568.167949,2075.426107,marital3,apart
+training_for_work,income_taxable_delta,marital3together,-615.5814723,521.1966826,-1.181092461,0.23757236,-1637.136218,405.9732736,marital3,together
+training_for_work,income_taxable_delta,education4Less HS,-8848.859813,1570.935918,-5.632858545,1.78E-08,-11927.92209,-5769.797538,education4,Less HS
+training_for_work,income_taxable_delta,education4High School,-8172.631471,1510.446915,-5.410737306,6.31E-08,-11133.13422,-5212.128717,education4,High School
+training_for_work,income_taxable_delta,education4Post HS,-5039.67006,1536.258137,-3.280483885,0.001037095,-8050.763266,-2028.576853,education4,Post HS
+training_for_work,income_taxable_delta,education4University Degree,-4474.237055,1597.34422,-2.801047513,0.005095918,-7605.060069,-1343.414041,education4,University Degree
+training_for_work,income_taxable_delta,dependent41 dependent,1047.55267,449.5484996,2.330232825,0.019798333,166.4296344,1928.675706,dependent4,1 dependent
+training_for_work,income_taxable_delta,dependent42 dependents,504.9230801,599.887652,0.841696072,0.399962659,-670.867362,1680.713522,dependent4,2 dependents
+training_for_work,income_taxable_delta,dependent43+ dependents,149.6653596,675.5247287,0.221554228,0.824661943,-1174.375095,1473.705814,dependent4,3+ dependents
+training_for_work,income_taxable_delta,disability2With Disability,-6942.503762,393.174963,-17.65754286,1.55E-69,-7713.133666,-6171.873858,disability2,With Disability
+training_for_work,income_taxable_delta,ethnicityCaucasian,-1347.219531,472.3166067,-2.852365367,0.004341535,-2272.968461,-421.4706014,ethnicity,Caucasian
+training_for_work,income_taxable_delta,ethnicityVisible Minority,-1610.348208,1074.512551,-1.498677895,0.133964367,-3716.411874,495.7154577,ethnicity,Visible Minority
+training_for_work,income_taxable_delta,ethnicityIndigenous,-5540.096007,601.4043225,-9.211932472,3.34E-20,-6718.85915,-4361.332864,ethnicity,Indigenous
+training_for_work,income_taxable_delta,immigrationborn in Canada,-714.0959499,454.7481961,-1.570310682,0.11635002,-1605.410483,177.2185834,immigration,born in Canada
+training_for_work,income_taxable_delta,immigrationimmigrant,2121.806562,791.3518883,2.681242812,0.007337654,570.7428195,3672.870305,immigration,immigrant
+training_for_work,income_taxable_delta,region7North Central,-218.9025304,938.4171957,-0.233267817,0.81555453,-2058.216885,1620.411824,region7,North Central
+training_for_work,income_taxable_delta,region7North East,397.0690643,1303.570487,0.304601146,0.760671383,-2157.95222,2952.090349,region7,North East
+training_for_work,income_taxable_delta,region7Edmonton,240.8911014,720.8383707,0.334181852,0.738243926,-1171.964895,1653.747098,region7,Edmonton
+training_for_work,income_taxable_delta,region7Central,-718.1552752,811.9719849,-0.884458194,0.376453739,-2309.634773,873.3242226,region7,Central
+training_for_work,income_taxable_delta,region7Calgary,-1399.51918,752.3808637,-1.860120649,0.062875107,-2874.199023,75.16066264,region7,Calgary
+training_for_work,income_taxable_delta,region7South,-1287.616841,856.1224229,-1.504010182,0.132585902,-2965.631981,390.3982985,region7,South
+training_for_work,income_taxable_delta,year_before2013,2377.373416,1420.881676,1.673167764,0.094301362,-407.5798799,5162.326711,year_before,2013
+training_for_work,income_taxable_delta,year_before2014,999.9609319,1386.326026,0.721302863,0.470727017,-1717.262677,3717.184541,year_before,2014
+training_for_work,income_taxable_delta,year_before2015,4343.570624,1387.30613,3.130938824,0.001743622,1624.425993,7062.715255,year_before,2015
+training_for_work,income_taxable_delta,year_before2016,5046.013156,1425.550245,3.539695058,4.01E-04,2251.909382,7840.116931,year_before,2016
+training_for_work,income_taxable_delta,year_before2017,6187.274276,1463.095466,4.228893069,2.35E-05,3319.581201,9054.96735,year_before,2017
+training_for_work,income_taxable_delta,spell_duration,-210.6208869,19.47634536,-10.81418937,3.19E-27,-248.7948694,-172.4469044,spell_duration,
+training_for_work,income_taxable_delta,income_taxable_before,-0.593479146,0.013539811,-43.83215839,0,-0.620017417,-0.566940876,income_taxable_before,
+work_foundation,income_net_delta,(Intercept),12495.19437,2272.630153,5.498120472,3.86E-08,8040.798946,16949.58979,NA,(Intercept)
+work_foundation,income_net_delta,txTRUE,-1370.842456,333.9330676,-4.105141386,4.05E-05,-2025.357194,-716.3277182,tx,TRUE
+work_foundation,income_net_delta,gender2Men,3587.291032,1583.436391,2.265510035,0.023486224,483.7276104,6690.854454,gender2,Men
+work_foundation,income_net_delta,gender2Women,-824.9526515,1571.760245,-0.52485909,0.599683787,-3905.63062,2255.725317,gender2,Women
+work_foundation,income_net_delta,age_in_years,44.85707136,15.58332984,2.878529289,0.00399726,14.31346837,75.40067435,age_in_years,
+work_foundation,income_net_delta,marital3never married,148.690475,365.6988198,0.406592712,0.684309123,-568.0857007,865.4666507,marital3,never married
+work_foundation,income_net_delta,marital3apart,1102.261035,1105.179803,0.99735901,0.318595749,-1063.91099,3268.433059,marital3,apart
+work_foundation,income_net_delta,marital3together,-1501.976483,516.3300616,-2.908946417,0.003628299,-2513.992565,-489.9604003,marital3,together
+work_foundation,income_net_delta,education4Less HS,-6111.914485,908.3942012,-6.728262331,1.74E-11,-7892.383238,-4331.445733,education4,Less HS
+work_foundation,income_net_delta,education4High School,-5307.345706,752.2750971,-7.05505968,1.75E-12,-6781.818245,-3832.873168,education4,High School
+work_foundation,income_net_delta,education4Post HS,-3601.48325,803.6220693,-4.481563396,7.43E-06,-5176.596765,-2026.369735,education4,Post HS
+work_foundation,income_net_delta,education4University Degree,-1802.423824,947.9162185,-1.901458999,0.057248425,-3660.356431,55.50878396,education4,University Degree
+work_foundation,income_net_delta,dependent41 dependent,-143.8978903,376.8325598,-0.381861616,0.702565851,-882.4963939,594.7006132,dependent4,1 dependent
+work_foundation,income_net_delta,dependent42 dependents,-133.7015027,525.2860776,-0.254530833,0.799086673,-1163.271535,895.86853,dependent4,2 dependents
+work_foundation,income_net_delta,dependent43+ dependents,-1155.932826,590.7549867,-1.956704305,0.05038854,-2313.823082,1.9574306,dependent4,3+ dependents
+work_foundation,income_net_delta,disability2With Disability,-1049.92114,389.3714517,-2.696451257,0.007010924,-1813.096095,-286.7461862,disability2,With Disability
+work_foundation,income_net_delta,ethnicityCaucasian,-62.99847936,449.5995838,-0.140121303,0.888564789,-944.2216412,818.2246825,ethnicity,Caucasian
+work_foundation,income_net_delta,ethnicityVisible Minority,572.4527126,973.2793435,0.588168974,0.55642189,-1335.19207,2480.097495,ethnicity,Visible Minority
+work_foundation,income_net_delta,ethnicityIndigenous,-3415.28258,542.1685257,-6.299300712,3.02E-10,-4477.942511,-2352.62265,ethnicity,Indigenous
+work_foundation,income_net_delta,immigrationborn in Canada,-524.706918,447.5361741,-1.172434651,0.241028924,-1401.88576,352.4719241,immigration,born in Canada
+work_foundation,income_net_delta,immigrationimmigrant,1675.899849,759.2625892,2.207273047,0.027300116,187.7317018,3164.067996,immigration,immigrant
+work_foundation,income_net_delta,region7North Central,1413.817708,946.1513908,1.494282756,0.13510888,-440.6558063,3268.291222,region7,North Central
+work_foundation,income_net_delta,region7North East,3495.237775,1363.681043,2.563090389,0.010377788,822.3987344,6168.076815,region7,North East
+work_foundation,income_net_delta,region7Edmonton,1153.284054,604.6819121,1.907257404,0.056493749,-31.90322279,2338.471331,region7,Edmonton
+work_foundation,income_net_delta,region7Central,795.0203132,699.9258365,1.135863647,0.256019803,-576.8467455,2166.887372,region7,Central
+work_foundation,income_net_delta,region7Calgary,24.93267267,627.3439466,0.039743227,0.968298019,-1204.672594,1254.537939,region7,Calgary
+work_foundation,income_net_delta,region7South,-201.7153444,743.3791588,-0.271349206,0.786123734,-1658.751686,1255.320997,region7,South
+work_foundation,income_net_delta,year_before2013,1549.350741,1234.352461,1.25519314,0.209415302,-870.0019843,3968.703466,year_before,2013
+work_foundation,income_net_delta,year_before2014,1387.400751,1211.092603,1.14557776,0.251976116,-986.362239,3761.163742,year_before,2014
+work_foundation,income_net_delta,year_before2015,3313.832013,1219.765333,2.716778322,0.006594644,923.0703179,5704.593708,year_before,2015
+work_foundation,income_net_delta,year_before2016,4456.158635,1268.428576,3.513133274,4.43E-04,1970.01612,6942.301149,year_before,2016
+work_foundation,income_net_delta,year_before2017,5217.834283,1285.145483,4.060111756,4.91E-05,2698.926333,7736.742233,year_before,2017
+work_foundation,income_net_delta,spell_duration,36.32150893,17.88921754,2.030357607,0.042326187,1.258325125,71.38469273,spell_duration,
+work_foundation,income_net_delta,income_net_before,-0.575574354,0.020053511,-28.70192364,1.62E-179,-0.614879592,-0.536269115,income_net_before,
+work_foundation,earnings_total_delta,(Intercept),10312.28321,1926.022624,5.354185921,8.64E-08,6537.244697,14087.32173,NA,(Intercept)
+work_foundation,earnings_total_delta,txTRUE,-1571.435436,353.9612933,-4.43956858,9.04E-06,-2265.205852,-877.6650207,tx,TRUE
+work_foundation,earnings_total_delta,gender2Men,4590.757935,1225.503027,3.746019254,1.80E-04,2188.750257,6992.765613,gender2,Men
+work_foundation,earnings_total_delta,gender2Women,196.4324778,1202.696009,0.163326789,0.87026189,-2160.87304,2553.737996,gender2,Women
+work_foundation,earnings_total_delta,age_in_years,16.26009557,15.40694808,1.055374204,0.291259994,-13.93779604,46.45798717,age_in_years,
+work_foundation,earnings_total_delta,marital3never married,422.5092969,368.3966801,1.14688682,0.251434619,-299.5547329,1144.573327,marital3,never married
+work_foundation,earnings_total_delta,marital3apart,1233.622338,1225.770869,1.006405331,0.314226148,-1168.910316,3636.154991,marital3,apart
+work_foundation,earnings_total_delta,marital3together,-707.8559189,527.8428487,-1.341035349,0.179915878,-1742.437268,326.7254304,marital3,together
+work_foundation,earnings_total_delta,education4Less HS,-7469.038192,970.6845593,-7.694609048,1.45E-14,-9371.597152,-5566.479233,education4,Less HS
+work_foundation,earnings_total_delta,education4High School,-6131.907327,839.0495904,-7.308158418,2.75E-13,-7776.459412,-4487.355242,education4,High School
+work_foundation,earnings_total_delta,education4Post HS,-3342.49367,890.6126949,-3.753027202,1.75E-04,-5088.110355,-1596.876986,education4,Post HS
+work_foundation,earnings_total_delta,education4University Degree,-2411.82962,1076.86566,-2.239675485,0.025116958,-4522.505422,-301.1538181,education4,University Degree
+work_foundation,earnings_total_delta,dependent41 dependent,530.697526,399.9007983,1.327072935,0.184491423,-253.1151344,1314.510186,dependent4,1 dependent
+work_foundation,earnings_total_delta,dependent42 dependents,646.3580644,546.1652797,1.183447737,0.236638123,-424.1355748,1716.851704,dependent4,2 dependents
+work_foundation,earnings_total_delta,dependent43+ dependents,-557.6637534,613.3931081,-0.909145776,0.363278147,-1759.925129,644.5976224,dependent4,3+ dependents
+work_foundation,earnings_total_delta,disability2With Disability,-5492.20663,411.592681,-13.3437908,1.54E-40,-6298.935588,-4685.477672,disability2,With Disability
+work_foundation,earnings_total_delta,ethnicityCaucasian,-573.8488801,458.5066509,-1.251560646,0.210736636,-1472.530052,324.8322913,ethnicity,Caucasian
+work_foundation,earnings_total_delta,ethnicityVisible Minority,-170.8282178,1053.69776,-0.162122597,0.871210054,-2236.094524,1894.438088,ethnicity,Visible Minority
+work_foundation,earnings_total_delta,ethnicityIndigenous,-4046.632536,541.6514598,-7.470915962,8.11E-14,-5108.279008,-2984.986064,ethnicity,Indigenous
+work_foundation,earnings_total_delta,immigrationborn in Canada,-629.6977999,487.0233072,-1.292952084,0.196034401,-1584.272124,324.8765237,immigration,born in Canada
+work_foundation,earnings_total_delta,immigrationimmigrant,1093.195718,772.6150997,1.414929269,0.157096292,-421.1435863,2607.535022,immigration,immigrant
+work_foundation,earnings_total_delta,region7North Central,848.2430471,944.4924278,0.898094068,0.369140301,-1002.97887,2699.464964,region7,North Central
+work_foundation,earnings_total_delta,region7North East,1642.119236,1529.579615,1.073575523,0.283018843,-1355.883951,4640.122422,region7,North East
+work_foundation,earnings_total_delta,region7Edmonton,715.4675238,600.5390624,1.191375497,0.233512615,-461.5996942,1892.534742,region7,Edmonton
+work_foundation,earnings_total_delta,region7Central,515.4800576,691.2511948,0.745720313,0.455840358,-839.3845495,1870.344665,region7,Central
+work_foundation,earnings_total_delta,region7Calgary,193.8119652,624.5896056,0.310302899,0.756332092,-1030.394744,1418.018675,region7,Calgary
+work_foundation,earnings_total_delta,region7South,-769.7757134,735.4881614,-1.046618768,0.295281175,-2211.34556,671.7941332,region7,South
+work_foundation,earnings_total_delta,year_before2013,1850.014058,936.709024,1.975014664,0.048272706,14.04775066,3685.980366,year_before,2013
+work_foundation,earnings_total_delta,year_before2014,1218.467843,900.9194413,1.352471472,0.176231469,-547.3502479,2984.285933,year_before,2014
+work_foundation,earnings_total_delta,year_before2015,4509.663505,913.7190239,4.93550357,8.02E-07,2718.758005,6300.569004,year_before,2015
+work_foundation,earnings_total_delta,year_before2016,5977.092406,986.3984473,6.059511166,1.38E-09,4043.733947,7910.450865,year_before,2016
+work_foundation,earnings_total_delta,year_before2017,4515.675551,1015.343438,4.447436584,8.71E-06,2525.584397,6505.766705,year_before,2017
+work_foundation,earnings_total_delta,spell_duration,-123.7129587,18.27188972,-6.770671266,1.30E-11,-159.5261868,-87.89973066,spell_duration,
+work_foundation,earnings_total_delta,earnings_total_before,-0.61089898,0.021315722,-28.65954925,5.36E-179,-0.652678173,-0.569119787,earnings_total_before,
+work_foundation,income_total_delta,(Intercept),12726.55191,2316.649388,5.49351662,3.96E-08,8185.878009,17267.22582,NA,(Intercept)
+work_foundation,income_total_delta,txTRUE,-1424.781308,343.1253623,-4.152363726,3.30E-05,-2097.313106,-752.2495094,tx,TRUE
+work_foundation,income_total_delta,gender2Men,3654.099668,1631.058125,2.240324616,0.025074812,457.1968018,6851.002534,gender2,Men
+work_foundation,income_total_delta,gender2Women,-789.7628274,1618.48999,-0.487962751,0.62557865,-3962.031926,2382.506271,gender2,Women
+work_foundation,income_total_delta,age_in_years,44.37649135,16.00280434,2.773044675,0.00555578,13.0107109,75.7422718,age_in_years,
+work_foundation,income_total_delta,marital3never married,172.887154,376.5537215,0.459130116,0.646142992,-565.1648215,910.9391295,marital3,never married
+work_foundation,income_total_delta,marital3apart,1372.906661,1166.931731,1.176509838,0.23939755,-914.3002367,3660.113559,marital3,apart
+work_foundation,income_total_delta,marital3together,-1593.644742,530.0543766,-3.006568406,0.002643632,-2632.560726,-554.728759,marital3,together
+work_foundation,income_total_delta,education4Less HS,-6451.693737,935.4406355,-6.896956891,5.38E-12,-8285.173981,-4618.213494,education4,Less HS
+work_foundation,income_total_delta,education4High School,-5579.037331,780.3405072,-7.149490869,8.84E-13,-7108.518571,-4049.556091,education4,High School
+work_foundation,income_total_delta,education4Post HS,-3719.944212,833.2436733,-4.46441339,8.05E-06,-5353.116597,-2086.771828,education4,Post HS
+work_foundation,income_total_delta,education4University Degree,-1593.376525,986.5138775,-1.615158754,0.106283469,-3526.961229,340.2081793,education4,University Degree
+work_foundation,income_total_delta,dependent41 dependent,172.550045,390.969382,0.441339023,0.658969742,-593.756881,938.8569709,dependent4,1 dependent
+work_foundation,income_total_delta,dependent42 dependents,220.9655026,542.1409948,0.407579402,0.683584466,-841.6404667,1283.571472,dependent4,2 dependents
+work_foundation,income_total_delta,dependent43+ dependents,-985.500072,608.9503138,-1.618358756,0.105592452,-2179.053492,208.053348,dependent4,3+ dependents
+work_foundation,income_total_delta,disability2With Disability,-1167.165304,400.2833691,-2.915847607,0.003549022,-1951.72781,-382.6027978,disability2,With Disability
+work_foundation,income_total_delta,ethnicityCaucasian,-157.6455472,458.8203555,-0.343588826,0.731157166,-1056.941585,741.6504908,ethnicity,Caucasian
+work_foundation,income_total_delta,ethnicityVisible Minority,602.318827,1015.983238,0.592843272,0.553289084,-1389.026347,2593.664001,ethnicity,Visible Minority
+work_foundation,income_total_delta,ethnicityIndigenous,-3642.054275,556.0444452,-6.549933744,5.82E-11,-4731.911253,-2552.197296,ethnicity,Indigenous
+work_foundation,income_total_delta,immigrationborn in Canada,-566.5078933,460.9420211,-1.229022019,0.219070104,-1469.962433,336.9466469,immigration,born in Canada
+work_foundation,income_total_delta,immigrationimmigrant,1678.049173,780.6774177,2.149478306,0.031601924,147.9075828,3208.190764,immigration,immigrant
+work_foundation,income_total_delta,region7North Central,1415.428414,965.3806969,1.466186779,0.142604535,-476.7348809,3307.59171,region7,North Central
+work_foundation,income_total_delta,region7North East,3540.577035,1384.083129,2.558066752,0.010528898,827.7495426,6253.404527,region7,North East
+work_foundation,income_total_delta,region7Edmonton,1270.683389,621.5763965,2.044291572,0.040930673,52.38262262,2488.984155,region7,Edmonton
+work_foundation,income_total_delta,region7Central,955.7611197,719.430016,1.328497697,0.184020614,-454.334477,2365.856716,region7,Central
+work_foundation,income_total_delta,region7Calgary,173.0236183,644.6617372,0.268394428,0.788396983,-1090.524825,1436.572062,region7,Calgary
+work_foundation,income_total_delta,region7South,-148.1520747,764.7856339,-0.193717126,0.846398273,-1647.145487,1350.841338,region7,South
+work_foundation,income_total_delta,year_before2013,1636.766287,1230.199721,1.330488261,0.183364327,-774.4469936,4047.979568,year_before,2013
+work_foundation,income_total_delta,year_before2014,1452.175308,1204.943169,1.205181576,0.228139676,-909.5346841,3813.8853,year_before,2014
+work_foundation,income_total_delta,year_before2015,3413.060426,1214.162658,2.811040517,0.004940333,1033.280072,5792.840779,year_before,2015
+work_foundation,income_total_delta,year_before2016,4675.179938,1266.075589,3.692654672,2.22E-04,2193.649319,7156.710557,year_before,2016
+work_foundation,income_total_delta,year_before2017,5422.739233,1284.740875,4.220881687,2.44E-05,2904.624321,7940.854144,year_before,2017
+work_foundation,income_total_delta,spell_duration,36.06233961,18.21363365,1.979964037,0.047713772,0.363294488,71.76138473,spell_duration,
+work_foundation,income_total_delta,income_total_before,-0.574104425,0.019390515,-29.6074873,8.88E-191,-0.612110178,-0.536098671,income_total_before,
+work_foundation,income_taxable_delta,(Intercept),9628.809228,2331.140205,4.130514848,3.63E-05,5059.733064,14197.88539,NA,(Intercept)
+work_foundation,income_taxable_delta,txTRUE,-1326.246745,345.6443853,-3.837026729,1.25E-04,-2003.715873,-648.7776169,tx,TRUE
+work_foundation,income_taxable_delta,gender2Men,3100.662241,1749.251687,1.772564956,0.07630772,-327.9021043,6529.226587,gender2,Men
+work_foundation,income_taxable_delta,gender2Women,-1135.319934,1733.851833,-0.654796397,0.512602263,-4533.700291,2263.060424,gender2,Women
+work_foundation,income_taxable_delta,age_in_years,38.38473703,15.71001929,2.443328447,0.014556377,7.592820468,69.17665359,age_in_years,
+work_foundation,income_taxable_delta,marital3never married,697.4439763,371.5541413,1.877099186,0.060511093,-30.80873337,1425.696686,marital3,never married
+work_foundation,income_taxable_delta,marital3apart,1545.428316,1171.098415,1.319640003,0.186962086,-749.9453568,3840.80199,marital3,apart
+work_foundation,income_taxable_delta,marital3together,-856.2200795,519.7105483,-1.647494133,0.099463641,-1874.861976,162.4218168,marital3,together
+work_foundation,income_taxable_delta,education4Less HS,-6841.050927,946.5480555,-7.227367789,5.00E-13,-8696.301911,-4985.799943,education4,Less HS
+work_foundation,income_taxable_delta,education4High School,-5690.384475,796.1860586,-7.147053649,9.00E-13,-7250.923277,-4129.845673,education4,High School
+work_foundation,income_taxable_delta,education4Post HS,-3452.831659,848.8069362,-4.067864566,4.75E-05,-5116.508314,-1789.155003,education4,Post HS
+work_foundation,income_taxable_delta,education4University Degree,-1915.972285,996.3863623,-1.922921025,0.054496397,-3868.907234,36.96266503,education4,University Degree
+work_foundation,income_taxable_delta,dependent41 dependent,37.07578159,381.5938876,0.097160313,0.922599526,-710.8550089,785.0065721,dependent4,1 dependent
+work_foundation,income_taxable_delta,dependent42 dependents,-7.845805517,533.076717,-0.014717967,0.988257252,-1052.68563,1036.994018,dependent4,2 dependents
+work_foundation,income_taxable_delta,dependent43+ dependents,-1380.955031,589.0914169,-2.344211767,0.019071752,-2535.584661,-226.3254016,dependent4,3+ dependents
+work_foundation,income_taxable_delta,disability2With Disability,-5586.705613,400.6488898,-13.9441435,4.24E-44,-6371.984546,-4801.42668,disability2,With Disability
+work_foundation,income_taxable_delta,ethnicityCaucasian,-190.9427483,454.3970822,-0.420211211,0.674333211,-1081.569092,699.6835955,ethnicity,Caucasian
+work_foundation,income_taxable_delta,ethnicityVisible Minority,336.977965,975.5673091,0.345417443,0.729782212,-1575.151271,2249.107201,ethnicity,Visible Minority
+work_foundation,income_taxable_delta,ethnicityIndigenous,-3699.326347,546.1422049,-6.773558817,1.27E-11,-4769.774759,-2628.877935,ethnicity,Indigenous
+work_foundation,income_taxable_delta,immigrationborn in Canada,-379.2215109,461.0912227,-0.822443569,0.410828935,-1282.968489,524.525467,immigration,born in Canada
+work_foundation,income_taxable_delta,immigrationimmigrant,2051.55913,741.8411861,2.765496401,0.005685985,597.5372426,3505.581018,immigration,immigrant
+work_foundation,income_taxable_delta,region7North Central,1670.995478,946.5312261,1.765388644,0.077505385,-184.22252,3526.213476,region7,North Central
+work_foundation,income_taxable_delta,region7North East,2718.583771,1394.445021,1.949581181,0.051232383,-14.55321303,5451.720755,region7,North East
+work_foundation,income_taxable_delta,region7Edmonton,1588.452336,604.3638837,2.628304535,0.008584136,403.8884004,2773.016272,region7,Edmonton
+work_foundation,income_taxable_delta,region7Central,1594.745717,699.3093172,2.280458272,0.022585269,224.0870473,2965.404387,region7,Central
+work_foundation,income_taxable_delta,region7Calgary,761.3128592,626.4367682,1.215306792,0.224255604,-466.5143218,1989.14004,region7,Calgary
+work_foundation,income_taxable_delta,region7South,312.0249653,740.7596179,0.421222969,0.673594325,-1139.877029,1763.92696,region7,South
+work_foundation,income_taxable_delta,year_before2013,2906.311736,1063.64669,2.73240331,0.006289914,821.5453506,4991.078121,year_before,2013
+work_foundation,income_taxable_delta,year_before2014,1993.034752,1036.433736,1.922973639,0.054489788,-38.39375993,4024.463265,year_before,2014
+work_foundation,income_taxable_delta,year_before2015,4292.368695,1041.246467,4.122336865,3.76E-05,2251.507145,6333.230246,year_before,2015
+work_foundation,income_taxable_delta,year_before2016,5597.376655,1099.333523,5.091609179,3.56E-07,3442.663444,7752.089865,year_before,2016
+work_foundation,income_taxable_delta,year_before2017,6128.36825,1117.794597,5.482553113,4.22E-08,3937.471006,8319.265495,year_before,2017
+work_foundation,income_taxable_delta,spell_duration,-96.18922821,18.42783295,-5.219779692,1.80E-07,-132.3081078,-60.07034864,spell_duration,
+work_foundation,income_taxable_delta,income_taxable_before,-0.552087262,0.020104119,-27.46140085,1.24E-164,-0.591491691,-0.512682833,income_taxable_before,
+workshop_noncp,income_net_delta,(Intercept),22101.18255,2864.066475,7.716714238,1.22E-14,16487.56144,27714.80366,NA,(Intercept)
+workshop_noncp,income_net_delta,txTRUE,-132.8078775,269.9896349,-0.491899912,0.622792548,-661.9923524,396.3765974,tx,TRUE
+workshop_noncp,income_net_delta,gender2Men,2455.764378,1322.520221,1.856882291,0.063334561,-136.3987212,5047.927477,gender2,Men
+workshop_noncp,income_net_delta,gender2Women,-2536.808348,1296.771115,-1.956249888,0.050442023,-5078.502744,4.886046806,gender2,Women
+workshop_noncp,income_net_delta,age_in_years,18.41694624,10.889935,1.69118973,0.090807633,-2.927519593,39.76141207,age_in_years,
+workshop_noncp,income_net_delta,marital3never married,411.9185961,309.7229294,1.32995835,0.183538868,-195.1438412,1018.981033,marital3,never married
+workshop_noncp,income_net_delta,marital3apart,-295.8895029,592.0279384,-0.499789763,0.617225612,-1456.274767,864.4957611,marital3,apart
+workshop_noncp,income_net_delta,marital3together,-469.5725338,417.7219743,-1.124126962,0.260965284,-1288.315015,349.1699478,marital3,together
+workshop_noncp,income_net_delta,education4Less HS,-8170.8255,908.5250877,-8.993505639,2.49E-19,-9951.550792,-6390.100207,education4,Less HS
+workshop_noncp,income_net_delta,education4High School,-7932.114245,837.0136076,-9.476684934,2.75E-21,-9572.675768,-6291.552723,education4,High School
+workshop_noncp,income_net_delta,education4Post HS,-5383.831679,864.7115671,-6.226158969,4.82E-10,-7078.681694,-3688.981664,education4,Post HS
+workshop_noncp,income_net_delta,education4University Degree,-4397.268167,944.486789,-4.655722259,3.24E-06,-6248.479032,-2546.057302,education4,University Degree
+workshop_noncp,income_net_delta,dependent41 dependent,503.7308856,382.7177509,1.316194204,0.188115705,-246.4026969,1253.864468,dependent4,1 dependent
+workshop_noncp,income_net_delta,dependent42 dependents,1102.594593,490.4910489,2.247940295,0.024584914,141.2234344,2063.965752,dependent4,2 dependents
+workshop_noncp,income_net_delta,dependent43+ dependents,-509.4852963,510.1709874,-0.998655958,0.317966858,-1509.429484,490.4588913,dependent4,3+ dependents
+workshop_noncp,income_net_delta,disability2With Disability,-3277.779569,315.5326086,-10.38808503,3.00E-25,-3896.22908,-2659.330057,disability2,With Disability
+workshop_noncp,income_net_delta,ethnicityCaucasian,-1368.98111,417.8919528,-3.275921206,0.001053991,-2188.056752,-549.9054676,ethnicity,Caucasian
+workshop_noncp,income_net_delta,ethnicityVisible Minority,-467.5365227,909.9037214,-0.513830762,0.607372891,-2250.963962,1315.890916,ethnicity,Visible Minority
+workshop_noncp,income_net_delta,ethnicityIndigenous,-4680.990152,628.3179092,-7.450034581,9.50E-14,-5912.504402,-3449.475901,ethnicity,Indigenous
+workshop_noncp,income_net_delta,immigrationborn in Canada,-984.5057504,375.745004,-2.620143288,0.008792292,-1720.972625,-248.0388754,immigration,born in Canada
+workshop_noncp,income_net_delta,immigrationimmigrant,318.7552376,645.6890525,0.493666783,0.621543985,-946.8067622,1584.317237,immigration,immigrant
+workshop_noncp,income_net_delta,region7North Central,-379.3766888,958.9225607,-0.395628077,0.692381334,-2258.881923,1500.128545,region7,North Central
+workshop_noncp,income_net_delta,region7North East,1266.15772,1209.21825,1.047087835,0.295064804,-1103.931507,3636.246946,region7,North East
+workshop_noncp,income_net_delta,region7Edmonton,-586.4356915,641.5918724,-0.914032295,0.36070487,-1843.967145,671.0957626,region7,Edmonton
+workshop_noncp,income_net_delta,region7Central,-1533.038321,700.1388032,-2.189620563,0.028556984,-2905.322798,-160.7538435,region7,Central
+workshop_noncp,income_net_delta,region7Calgary,-2678.7089,647.1703376,-4.139109512,3.49E-05,-3947.174245,-1410.243556,region7,Calgary
+workshop_noncp,income_net_delta,region7South,-3009.656589,729.1662666,-4.1275313,3.67E-05,-4438.835409,-1580.477768,region7,South
+workshop_noncp,income_net_delta,year_before2013,899.7861724,2305.41307,0.390292822,0.696321915,-3618.864352,5418.436696,year_before,2013
+workshop_noncp,income_net_delta,year_before2014,-402.9405351,2291.959454,-0.175806136,0.860447056,-4895.221732,4089.340662,year_before,2014
+workshop_noncp,income_net_delta,year_before2015,3160.54572,2273.780328,1.38999607,0.164537082,-1296.104068,7617.195507,year_before,2015
+workshop_noncp,income_net_delta,year_before2016,4194.414397,2267.408665,1.84987138,0.064338771,-249.7468192,8638.575613,year_before,2016
+workshop_noncp,income_net_delta,year_before2017,4262.810883,2270.172236,1.877747783,0.060422266,-186.7669804,8712.388747,year_before,2017
+workshop_noncp,income_net_delta,spell_duration,-51.56106661,18.11927128,-2.845647918,0.004434158,-87.07515983,-16.0469734,spell_duration,
+workshop_noncp,income_net_delta,income_net_before,-0.599572058,0.016644853,-36.02146869,4.53E-280,-0.632196266,-0.566947851,income_net_before,
+workshop_noncp,earnings_total_delta,(Intercept),22570.76582,2076.01417,10.87216367,1.70E-27,18501.74122,26639.79043,NA,(Intercept)
+workshop_noncp,earnings_total_delta,txTRUE,449.7998456,285.9745333,1.572866788,0.115756836,-110.7153138,1010.315005,tx,TRUE
+workshop_noncp,earnings_total_delta,gender2Men,1303.81739,1109.692502,1.174935748,0.240026762,-871.1996042,3478.834384,gender2,Men
+workshop_noncp,earnings_total_delta,gender2Women,-3153.548829,1106.986936,-2.848767882,0.004390918,-5323.262865,-983.8347926,gender2,Women
+workshop_noncp,earnings_total_delta,age_in_years,-79.7577341,10.74593093,-7.422133512,1.17E-13,-100.8199494,-58.6955188,age_in_years,
+workshop_noncp,earnings_total_delta,marital3never married,523.3448315,315.8314887,1.657038168,0.097518867,-95.69049044,1142.380153,marital3,never married
+workshop_noncp,earnings_total_delta,marital3apart,-298.77168,638.7868766,-0.467717311,0.63998907,-1550.805293,953.2619324,marital3,apart
+workshop_noncp,earnings_total_delta,marital3together,160.1815095,446.3517741,0.358868316,0.71969532,-714.6758876,1035.038907,marital3,together
+workshop_noncp,earnings_total_delta,education4Less HS,-9746.147676,956.0093551,-10.19461538,2.23E-24,-11619.94298,-7872.352377,education4,Less HS
+workshop_noncp,earnings_total_delta,education4High School,-8860.193032,877.8819107,-10.09269348,6.32E-24,-10580.85715,-7139.528911,education4,High School
+workshop_noncp,earnings_total_delta,education4Post HS,-5293.18437,910.3580921,-5.814398109,6.13E-09,-7077.502383,-3508.866356,education4,Post HS
+workshop_noncp,earnings_total_delta,education4University Degree,-4468.12911,1009.702326,-4.425194431,9.66E-06,-6447.163585,-2489.094636,education4,University Degree
+workshop_noncp,earnings_total_delta,dependent41 dependent,1274.201093,407.7842083,3.124694549,0.001781051,474.936809,2073.465377,dependent4,1 dependent
+workshop_noncp,earnings_total_delta,dependent42 dependents,1657.28083,535.3525348,3.095681299,0.001964842,607.9803632,2706.581298,dependent4,2 dependents
+workshop_noncp,earnings_total_delta,dependent43+ dependents,-99.27225785,561.828102,-0.176695074,0.859748722,-1200.465307,1001.920791,dependent4,3+ dependents
+workshop_noncp,earnings_total_delta,disability2With Disability,-8245.075258,337.3022834,-24.44417267,4.34E-131,-8906.193719,-7583.956798,disability2,With Disability
+workshop_noncp,earnings_total_delta,ethnicityCaucasian,-1288.156408,447.934997,-2.875766387,0.004032407,-2166.11695,-410.195866,ethnicity,Caucasian
+workshop_noncp,earnings_total_delta,ethnicityVisible Minority,-753.4766938,1007.097494,-0.748166586,0.45436367,-2727.405652,1220.452265,ethnicity,Visible Minority
+workshop_noncp,earnings_total_delta,ethnicityIndigenous,-4419.158416,669.9713779,-6.59604061,4.27E-11,-5732.314204,-3106.002628,ethnicity,Indigenous
+workshop_noncp,earnings_total_delta,immigrationborn in Canada,-1120.060984,408.0496011,-2.744913807,0.006055127,-1919.845443,-320.2765256,immigration,born in Canada
+workshop_noncp,earnings_total_delta,immigrationimmigrant,316.1207167,718.9957538,0.439669796,0.660178434,-1093.123718,1725.365152,immigration,immigrant
+workshop_noncp,earnings_total_delta,region7North Central,-1007.391927,965.9999564,-1.042848832,0.297024024,-2900.768982,885.9851283,region7,North Central
+workshop_noncp,earnings_total_delta,region7North East,-795.7410866,1213.48152,-0.655750478,0.511988103,-3174.186397,1582.704223,region7,North East
+workshop_noncp,earnings_total_delta,region7Edmonton,-1002.017411,696.8367885,-1.437951365,0.150454945,-2367.829881,363.7950584,region7,Edmonton
+workshop_noncp,earnings_total_delta,region7Central,-1505.952903,757.7631429,-1.98736626,0.046887995,-2991.182109,-20.72369786,region7,Central
+workshop_noncp,earnings_total_delta,region7Calgary,-2615.336988,697.7153093,-3.748429988,1.78E-04,-3982.871374,-1247.802602,region7,Calgary
+workshop_noncp,earnings_total_delta,region7South,-3836.22228,783.2989401,-4.89752007,9.74E-07,-5371.502101,-2300.942459,region7,South
+workshop_noncp,earnings_total_delta,year_before2013,2297.167444,1277.912673,1.797593445,0.072248292,-207.5640703,4801.898959,year_before,2013
+workshop_noncp,earnings_total_delta,year_before2014,610.6934511,1248.438936,0.489165656,0.624726853,-1836.269015,3057.655917,year_before,2014
+workshop_noncp,earnings_total_delta,year_before2015,4992.424119,1248.689434,3.998131147,6.39E-05,2544.970672,7439.877566,year_before,2015
+workshop_noncp,earnings_total_delta,year_before2016,6025.900802,1274.555348,4.727845528,2.28E-06,3527.749705,8524.0519,year_before,2016
+workshop_noncp,earnings_total_delta,year_before2017,4537.041906,1291.571282,3.51280798,4.44E-04,2005.539276,7068.544536,year_before,2017
+workshop_noncp,earnings_total_delta,spell_duration,-190.2369961,18.33092218,-10.3779283,3.34E-25,-226.1659289,-154.3080634,spell_duration,
+workshop_noncp,earnings_total_delta,earnings_total_before,-0.607312529,0.018667672,-32.53284804,1.91E-229,-0.643901497,-0.570723561,earnings_total_before,
+workshop_noncp,income_total_delta,(Intercept),22520.93922,2911.440208,7.735326027,1.05E-14,16814.46475,28227.41368,NA,(Intercept)
+workshop_noncp,income_total_delta,txTRUE,-129.2387058,279.1285878,-0.463007773,0.643361079,-676.3356907,417.858279,tx,TRUE
+workshop_noncp,income_total_delta,gender2Men,2441.157206,1345.970891,1.813677563,0.069734171,-196.9696226,5079.284034,gender2,Men
+workshop_noncp,income_total_delta,gender2Women,-2547.348579,1322.523035,-1.926127948,0.054094816,-5139.517194,44.82003555,gender2,Women
+workshop_noncp,income_total_delta,age_in_years,17.25674117,11.25426206,1.533351639,0.125196406,-4.801812155,39.31529449,age_in_years,
+workshop_noncp,income_total_delta,marital3never married,444.8809513,318.7094212,1.39588265,0.162756859,-179.7951693,1069.557072,marital3,never married
+workshop_noncp,income_total_delta,marital3apart,-209.9444624,627.0324724,-0.334822313,0.737760719,-1438.939234,1019.050309,marital3,apart
+workshop_noncp,income_total_delta,marital3together,-484.910445,432.6320114,-1.120838108,0.262362879,-1332.876864,363.0559738,marital3,together
+workshop_noncp,income_total_delta,education4Less HS,-8694.113799,948.7088352,-9.164153928,5.20E-20,-10553.59995,-6834.627648,education4,Less HS
+workshop_noncp,income_total_delta,education4High School,-8386.38305,878.2313794,-9.549172629,1.37E-21,-10107.73214,-6665.033964,education4,High School
+workshop_noncp,income_total_delta,education4Post HS,-5702.943811,905.0486615,-6.301256555,2.98E-10,-7476.855247,-3929.032376,education4,Post HS
+workshop_noncp,income_total_delta,education4University Degree,-4491.15677,995.9886601,-4.509244884,6.52E-06,-6443.312217,-2539.001324,education4,University Degree
+workshop_noncp,income_total_delta,dependent41 dependent,865.1280419,398.0814027,2.173244055,0.029767254,84.88142912,1645.374655,dependent4,1 dependent
+workshop_noncp,income_total_delta,dependent42 dependents,1496.468783,504.0574793,2.968845508,0.002990814,508.5071798,2484.430386,dependent4,2 dependents
+workshop_noncp,income_total_delta,dependent43+ dependents,-224.5867055,532.723492,-0.421582132,0.673332104,-1268.734202,819.5607914,dependent4,3+ dependents
+workshop_noncp,income_total_delta,disability2With Disability,-3403.83889,326.857376,-10.41383533,2.29E-25,-4044.485146,-2763.192633,disability2,With Disability
+workshop_noncp,income_total_delta,ethnicityCaucasian,-1394.975337,434.0063579,-3.214181802,0.001309108,-2245.6355,-544.3151751,ethnicity,Caucasian
+workshop_noncp,income_total_delta,ethnicityVisible Minority,-456.4248522,933.2704575,-0.489059574,0.624801952,-2285.651508,1372.801804,ethnicity,Visible Minority
+workshop_noncp,income_total_delta,ethnicityIndigenous,-4891.955543,645.0593031,-7.583729929,3.42E-14,-6156.283223,-3627.627863,ethnicity,Indigenous
+workshop_noncp,income_total_delta,immigrationborn in Canada,-997.5477873,387.8615258,-2.571917349,0.010116945,-1757.76326,-237.3323146,immigration,born in Canada
+workshop_noncp,income_total_delta,immigrationimmigrant,296.0318773,674.1675292,0.439107291,0.660585946,-1025.348442,1617.412197,immigration,immigrant
+workshop_noncp,income_total_delta,region7North Central,-167.2328995,1011.066743,-0.165402433,0.868627996,-2148.941655,1814.475856,region7,North Central
+workshop_noncp,income_total_delta,region7North East,1219.714129,1228.179248,0.993107587,0.320662972,-1187.538989,3626.967247,region7,North East
+workshop_noncp,income_total_delta,region7Edmonton,-507.0195357,654.6651678,-0.774471532,0.438656146,-1790.174881,776.1358094,region7,Edmonton
+workshop_noncp,income_total_delta,region7Central,-1524.283712,716.5214873,-2.127338453,0.033397501,-2928.678541,-119.8888836,region7,Central
+workshop_noncp,income_total_delta,region7Calgary,-2569.328053,660.6119554,-3.8893151,1.01E-04,-3864.139207,-1274.516899,region7,Calgary
+workshop_noncp,income_total_delta,region7South,-3040.848859,744.6210562,-4.08375352,4.44E-05,-4500.319341,-1581.378377,region7,South
+workshop_noncp,income_total_delta,year_before2013,1008.579365,2330.02949,0.432861202,0.665117723,-3558.319779,5575.47851,year_before,2013
+workshop_noncp,income_total_delta,year_before2014,-228.219616,2315.69785,-0.098553279,0.921493415,-4767.028491,4310.589259,year_before,2014
+workshop_noncp,income_total_delta,year_before2015,3374.533915,2297.158872,1.469003279,0.141839028,-1127.938234,7877.006065,year_before,2015
+workshop_noncp,income_total_delta,year_before2016,4464.882292,2292.63851,1.947486389,0.051482783,-28.72986671,8958.494451,year_before,2016
+workshop_noncp,income_total_delta,year_before2017,4530.987572,2295.285597,1.974040868,0.048383323,32.18707569,9029.788068,year_before,2017
+workshop_noncp,income_total_delta,spell_duration,-55.89740055,18.69677501,-2.989681404,0.002794225,-92.54341131,-19.25138979,spell_duration,
+workshop_noncp,income_total_delta,income_total_before,-0.598138076,0.01679148,-35.62152221,5.09E-274,-0.631049674,-0.565226477,income_total_before,
+workshop_noncp,income_taxable_delta,(Intercept),20619.96192,2895.088553,7.122394201,1.08E-12,14945.53699,26294.38685,NA,(Intercept)
+workshop_noncp,income_taxable_delta,txTRUE,182.4698867,277.6181692,0.657269253,0.511011231,-361.6666509,726.6064243,tx,TRUE
+workshop_noncp,income_taxable_delta,gender2Men,2101.518448,1367.68551,1.536550933,0.124410485,-579.1694204,4782.206316,gender2,Men
+workshop_noncp,income_taxable_delta,gender2Women,-2568.696988,1342.18392,-1.913818926,0.055649758,-5199.401286,62.00731014,gender2,Women
+workshop_noncp,income_taxable_delta,age_in_years,-22.5509833,11.04495595,-2.041744975,0.041182769,-44.19929294,-0.902673667,age_in_years,
+workshop_noncp,income_taxable_delta,marital3never married,692.7669524,318.2676953,2.17668008,0.029509729,68.95662235,1316.577282,marital3,never married
+workshop_noncp,income_taxable_delta,marital3apart,-83.95447029,617.5895514,-0.135938942,0.89187017,-1294.440949,1126.532009,marital3,apart
+workshop_noncp,income_taxable_delta,marital3together,-176.8628961,426.2234829,-0.41495343,0.678178013,-1012.268485,658.5426932,marital3,together
+workshop_noncp,income_taxable_delta,education4Less HS,-8990.991057,908.651206,-9.894876052,4.63E-23,-10771.96354,-7210.018571,education4,Less HS
+workshop_noncp,income_taxable_delta,education4High School,-8448.989453,830.5927957,-10.17224023,2.81E-24,-10076.96607,-6821.012836,education4,High School
+workshop_noncp,income_taxable_delta,education4Post HS,-5457.635515,860.8640337,-6.339718355,2.32E-10,-7144.944296,-3770.326734,education4,Post HS
+workshop_noncp,income_taxable_delta,education4University Degree,-4718.770616,942.0123012,-5.009245219,5.49E-07,-6565.131442,-2872.409791,education4,University Degree
+workshop_noncp,income_taxable_delta,dependent41 dependent,617.0868989,391.719276,1.575329417,0.115187596,-150.6898326,1384.86363,dependent4,1 dependent
+workshop_noncp,income_taxable_delta,dependent42 dependents,1435.58884,499.9235381,2.871616819,0.004085722,455.7298353,2415.447846,dependent4,2 dependents
+workshop_noncp,income_taxable_delta,dependent43+ dependents,-511.7634119,517.4693178,-0.988973441,0.322681559,-1526.012457,502.4856329,dependent4,3+ dependents
+workshop_noncp,income_taxable_delta,disability2With Disability,-7656.937021,331.2766439,-23.11342246,1.70E-117,-8306.245121,-7007.628921,disability2,With Disability
+workshop_noncp,income_taxable_delta,ethnicityCaucasian,-1098.566502,425.5397559,-2.58158371,0.009838008,-1932.631974,-264.5010296,ethnicity,Caucasian
+workshop_noncp,income_taxable_delta,ethnicityVisible Minority,-755.6111287,930.7648738,-0.81181741,0.41690079,-2579.926796,1068.704539,ethnicity,Visible Minority
+workshop_noncp,income_taxable_delta,ethnicityIndigenous,-4580.269891,639.6138792,-7.16099203,8.13E-13,-5833.924444,-3326.615339,ethnicity,Indigenous
+workshop_noncp,income_taxable_delta,immigrationborn in Canada,-769.7074803,386.5487597,-1.991229983,0.046461764,-1527.349908,-12.06505246,immigration,born in Canada
+workshop_noncp,income_taxable_delta,immigrationimmigrant,913.285046,672.2843196,1.358480362,0.174318254,-404.4041492,2230.974241,immigration,immigrant
+workshop_noncp,income_taxable_delta,region7North Central,419.513986,972.606921,0.431329427,0.666230963,-1486.812837,2325.840809,region7,North Central
+workshop_noncp,income_taxable_delta,region7North East,1023.001353,1191.444215,0.858622955,0.390553233,-1312.250449,3358.253155,region7,North East
+workshop_noncp,income_taxable_delta,region7Edmonton,470.2661763,646.0398062,0.727921363,0.466665587,-795.983307,1736.51566,region7,Edmonton
+workshop_noncp,income_taxable_delta,region7Central,-378.3714361,704.4031594,-0.537151816,0.59116546,-1759.014127,1002.271255,region7,Central
+workshop_noncp,income_taxable_delta,region7Calgary,-1481.312062,651.2954313,-2.274408802,0.022946197,-2757.862663,-204.7614602,region7,Calgary
+workshop_noncp,income_taxable_delta,region7South,-2145.37547,735.5616872,-2.916649286,0.003539916,-3587.089428,-703.6615112,region7,South
+workshop_noncp,income_taxable_delta,year_before2013,1510.256303,2319.217507,0.65119218,0.514925829,-3035.451161,6055.963768,year_before,2013
+workshop_noncp,income_taxable_delta,year_before2014,-150.4714306,2304.163496,-0.065304147,0.947932137,-4666.672768,4365.729907,year_before,2014
+workshop_noncp,income_taxable_delta,year_before2015,3431.590025,2284.441745,1.502156942,0.133063737,-1045.95633,7909.13638,year_before,2015
+workshop_noncp,income_taxable_delta,year_before2016,4501.784166,2279.562028,1.974846093,0.04829184,33.80214213,8969.766189,year_before,2016
+workshop_noncp,income_taxable_delta,year_before2017,4276.091353,2283.447597,1.872647026,0.06112375,-199.5064542,8751.68916,year_before,2017
+workshop_noncp,income_taxable_delta,spell_duration,-176.7380556,18.88076928,-9.360744417,8.28E-21,-213.7446984,-139.7314128,spell_duration,
+workshop_noncp,income_taxable_delta,income_taxable_before,-0.584095195,0.016443911,-35.52045401,1.68E-272,-0.616325553,-0.551864837,income_taxable_before,
