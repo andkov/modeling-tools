@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Environment 
+# Environment
 
 ```{r message=F}
 library(tidyverse)
@@ -41,24 +41,26 @@ d <-
   )
 d %>% head() %>% print()
 ```
+
 ```{r}
 d %>% tableone::CreateTableOne(data=.)
 d %>% tableone::CreateTableOne(data=.,strata="sex")
 ```
-From marginal distribution of variables we observe  that `24.2%`of cases have a positive outcome. We can think of it as a parameter of the intercept-only model:
+
+From marginal distribution of variables we observe that `24.2%`of cases have a positive outcome. We can think of it as a parameter of the intercept-only model:
 
 ```{r}
 # m0 <- glm(outcome ~ 1, data = d, family= binomial(link="log"))
 m0 <- glm(outcome ~ 1, data = d, family= "binomial")
 m0 %>% broom::tidy(exp=T)
 ```
+
 It represents the probability with which a randomly selected case from this population will result in a positive outcome. We may be able to improve on this
 
 ```{r}
 m0 %>% broom::augment()
 m0 %>% make_auc_graph()
 ```
-
 
 ```{r}
 m1 <- glm(outcome ~ 1 + sex, data = d, family= binomial(link="log"))
