@@ -45,6 +45,56 @@ outcome_labels <- c(
 )
 outcome_names <- outcome_labels %>%  names()
 
+
+predictor_meta <- tibble::tribble(
+  ~var_name,~value_label,~value_order,
+  "tx", "FALSE",0,
+  "tx", "TRUE",1,
+  "gender2","(Missing)",0,
+  "gender2","Men",1,
+  "gender2","Women",2,
+  "marital3","(Missing)",0,
+  "marital3","never married",1,
+  "marital3","apart",2,
+  "marital3","together",3,
+  "education4","(Missing)",0,
+  "education4","Less HS",1,
+  "education4","High School",2,
+  "education4","Post HS",3,
+  "education4","University Degree",4,
+  "dependent4","0 dependents",0,
+  "dependent4","1 dependent",1,
+  "dependent4","2 dependent",2,
+  "dependent4","3+ dependent",3,
+  "disability2","Without Disability",0,
+  "disability2","With Disability",1,
+  "ethnicity","(Missing)",0,
+  "ethnicity","Caucasian",1,
+  "ethnicity","Visible Minority",2,
+  "ethnicity","Indigenous",3,
+  "immigration","(Missing)",0,
+  "immigration","born in Canada",1,
+  "immigration","immigrant",2,
+  "region7","North West", 0,
+  "region7","North Central",1,
+  "region7","North East", 2,
+  "region7","Edmonton",3 ,
+  "region7","Central",4 ,
+  "region7","Calgary",5,
+  "region7","South",6,
+  "year_before","2012",0,
+  "year_before","2013",1,
+  "year_before","2014",2,
+  "year_before","2015",3,
+  "year_before","2016",4,
+  "year_before","2017",5,
+  "spell_duration","0",0,
+  "income_net_before","0",0,
+  "earnings_total_before","0",0,
+  "income_total_before","0",0,
+  "income_taxable_before","0",0,
+)
+
 # ---- declare-functions -------------------------------------------------------
 
 # ---- load-data ---------------------------------------------------------------
