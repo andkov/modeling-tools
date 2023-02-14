@@ -1,0 +1,1 @@
+Simulating data with manually defined effect sizes (approximate)
