@@ -30,7 +30,19 @@ path_data_input <- "./analysis/effects-gaussian/nia-3-cra-effects-full.csv"
 # ---- load-data ---------------------------------------------------------------
 ds0 <- 
   readr::read_csv(path_data_input) %>% 
-  janitor::clean_names() 
+  janitor::clean_names() %>% 
+  mutate(
+    value_level = case_when(
+      term %in% c(
+        "earnings_total_before" 
+        ,"income_net_before"     
+        ,"income_taxable_before" 
+        ,"income_total_before"   
+      ) ~ "XXX", TRUE ~ value_level
+    )
+  ) 
+
+
 
 ds0 %>% glimpse()
 # ---- inspect-data ------------------------------------------------------------
@@ -68,7 +80,7 @@ predictor_labels <- c(
   "tx"                      = "Intervention"
   ,"reference"               = "Reference group"
   ,"gender2"                 = "Sex"
-  ,"age_in_years"            = "Age (years)"
+  ,"age_category5"           = "Age group"
   ,"marital3"                = "Marital Status"
   ,"dependent4"              = "Dependents (N)"
   ,"education4"              = "Education"
@@ -116,12 +128,13 @@ ds_pred <- tibble::tribble(
   ,"ethnicity"             ,"Caucasian"            ,0 , "Caucasian"          
   ,"ethnicity"             ,"Visible Minority"     ,1 , "Visible Minority"   
   ,"ethnicity"             ,"Indigenous"           ,2 , "Indigenous"         
+  ,"ethnicity"             ,"(Missing)"            ,3 , "(Missing)"         
   
   ,"gender2"               ,"Men"                  ,0      ,"Men"                  
   ,"gender2"               ,"Women"                ,1      ,"Women"                
   ,"gender2"               ,"(Missing)"            ,2      ,"(Missing)"            
   ,"immigration"           ,"Born in CAN"          ,0      ,"Born in CAN"          
-  ,"immigration"           ,"immigrant"            ,1      ,"immigrant"            
+  ,"immigration"           ,"immigrant"            ,1      ,"Immigrant"            
   ,"marital3"              ,"never married"        ,0      ,"Never Married"        
   ,"marital3"              ,"together"             ,1      ,"Together"             
   ,"marital3"              ,"apart"                ,2      ,"Apart"                
@@ -146,10 +159,10 @@ ds_pred <- tibble::tribble(
   ,"year_before"           ,"2015"                 ,-1     ,"2015"                 
   ,"year_before"           ,"2017"                 ,1      ,"2017"                 
   
-  ,"earnings_total_before" ,"1K"                   ,0 , "1K 2022"
-  ,"income_net_before"     ,"1K"                   ,0 , "1K 2022"
-  ,"income_taxable_before" ,"1K"                   ,0 , "1K 2022"
-  ,"income_total_before"   ,"1K"                   ,0 , "1K 2022"
+  ,"earnings_total_before" ,"XXX"                   ,0 , "1K 2022"
+  ,"income_net_before"     ,"XXX"                   ,0 , "1K 2022"
+  ,"income_taxable_before" ,"XXX"                   ,0 , "1K 2022"
+  ,"income_total_before"   ,"XXX"                   ,0 , "1K 2022"
 ) %>% 
   mutate(
     reference = value_order==0L
@@ -157,10 +170,10 @@ ds_pred <- tibble::tribble(
   )
 
 
-# ---- tweak-data-1 --------------------------------------------------------------
+# ---- tweak-data-raw --------------------------------------------------------------
 # tidy up for generic reporting
 
-ds1 <- 
+ds_raw <- 
   ds0 %>% 
   mutate(
     intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
@@ -194,14 +207,14 @@ ds1 <-
   select(
     intervention, outcome, predictor, level, everything()
   )
-ds1 %>% filter(intervention=="Exposure Course",outcome=="Net income (delta)")
-ds1 %>% readr::write_rds("./analysis/effects-gaussian/ds1.rds")
-ds1 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results.csv")
-# ds1 %>% names()
-# ds1 %>% count(intervention)
-# ds1 %>% count(outcome)
+ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
+# ds_raw %>% readr::write_rds("./analysis/effects-gaussian/ds1.rds")
+ds_raw %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-raw.csv")
+# ds_raw %>% names()
+# ds_raw %>% count(intervention)
+# ds_raw %>% count(outcome)
 
-# ---- tweak-data-2 --------------------------------------------------------------
+# ---- tweak-data-1 --------------------------------------------------------------
 # prepare to create effect graph
 ds0 %>% count(intervention)
 ds0 %>% count(outcome)
@@ -209,36 +222,13 @@ cat("\014")
 ds_pred %>% print_all() # model stencil
 d_model <- ds0 %>%  filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 
-# ds2 <- 
-#   ds1 %>% 
-#   mutate(
-#     var_name = case_when(is.na(var_name)~"tx",TRUE~var_name) # for consistency
-#     ,value_level = case_when(value_level=="(Intercept)"~"FALSE",TRUE~value_level)
-#   )  
-
-# table of intercepts
-d_intercept <- 
-  ds0 %>% 
-  filter(term == "(Intercept)") %>% 
-  select(intervention, outcome, estimate)
-  
-
-d_reference <- 
-  ds_pred %>% 
-  filter(reference)
-
-d_1 <- tidyr::expand_grid(d_intercept, d_reference)  
-d_1 %>%  filter(intervention=="exposure_course",outcome=="income_net_delta") 
-
-
-
 # table of slope coefficients
 d_coef <- 
   ds0 %>%
   # d_model %>%
   filter(term != "(Intercept)") %>%
   select(-term) %>% 
-  print()
+  relocate(c("var_name","value_level"), .after = "outcome") 
 
 d_coef_intercept <-
   ds0 %>%
@@ -246,29 +236,76 @@ d_coef_intercept <-
   distinct(intervention,outcome) %>% 
   tidyr::expand_grid(
    ds_pred %>% 
-     filter(var_name == "tx",value_level == "FALSE") %>% 
+     # filter(var_name == "tx",value_level == "FALSE") %>% 
+     filter(reference) %>% 
      select(var_name, value_level)
   )
 
-d_2 <- 
-  # left_join(d_coef, d_coef_intercept) %>% 
-  # bind_rows(d_coef, d_coef_intercept) %>% 
+ds1 <- 
   bind_rows(d_coef_intercept, d_coef) %>%
   relocate(c("var_name","value_level"), .after = "outcome") %>%
   left_join(
     ds_pred
   ) %>% 
-  arrange(intervention, outcome, row_number)
-d_2
+  left_join(
+    ds0 %>% 
+      filter(term == "(Intercept)") %>% 
+      select(intervention, outcome, intercept = estimate)
+  ) %>%
+  # mutate(
+  #   across(
+  #     .cols = where(is.numeric)
+  #     ,.fns = ~tidyr::replace_na(.,0)
+  #   )
+  # ) %>% 
+  relocate(intercept, .after  = "value_level") %>% 
+  arrange(intervention, outcome, row_number) 
+ds1 
 
-d_intercept <- 
-  ds0 %>% 
-  filter(term == "(Intercept)") %>% 
-  select(intervention, outcome, intercept = estimate)
 
-d_3 <- 
-  d_2 %>% 
-  left_join(d_intercept)
+
+
+
+# factors 
+ds2 <- 
+  ds1 %>% 
+  mutate(
+    intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
+    ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
+  ) %>% 
+  # select(-term) %>% 
+  rename(
+    "predictor" = "var_name"
+    ,"level"    = "value_level"
+  )  %>% 
+  mutate(
+    need_to_scale = case_when(
+      predictor %in% c(
+        "income_net_before","income_taxable_before","income_total_before","earnings_total_before"
+      ) ~ TRUE
+      , TRUE ~ FALSE
+    )
+    ,estimate = case_when(need_to_scale ~ estimate*1000, TRUE~estimate)
+    ,std_error  = case_when(need_to_scale ~ std_error*1000, TRUE~std_error )
+    ,conf_low  = case_when(need_to_scale ~ conf_low *1000, TRUE~conf_low )
+    ,conf_high  = case_when(need_to_scale ~ conf_high*1000, TRUE~conf_high )
+    
+  ) %>%
+  filter(
+    !(need_to_scale & is.na(estimate))
+  )  %>% 
+  select(-need_to_scale) %>% 
+  mutate(
+    predictor = factor(predictor, levels = predictor_names, labels = predictor_labels)
+  )
+ 
+
+ds2 %>%  filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
+
+ds2 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.csv")
+ds2 %>% readr::write_rds("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.rds")
+# ----- ------
+
 
 # ---- table-1 -----------------------------------------------------------------
 
