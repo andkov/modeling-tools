@@ -88,7 +88,7 @@ predictor_names <- predictor_labels %>% names()
 # ds0 %>% group_by(var_name,value_level) %>% count()
 
 ds_pred <- tibble::tribble(
-  ~var_name,~value_label,~value_order,~value_display
+  ~var_name,~value_level,~value_order,~value_display_label
   
   ,"tx"                    ,"FALSE"                ,0 , "No Intervention"
   ,"tx"                    ,"TRUE"                 ,1 , "Yes Intervention"
@@ -227,8 +227,10 @@ d_reference <-
   ds_pred %>% 
   filter(reference)
 
-d <- tidyr::expand_grid(d_intercept, d_reference)  
-d %>%  filter(intervention=="exposure_course",outcome=="income_net_delta") 
+d_1 <- tidyr::expand_grid(d_intercept, d_reference)  
+d_1 %>%  filter(intervention=="exposure_course",outcome=="income_net_delta") 
+
+
 
 # table of slope coefficients
 d_coef <- 
@@ -239,18 +241,35 @@ d_coef <-
   print()
 
 d_coef_intercept <-
-  ds0 %>% 
+  ds0 %>%
+  # d_model %>%
   distinct(intervention,outcome) %>% 
   tidyr::expand_grid(
    ds_pred %>% 
-     filter(var_name == "tx",value_label == "FALSE")
+     filter(var_name == "tx",value_level == "FALSE") %>% 
+     select(var_name, value_level)
   )
 
-d2 <- 
-  left_join(d_coef, d_coef_intercept) %>% 
-  relocate(c("var_name","value_label"), .after = "outcome") %>% 
+d_2 <- 
+  # left_join(d_coef, d_coef_intercept) %>% 
+  # bind_rows(d_coef, d_coef_intercept) %>% 
+  bind_rows(d_coef_intercept, d_coef) %>%
+  relocate(c("var_name","value_level"), .after = "outcome") %>%
+  left_join(
+    ds_pred
+  ) %>% 
   arrange(intervention, outcome, row_number)
-d2
+d_2
+
+d_intercept <- 
+  ds0 %>% 
+  filter(term == "(Intercept)") %>% 
+  select(intervention, outcome, intercept = estimate)
+
+d_3 <- 
+  d_2 %>% 
+  left_join(d_intercept)
+
 # ---- table-1 -----------------------------------------------------------------
 
 ds1 %>% 
