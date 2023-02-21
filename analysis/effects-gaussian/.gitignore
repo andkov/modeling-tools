@@ -1,0 +1,8 @@
+model-solution/*
+model-solution/*.*
+twang-diagnostics/*
+twang-diagnostics/*.*
+*.7z
+*.csv
+*.html
+*.rds
