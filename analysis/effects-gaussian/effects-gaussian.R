@@ -22,7 +22,7 @@ base::source("./scripts/common-functions.R") # project-level
 prints_folder <- paste0("./analysis/nia-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-path_data_input <- "./analysis/effects-gaussian/nia-3-cra-effects-full.csv"
+path_data_input <- "./analysis/effects-gaussian/nia/nia-3-cra-effects-full.csv"
 
 
 # ---- declare-functions -------------------------------------------------------
@@ -38,7 +38,7 @@ ds0 <-
         ,"income_net_before"     
         ,"income_taxable_before" 
         ,"income_total_before"   
-      ) ~ "XXX", TRUE ~ value_level
+      ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll rescale it to 1000
     )
   ) 
 
@@ -69,7 +69,7 @@ intervention_labels <- c(
 intervention_names <- intervention_labels %>%  names()
 
 outcome_labels <- c(
-  "earnings_total_delta" = "Total earnings (delta)"
+  "earnings_total_delta"  = "Total earnings (delta)"
   ,"income_net_delta"     = "Net income (delta)"
   ,"income_taxable_delta" = "Taxable income (delta)"
   ,"income_total_delta"   = "Total income (delta)"
@@ -105,16 +105,16 @@ ds_pred <- tibble::tribble(
   ,"tx"                    ,"FALSE"                ,0 , "No Intervention"
   ,"tx"                    ,"TRUE"                 ,1 , "Yes Intervention"
   
-  ,"age_category5"         ,"middle age 1"         ,0 , "25-34"
-  ,"age_category5"         ,"middle age 2"         ,1 , "35-44"
-  ,"age_category5"         ,"middle age 3"         ,2 , "45-54"
-  ,"age_category5"         ,"senior"               ,3 , "55+"
-  ,"age_category5"         ,"youth"                ,-1 , "16-24"
+  ,"age_category5"         ,"middle age 1"         ,0  , "25-34"
+  ,"age_category5"         ,"middle age 2"         ,1  , "35-44"
+  ,"age_category5"         ,"middle age 3"         ,2  , "45-54"
+  ,"age_category5"         ,"senior"               ,3  , "55+"
+  ,"age_category5"         ,"youth"                ,-1 ,"16-24"
   
-  ,"dependent4"            ,"0 dependents"         ,0 , "No dependents"
-  ,"dependent4"            ,"1 dependent"          ,1 ,"1 dependent"   
-  ,"dependent4"            ,"2 dependents"         ,2 ,"2 dependents"  
-  ,"dependent4"            ,"3+ dependents"        ,3 ,"3+ dependents" 
+  ,"dependent4"            ,"0 dependents"         ,0  , "No dependents"
+  ,"dependent4"            ,"1 dependent"          ,1  ,"1 dependent"   
+  ,"dependent4"            ,"2 dependents"         ,2  ,"2 dependents"  
+  ,"dependent4"            ,"3+ dependents"        ,3  ,"3+ dependents" 
   
   ,"disability2"           ,"Without Disability"   ,0  , "Without Disability" 
   ,"disability2"           ,"With Disability"      ,1  , "With Disability"    
@@ -132,13 +132,16 @@ ds_pred <- tibble::tribble(
   
   ,"gender2"               ,"Men"                  ,0      ,"Men"                  
   ,"gender2"               ,"Women"                ,1      ,"Women"                
-  ,"gender2"               ,"(Missing)"            ,2      ,"(Missing)"            
+  ,"gender2"               ,"(Missing)"            ,2      ,"(Missing)"
+  
   ,"immigration"           ,"Born in CAN"          ,0      ,"Born in CAN"          
-  ,"immigration"           ,"immigrant"            ,1      ,"Immigrant"            
+  ,"immigration"           ,"immigrant"            ,1      ,"Immigrant"    
+  
   ,"marital3"              ,"never married"        ,0      ,"Never Married"        
   ,"marital3"              ,"together"             ,1      ,"Together"             
   ,"marital3"              ,"apart"                ,2      ,"Apart"                
-  ,"marital3"              ,"(Missing)"            ,3      ,"(Missing)"            
+  ,"marital3"              ,"(Missing)"            ,3      ,"(Missing)"  
+  
   ,"region7"               ,"Edmonton"             ,0      ,"Edmonton"             
   ,"region7"               ,"North West"           ,-3     ,"North West"           
   ,"region7"               ,"North Central"        ,-2     ,"North Central"        
@@ -146,12 +149,14 @@ ds_pred <- tibble::tribble(
   ,"region7"               ,"Central"              ,1      ,"Central"              
   ,"region7"               ,"Calgary"              ,2      ,"Calgary"              
   ,"region7"               ,"South"                ,3      ,"South"                
+  
   ,"spell_duration"        ,"1 month"              ,0      ,"1 month"              
   ,"spell_duration"        ,"2-3 months"           ,1      ,"2-3 months"           
   ,"spell_duration"        ,"4-6 months"           ,2      ,"4-6 months"           
   ,"spell_duration"        ,"7-11 months"          ,3      ,"7-11 months"          
   ,"spell_duration"        ,"12-23 months"         ,4      ,"12-23 months"         
   ,"spell_duration"        ,"24+ months"           ,5      ,"24+ months"           
+  
   ,"year_before"           ,"2016"                 ,0      ,"2016"                 
   ,"year_before"           ,"2012"                 ,-4     ,"2012"                 
   ,"year_before"           ,"2013"                 ,-3     ,"2013"                 
@@ -159,17 +164,21 @@ ds_pred <- tibble::tribble(
   ,"year_before"           ,"2015"                 ,-1     ,"2015"                 
   ,"year_before"           ,"2017"                 ,1      ,"2017"                 
   
-  ,"earnings_total_before" ,"XXX"                   ,0 , "1K 2022"
-  ,"income_net_before"     ,"XXX"                   ,0 , "1K 2022"
-  ,"income_taxable_before" ,"XXX"                   ,0 , "1K 2022"
-  ,"income_total_before"   ,"XXX"                   ,0 , "1K 2022"
+  ,"earnings_total_before" ,"0 dollars"            ,0 , "0K 2022"
+  ,"earnings_total_before" ,"1K 2022"              ,1 , "1K 2022"
+  ,"income_net_before"     ,"0 dollars"            ,0 , "0K 2022"
+  ,"income_net_before"     ,"1K 2022"              ,1 , "1K 2022"
+  ,"income_taxable_before" ,"0 dollars"            ,0 , "0K 2022"
+  ,"income_taxable_before" ,"1K 2022"              ,1 , "1K 2022"
+  ,"income_total_before"   ,"0 dollars"            ,0 , "0K 2022"
+  ,"income_total_before"   ,"1K 2022"              ,1 , "1K 2022"
 ) %>% 
   mutate(
     reference = value_order==0L
     ,row_number = row_number()
   )
 
-
+ds_pred
 # ---- tweak-data-raw --------------------------------------------------------------
 # tidy up for generic reporting
 
@@ -209,7 +218,7 @@ ds_raw <-
   )
 ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
 # ds_raw %>% readr::write_rds("./analysis/effects-gaussian/ds1.rds")
-ds_raw %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-raw.csv")
+# ds_raw %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-raw.csv")
 # ds_raw %>% names()
 # ds_raw %>% count(intervention)
 # ds_raw %>% count(outcome)
@@ -224,15 +233,16 @@ d_model <- ds0 %>%  filter(intervention=="exposure_course",outcome=="income_net_
 
 # table of slope coefficients
 d_coef <- 
-  ds0 %>%
-  # d_model %>%
+  # ds0 %>%
+  d_model %>%
   filter(term != "(Intercept)") %>%
   select(-term) %>% 
   relocate(c("var_name","value_level"), .after = "outcome") 
+# d_coef %>% print_all()
 
 d_coef_intercept <-
-  ds0 %>%
-  # d_model %>%
+  # ds0 %>%
+  d_model %>%
   distinct(intervention,outcome) %>% 
   tidyr::expand_grid(
    ds_pred %>% 
@@ -240,8 +250,10 @@ d_coef_intercept <-
      filter(reference) %>% 
      select(var_name, value_level)
   )
+d_coef_intercept %>% print_all()
 
-ds1 <- 
+
+ds1a <- 
   bind_rows(d_coef_intercept, d_coef) %>%
   relocate(c("var_name","value_level"), .after = "outcome") %>%
   left_join(
@@ -260,10 +272,26 @@ ds1 <-
   # ) %>% 
   relocate(intercept, .after  = "value_level") %>% 
   arrange(intervention, outcome, row_number) 
+
+# correct for a unique predictor in each model (delta vs before)
+# which also happens to be a continuous predictor
+ds1 <- 
+  ds1a %>% 
+  mutate(
+    unique_pred = (var_name %in% str_replace(outcome_names,"_delta","_before")) 
+    ,target_pred = str_remove(outcome,"_delta$") ==
+    str_remove(var_name,"_before$")
+  ) %>% 
+  filter(
+    !(unique_pred & !target_pred)
+  ) %>% 
+  select(-c("unique_pred","target_pred"))
+# ds1 %>% select(-c(4:11)) %>% print_all()
+
 ds1 
-
-
-
+# ds1 %>% print_all()
+ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ds1 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 
 
 # factors 
