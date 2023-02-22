@@ -292,23 +292,18 @@ ds1
 # ds1 %>% print_all()
 ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 ds1 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ 
 
 
-# factors 
+
+
+# original scale of unique (to each outcome) predictor was in dollors
+# we want to change it to thousands of dollors for better display
 ds2 <- 
   ds1 %>% 
   mutate(
-    intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
-    ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
-  ) %>% 
-  # select(-term) %>% 
-  rename(
-    "predictor" = "var_name"
-    ,"level"    = "value_level"
-  )  %>% 
-  mutate(
     need_to_scale = case_when(
-      predictor %in% c(
+      var_name %in% c(
         "income_net_before","income_taxable_before","income_total_before","earnings_total_before"
       ) ~ TRUE
       , TRUE ~ FALSE
@@ -322,13 +317,27 @@ ds2 <-
   filter(
     !(need_to_scale & is.na(estimate))
   )  %>% 
-  select(-need_to_scale) %>% 
+  select(-need_to_scale) 
+ds2 %>% print_all()
+
+# factors 
+ds3 <- 
+  ds2 %>% 
+  mutate(
+    intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
+    ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
+  ) %>% 
+  # select(-term) %>% 
+  rename(
+    "predictor" = "var_name"
+    ,"level"    = "value_level"
+  )  %>% 
   mutate(
     predictor = factor(predictor, levels = predictor_names, labels = predictor_labels)
   )
- 
+ds3 %>% print_all()
 
-ds2 %>%  filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
+ds3 %>%  filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
 
 ds2 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.csv")
 ds2 %>% readr::write_rds("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.rds")
