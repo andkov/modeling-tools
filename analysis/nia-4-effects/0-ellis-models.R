@@ -19,7 +19,7 @@ base::source("./scripts/common-functions.R") # project-level
 
 # ---- declare-globals ---------------------------------------------------------
 # printed figures will go here when `quick_save("name",w=8,h=6)` is used:
-prints_folder <- paste0("./analysis/nia-effects/prints/")
+prints_folder <- paste0("./analysis/nia-4-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
 path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
@@ -91,7 +91,7 @@ predictor_labels <- c(
   ,"spell_duration"          = "Duration of IS"
   ,"year_before"             = "Year before IS"
   ,"earnings_total_before"   = "Earnings before IS"
-  ,"income_net_before"       = "Net Income before IS "
+  ,"income_net_before"       = "Net Income before IS"
   ,"income_total_before"     = "Total Income before IS"
   ,"income_taxable_before"   = "Taxable Income before IS"
 )
@@ -243,23 +243,23 @@ d_model <- ds0 %>%  filter(intervention=="exposure_course",outcome=="income_net_
 
 # table of slope coefficients
 d_coef <- 
-  # ds0 %>%
-  d_model %>%
+  ds0 %>%
+  # d_model %>%
   filter(term != "(Intercept)") %>%
   select(-term) %>% 
   relocate(c("var_name","value_level"), .after = "outcome") 
 # d_coef %>% print_all()
 
 d_coef_intercept <-
-  # ds0 %>%
-  d_model %>%
+  ds0 %>%
+  # d_model %>%
   distinct(intervention,outcome) %>% 
   tidyr::expand_grid(
     ds_pred %>% 
       # filter(var_name == "tx",value_level == "FALSE") %>% 
       filter(reference) %>% 
       select(var_name, value_level)
-  )
+  ) 
 d_coef_intercept %>% print_all()
 
 
@@ -349,25 +349,26 @@ ds1 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% 
 ds2 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 ds3 %>%  filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
 
-ds2 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.csv")
-ds2 %>% readr::write_rds("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.rds")
+# ds2 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.csv")
+# ds2 %>% readr::write_rds("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.rds")
 # ----- ------
 
 
 # ---- table-1 -----------------------------------------------------------------
 
-ds1 %>% 
-  select(
-    intervention, outcome, predictor, level, estimate, p_value, conf_low, conf_high
-  ) %>% 
-  DT::datatable(
-    class   = 'cell-border stripe'
-    ,filter  = "top"
-    ,options = list(
-      pageLength = 34,
-      autoWidth  = FALSE
-    )
-  )
+# ds1 %>% 
+#   select(
+#     intervention, outcome, predictor, level, estimate, p_value, conf_low, conf_high
+#   ) %>% 
+#   DT::datatable(
+#     class   = 'cell-border stripe'
+#     ,filter  = "top"
+#     ,options = list(
+#       pageLength = 34,
+#       autoWidth  = FALSE
+#     )
+#   )
+
 # ---- graph-1 -----------------------------------------------------------------
 # reference group view
 dg1 <- 
@@ -375,21 +376,69 @@ dg1 <-
   # ds_raw %>%
   # filter(intervention=="exposure_course",outcome=="income_net_delta") %>%
   filter(term %in% c("(Intercept)","txTRUE") ) %>% 
+  left_join(
+    ds1 %>% distinct(intervention, outcome,intercept)
+  ) %>% 
   mutate(
     intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
     ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
+  ) %>% 
+  mutate(
+    had_treatment = value_level %>% factor() %>% fct_recode(
+      "Reference" = "(Intercept)"
+      ,"Intervention" = "TRUE" 
+    )
+  ) %>% 
+  select(-var_name, -value_level, -term) %>% 
+  relocate(condition, .after = "outcome") %>% 
+  mutate(
+    impact_direction = case_when(
+      estimate >0L ~ "positive",
+      estimate <=0L ~ "negative"
+    )
   ) 
-  
 dg1
 
 g1 <- 
   dg1 %>% 
-  ggplot(aes(x=estimate, y =intervention))+
-  geom_point()+
+  ggplot(aes(x=estimate, y =intervention, color = condition, shape = condition))+
+  # Reference
+  geom_point(
+    aes(x = estimate)
+    ,data = . %>% filter(condition == "Reference")
+  )+
+  geom_segment(
+    aes(x=conf_low, xend=conf_high,yend=intervention)
+    ,data = . %>% filter(condition == "Reference")
+  )+
+  # Intervention
+  geom_point(
+    aes(x=estimate+intercept)
+    ,data = . %>% filter(condition == "Intervention")
+  )+
+  geom_segment(
+    aes(x=conf_low+intercept, xend=conf_high+intercept,yend=intervention)
+    ,data = . %>% filter(condition == "Intervention")
+  )+
   facet_wrap(facets = "outcome", nrow=1)
-g1
+g2 <- g1 + 
+  scale_color_manual(values = c("Intervention" = "red", "Reference" = "grey80"))+
+  scale_shape_manual(values = c("Intervention"=21, "Reference"=124))
+g2
+g2 %>% quick_save("1",w=12,h=4)
 # ---- graph-2 -----------------------------------------------------------------
 
+
+# ---- predicted-values --------------------------
+# wrong save, intervention has values of the outcome, must redo before using
+# ds_hat0 <- readr::read_rds("./analysis/nia-4-effects/osi/model-solution/nia-3-cra-fitted.rds")
+# ds_hat0 %>% glimpse()
+# 
+# ds_hat1 <- 
+#   ds_hat0 %>% 
+#   filter(intervention=="exposure_course",outcome=="income_net_delta")
+# 
+# ds_hat1
 # ---- save-to-disk ------------------------------------------------------------
 
 # ---- publish ------------------------------------------------------------
