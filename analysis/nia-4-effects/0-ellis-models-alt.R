@@ -641,10 +641,43 @@ g2
 dg1
 g2 %>% quick_save("1",w=11,h=5)
 # ---- graph-2 -----------------------------------------------------------------
-
+neat <- 
+  function(x, output_format = "html",...){
+  # knitr.table.format = output_format
+  if(output_format == "pandoc"){
+    x_t <- knitr::kable(x, format = "pandoc")
+  }else{
+    x_t <- x %>%
+      # x %>%
+      # knitr::kable() %>%
+      knitr::kable(format=output_format,...) %>%
+      kableExtra::kable_styling(
+        bootstrap_options = c("striped", "hover", "condensed","responsive"),
+        # bootstrap_options = c( "condensed"),
+        full_width = F,
+        position = "left"
+      )
+  }
+  return(x_t)
+}
 # reference group definition
-
-
+d <- 
+  ds_pred %>% 
+  filter(reference) %>% 
+  mutate(
+    var_name = factor(var_name, levels = predictor_names, labels = predictor_labels)
+  ) %>% 
+  select(var_name, value_level_display) %>% 
+  mutate(
+    value_level_display = toupper(as.character(value_level_display))
+  ) %>% 
+  distinct() %>% 
+  rename(
+    'Predictor' = var_name
+    ,'LEVEL' = value_level_display
+  )
+d %>% print_all()
+d %>% neat(align=c("r","l"))
 
 # ---- predicted-values --------------------------
 # wrong save, intervention has values of the outcome, must redo before using
