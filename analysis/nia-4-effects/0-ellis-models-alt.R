@@ -635,7 +635,7 @@ g2 <-
     ,fill = "Significant at .05"
     ,x = "Change in the amount reported to CRA, in 2022 dollars"
     ,title = "Net impact of intervention in the year after the first Income Support spell"
-    ,subtitle  = ""
+    # ,subtitle  = ""
   )
 g2
 dg1
