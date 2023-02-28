@@ -22,7 +22,8 @@ base::source("./scripts/common-functions.R") # project-level
 prints_folder <- paste0("./analysis/nia-4-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
+# path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
+path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
 
 
 # ---- declare-functions -------------------------------------------------------
@@ -221,7 +222,7 @@ ds_raw <-
   select(
     intervention, outcome, predictor, level, everything()
   )
-ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
+ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income") %>% print_all()
 # ds_raw %>% readr::write_rds("./analysis/effects-gaussian/ds1.rds")
 # ds_raw %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-raw.csv")
 # ds_raw %>% names()
@@ -363,11 +364,11 @@ ds3 <-
   # ) %>% 
   arrange(
     intervention, outcome, row_number
-  ) %>% 
-  select(
-    -std_error
-    ,-statistic
-  )
+  ) #%>% 
+  # select(
+  #   -std_error
+  #   ,-statistic
+  # )
 # ds3 %>% print_all()
 ds3 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 
@@ -410,14 +411,12 @@ ds4 %>%  filter(intervention=="Exposure Course",outcome=="Net income") %>% print
 # use the following table to see what you need to enter
 contrast_options <- 
   ds4 %>% 
-  # filter(reference) %>% 
+  # filter(reference) %>%
   select(var_name_common, value_level, reference) %>% 
   distinct() %>% 
   print_all()
 
-ds_contrast_scheme <- 
-  
-
+# define the reference and the comparison group 
 d_comparison_group <- 
   tibble::tribble(
   ~var_name, ~reference_value, ~comparison_value 
@@ -444,7 +443,7 @@ ds4 %>%
       mutate(comparison_group = )
   )
 # ---- table-1 -----------------------------------------------------------------
-
+# dynamic table for looking up
 # ds1 %>% 
 #   select(
 #     intervention, outcome, predictor, level, estimate, p_value, conf_low, conf_high
@@ -460,103 +459,32 @@ ds4 %>%
 
 
 
-# ---- graph-reference ---------------------------------------------------------
-# plot of the treatment effect on the reference group
-
 # ---- graph-0 -----------------------------------------------------------------
-# target_predictor <- "gender2"
-target_predictor <- "age_category5"
-# target_predictor <- "dependent4"
 
-
-
-dg1 <- 
-  ds3 %>% 
-  # filter(intervention %in% c("workshop_noncp")) %>%
-  # filter(intervention %in% c("ab_job_corps","career_planning")) %>%
-  filter(
-    var_name %in% c("(Intercept)","tx",target_predictor)
-  ) %>% 
-  group_by(intervention, outcome) %>% 
+# definition of a reference group
+d <- 
+  ds_pred %>% 
+  filter(reference) %>% 
   mutate(
-    tx_effect = max(estimate[which(value_level_display == "Yes Intervention")],na.rm = T)
-    ,std_error = case_when(
-      reference & !var_name == "tx" ~ std_error[which(value_level_display == "Yes Intervention")]
-      ,TRUE ~ std_error
-    )
-    ,statistic = case_when(
-      reference & !var_name == "tx" ~ statistic[which(value_level_display == "Yes Intervention")]
-      ,TRUE ~ statistic
-    )
-    ,p_value = case_when(
-      reference & !var_name == "tx" ~ p_value[which(value_level_display == "Yes Intervention")]
-      ,TRUE ~ p_value
-    )
-    ,conf_low = case_when(
-      reference & !var_name == "tx" ~ conf_low[which(value_level_display == "Yes Intervention")]
-      ,TRUE ~ conf_low
-    )
-    ,conf_high = case_when(
-      reference & !var_name == "tx" ~ conf_high[which(value_level_display == "Yes Intervention")]
-      ,TRUE ~ conf_high
-    )
-    ,estimate = case_when(reference ~ 0,TRUE ~ estimate)
+    var_name = factor(var_name, levels = predictor_names, labels = predictor_labels)
   ) %>% 
-  ungroup() %>% 
-  relocate(tx_effect, .after = "intercept") %>% 
-  # filter(!var_name %in% c("(Intercept)","tx")) %>% 
-  filter(!var_name %in% c("tx")) %>% 
+  select(var_name, value_level_display) %>% 
   mutate(
-    estimate_adj = estimate + intercept + tx_effect 
-    ,conf_low_adj = conf_low + intercept + tx_effect
-    ,conf_high_adj = conf_high + intercept + tx_effect
-    ,sign_05 = p_value <= .01
-    ,estimate_adj = case_when(
-      var_name == "(Intercept)" ~ estimate, TRUE ~ estimate_adj
-    
-    )
+    value_level_display = toupper(as.character(value_level_display))
   ) %>% 
-  select(-std_error, -statistic, -conf_low, -conf_high)
-dg1 %>% print(n=16)
-
-pred_levels <- dg1 %>% 
-  filter(value_level != "(Intercept)") %>% 
-  distinct(value_level, value_order,reference) %>% 
-  arrange(desc(reference), value_order) 
-custom_shapes <- c(3, 25,24, 21, 22, 23)
-(pred_level_values <- c( "(Intercept)",(pred_levels %>% pull(value_level))) )
-(pred_level_shapes <- custom_shapes[1:length(pred_level_values)])
-names(pred_level_shapes) <- pred_level_values
-pred_level_shapes
-
-g1 <-
-  dg1 %>% 
-
-  ggplot(aes(x=estimate_adj, y = intervention, fill = sign_05, color = sign_05))+
-  # geom_point()+
-  # geom_point(aes(shape = value_level))+
-  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6, color ="black")+
-  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6)+
-  geom_point(aes(shape = value_level), data = . %>% filter(var_name =="(Intercept)"), color="black", fill = "black",
-             size = 4)+
-  facet_wrap(facets = "outcome", nrow=1)
-g2 <- g1 +
-  scale_shape_manual(
-    values = pred_level_shapes
-  )+
-  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "white"))+
-  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "grey60"))+
-  labs(
-    fill = "Significant\nat .05", color = "Significant\nat .05"
+  distinct() %>% 
+  rename(
+    'Predictor' = var_name
+    ,'LEVEL' = value_level_display
   )
-
-g2  
-g2 %>% quick_save("test", w=11,h=5)
+d %>% print_all()
+d %>% neat(align=c("r","l"))
 
 
 
 # ---- graph-1 -----------------------------------------------------------------
-# reference group view
+# demonstration of treatment effect for the reference group
+
 dg1 <- 
   # ds0 %>%
   # ds_raw %>%
@@ -640,44 +568,100 @@ g2 <-
 g2
 dg1
 g2 %>% quick_save("1",w=11,h=5)
+
+
+
 # ---- graph-2 -----------------------------------------------------------------
-neat <- 
-  function(x, output_format = "html",...){
-  # knitr.table.format = output_format
-  if(output_format == "pandoc"){
-    x_t <- knitr::kable(x, format = "pandoc")
-  }else{
-    x_t <- x %>%
-      # x %>%
-      # knitr::kable() %>%
-      knitr::kable(format=output_format,...) %>%
-      kableExtra::kable_styling(
-        bootstrap_options = c("striped", "hover", "condensed","responsive"),
-        # bootstrap_options = c( "condensed"),
-        full_width = F,
-        position = "left"
-      )
-  }
-  return(x_t)
-}
-# reference group definition
-d <- 
-  ds_pred %>% 
-  filter(reference) %>% 
-  mutate(
-    var_name = factor(var_name, levels = predictor_names, labels = predictor_labels)
+# Comparison of tx effect across value of a covariate
+
+# target_predictor <- "gender2"
+target_predictor <- "age_category5"
+# target_predictor <- "dependent4"
+
+
+dg1 <- 
+  ds3 %>% 
+  # filter(intervention %in% c("workshop_noncp")) %>%
+  # filter(intervention %in% c("ab_job_corps","career_planning")) %>%
+  filter(
+    var_name %in% c("(Intercept)","tx",target_predictor)
   ) %>% 
-  select(var_name, value_level_display) %>% 
+  group_by(intervention, outcome) %>% 
   mutate(
-    value_level_display = toupper(as.character(value_level_display))
+    tx_effect = max(estimate[which(value_level_display == "Yes Intervention")],na.rm = T)
+    ,std_error = case_when(
+      reference & !var_name == "tx" ~ std_error[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ std_error
+    )
+    ,statistic = case_when(
+      reference & !var_name == "tx" ~ statistic[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ statistic
+    )
+    ,p_value = case_when(
+      reference & !var_name == "tx" ~ p_value[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ p_value
+    )
+    ,conf_low = case_when(
+      reference & !var_name == "tx" ~ conf_low[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ conf_low
+    )
+    ,conf_high = case_when(
+      reference & !var_name == "tx" ~ conf_high[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ conf_high
+    )
+    ,estimate = case_when(reference ~ 0,TRUE ~ estimate)
   ) %>% 
-  distinct() %>% 
-  rename(
-    'Predictor' = var_name
-    ,'LEVEL' = value_level_display
+  ungroup() %>% 
+  relocate(tx_effect, .after = "intercept") %>% 
+  # filter(!var_name %in% c("(Intercept)","tx")) %>% 
+  filter(!var_name %in% c("tx")) %>% 
+  mutate(
+    estimate_adj = estimate + intercept + tx_effect 
+    ,conf_low_adj = conf_low + intercept + tx_effect
+    ,conf_high_adj = conf_high + intercept + tx_effect
+    ,sign_05 = p_value <= .01
+    ,estimate_adj = case_when(
+      var_name == "(Intercept)" ~ estimate, TRUE ~ estimate_adj
+      
+    )
+  ) %>% 
+  select(-std_error, -statistic, -conf_low, -conf_high)
+dg1 %>% print(n=16)
+
+pred_levels <- dg1 %>% 
+  filter(value_level != "(Intercept)") %>% 
+  distinct(value_level, value_order,reference) %>% 
+  arrange(desc(reference), value_order) 
+custom_shapes <- c(3, 25,24, 21, 22, 23)
+(pred_level_values <- c( "(Intercept)",(pred_levels %>% pull(value_level))) )
+(pred_level_shapes <- custom_shapes[1:length(pred_level_values)])
+names(pred_level_shapes) <- pred_level_values
+pred_level_shapes
+
+g1 <-
+  dg1 %>% 
+  
+  ggplot(aes(x=estimate_adj, y = intervention, fill = sign_05, color = sign_05))+
+  # geom_point()+
+  # geom_point(aes(shape = value_level))+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6, color ="black")+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6)+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name =="(Intercept)"), color="black", fill = "black",
+             size = 4)+
+  facet_wrap(facets = "outcome", nrow=1)
+g2 <- g1 +
+  scale_shape_manual(
+    values = pred_level_shapes
+  )+
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "white"))+
+  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "grey60"))+
+  labs(
+    fill = "Significant\nat .05", color = "Significant\nat .05"
   )
-d %>% print_all()
-d %>% neat(align=c("r","l"))
+
+g2  
+g2 %>% quick_save("test", w=11,h=5)
+
 
 # ---- predicted-values --------------------------
 # wrong save, intervention has values of the outcome, must redo before using
@@ -689,6 +673,8 @@ d %>% neat(align=c("r","l"))
 #   filter(intervention=="exposure_course",outcome=="income_net_delta")
 # 
 # ds_hat1
+
+
 # ---- save-to-disk ------------------------------------------------------------
 
 # ---- publish ------------------------------------------------------------
