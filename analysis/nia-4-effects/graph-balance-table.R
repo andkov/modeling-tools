@@ -23,11 +23,45 @@ base::source("./scripts/graphing/graph-presets.R") # project-level
 prints_folder <- paste0("./analysis/nia-4-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-# path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
-path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
-
-
 # ---- declare-functions -------------------------------------------------------
+
+# ---- background ----------------------
+# see twang vignette at (https://cran.r-project.org/web/packages/twang/vignettes/twang.pdf
+
+# given a `twang_object` (output of the twang::ps() function)
+# diagnositic graphs
+
+# twang_object %>% plot("optimize", main = "Number of iteration to find an optimal balance between groups") %>% print()
+# balance as  function of gbm.iteration
+# this command plots the size of the imbalance vs. the number of iterations.  For
+# es.max.ATT and ks.max.ATT, this is the maximum of the absolute value of std.eff.sz
+# (standardized bias).  For ex.mean.ATT and ks.mean.ATT, this is the mean of the
+# absolute value of std.eff.sz (standardized bias)
+
+
+# twang_object %>% plot("boxplot", main = "Distribution of propensity scores (Low control & High Tx = No common support)" )%>% print()
+# distribution of propensity scores
+# we have common support when the propensity scores approximately lineup between treatment and control
+# we lack common support if propensity score is generally low for control and high for treatment
+
+
+# twang_object %>% plot("es", main = "Standard Effect Size (The higher the dot, the lower similarity between groups)") %>% print()
+# standardized effect size of pre-treatment variables
+# each dot is a variable and the higher the dot, the greater the dissimilarity between treatment and control
+# es test assumes normal distribution to compute standardized effects
+
+# twang_object %>% plot("t", main = "T-test p-values for weighted pre-treatment variables (higher = better)") %>% print()
+# t-test p-values for weighted pre-treatment variables
+# we learned that es.max.ATT optimizes the worst match and so we should use it
+# if we are afraid that the poorest match is the most important variable to balance on
+# we should use one of the other three methods if all variables to balance on are equally important
+
+# twang_object %>% plot("ks", main = "Kolmogorov-Smirnov p-values for weighted pre-treatment variables (higher = better)") %>% print()
+# kolmogorov-smirnov p-values for weighted pre-treatment variables
+# ks test is a nonparametric test that compares cumulative distributions of two datasets
+# Ho: both groups are sampled from populations with identical distributions
+# Ha: null hypothesis violated:  different medians, variances, or distributions.
+
 
 # ---- load-data --------------------------------
 
@@ -44,12 +78,13 @@ path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-
 # dbt %>% readr::write_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table.csv")
 
 d_balance_table <-
-  readr::read_csv("../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
+  # readr::read_csv("../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
+  readr::read_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
   relocate(intervention)
 
 # ---- inspect-data ------------------------------------------------------------
 d_balance_table %>% count(intervention) # for a given intervention variable (tx)
-d_balance_table %>% count(method)
+d_balance_table %>% count(method) # see more about methods in 
 
 # ---- declare-labels ----------------------------------------------------------
 
