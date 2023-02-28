@@ -16,6 +16,7 @@ library(labelled)  # labels
 library(dplyr)
 # ---- load-sources ------------------------------------------------------------
 base::source("./scripts/common-functions.R") # project-level
+base::source("./scripts/graphing/graph-presets.R") # project-level
 
 # ---- declare-globals ---------------------------------------------------------
 # printed figures will go here when `quick_save("name",w=8,h=6)` is used:
@@ -28,31 +29,27 @@ path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-
 
 # ---- declare-functions -------------------------------------------------------
 
-# ---- load-data ---------------------------------------------------------------
-ds0 <- 
-  readr::read_csv(path_data_input) %>% 
-  janitor::clean_names() %>% 
-  mutate(
-    value_level = case_when(
-      term %in% c(
-        "earnings_total_before" 
-        ,"income_net_before"     
-        ,"income_taxable_before" 
-        ,"income_total_before"   
-      ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll rescale it to 1000
-    )
-  ) 
+# ---- load-data --------------------------------
 
+# read in multiple files
+# folder_path <- "../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/"
+# file_path <- list.files(path=folder_path,pattern =".csv$",full.names = T)
+# file_name <- basename(file_path) %>% str_remove("^balance-table-") %>% str_remove(".csv$")
+# l_object <- list()
+# for(i in seq_along(file_path)){
+#   # i <- 1
+#   l_object[[file_name[i]]]  <- readr::read_csv(file_path[i])
+# }
+# dbt <- l_object %>% bind_rows(.id = "intervention") %>% relocate(intervention)
+# dbt %>% readr::write_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table.csv")
 
+d_balance_table <-
+  readr::read_csv("../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
+  relocate(intervention)
 
-ds0 %>% glimpse()
 # ---- inspect-data ------------------------------------------------------------
-ds0 %>% count(intervention)
-ds0 %>% count(outcome)
-ds0 %>% count(var_name)
-ds0 %>% group_by(var_name,value_level) %>% count() %>% print_all()
-
-
+d_balance_table %>% count(intervention) # for a given intervention variable (tx)
+d_balance_table %>% count(method)
 
 # ---- declare-labels ----------------------------------------------------------
 
@@ -182,45 +179,10 @@ ds_pred <- tibble::tribble(
 
 ds_pred
 
-# ---- load-data --------------------------------
 
-# read in multiple files
-# folder_path <- "../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/"
-# file_path <- list.files(path=folder_path,pattern =".csv$",full.names = T)
-# file_name <- basename(file_path) %>% str_remove("^balance-table-") %>% str_remove(".csv$")
-# l_object <- list()
-# for(i in seq_along(file_path)){
-#   # i <- 1
-#   l_object[[file_name[i]]]  <- readr::read_csv(file_path[i])
-# }
-# dbt <- l_object %>% bind_rows(.id = "intervention") %>% relocate(intervention)
-# dbt %>% readr::write_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table.csv")
-
-d_balance_table <-
-  readr::read_csv("../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
-  relocate(intervention)
 
 # ---- tweak-data --------------------------------
-
-# ---- ----- 
-
-balance_table <-
-  twang_object %>%
-  bal.table() %>% # gets balance table
-  purrr::map(tibble::rownames_to_column,"covariate") # add covariate names
-
-# dbt <-
-# d_balance_table <-
-#   balance_table %>%
-#   dplyr::bind_rows(.id = "method") %>%
-#   janitor::clean_names() %>%
-#   as_tibble()%>%
-#   mutate(
-#     covariate = as_factor(covariate)
-#   )
-# d_balance_table
-
-
+intervention_i <- "career_planning"
 # group imbalance graph
 d <-
   d_balance_table %>%
@@ -283,16 +245,15 @@ g <-
     ,caption = "Standard Effect Size interpretation: <.01 = 'very small' | <.2 = 'Small` | <.5 = 'Medium'"
   )
 # g
-ggsave(
-  filename = paste0(intervention_i,"-0-group-imbalance.png")
-  ,plot = g
-  ,path = folder_for_diagnostic_graphs
-  ,device = "png"
-  ,width=12
-  ,height=7
-)
 
-}
+g %>% 
+  quick_save(
+    name = paste0(intervention_i,"-0-group-imbalance")
+    ,width = 12
+    ,height= 7
+  )
+
+
 # ---- save-to-disk ------------------------------------------------------------
 
 # ---- publish ------------------------------------------------------------
