@@ -196,12 +196,34 @@ ds_pred
 # dbt <- l_object %>% bind_rows(.id = "intervention") %>% relocate(intervention)
 # dbt %>% readr::write_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table.csv")
 
-dbt <- readr::read_csv("./analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv")
+d_balance_table <-
+  readr::read_csv("../sda-fiesta/analysis/nia-4-effects/osi/twang-diagnostics/balance-table-career_planning.csv") %>% 
+  relocate(intervention)
 
 # ---- tweak-data --------------------------------
+
+# ---- ----- 
+
+balance_table <-
+  twang_object %>%
+  bal.table() %>% # gets balance table
+  purrr::map(tibble::rownames_to_column,"covariate") # add covariate names
+
+# dbt <-
+# d_balance_table <-
+#   balance_table %>%
+#   dplyr::bind_rows(.id = "method") %>%
+#   janitor::clean_names() %>%
+#   as_tibble()%>%
+#   mutate(
+#     covariate = as_factor(covariate)
+#   )
+# d_balance_table
+
+
+# group imbalance graph
 d <-
-  dbt %>%
-  filter(intervention == "workshop_noncp") %>% 
+  d_balance_table %>%
   # filter(!method == "unw") %>%
   mutate(
     std_eff_sz = abs(std_eff_sz)
@@ -222,7 +244,7 @@ d <-
     ,standard_distance = (std_eff_sz)^2 %>% mean(na.rm=T) %>% sqrt()  # custom metric
   ) %>%
   ungroup()
-d %>% glimpse()
+# d %>% glimpse()
 
 g <-
   d %>%
@@ -231,30 +253,46 @@ g <-
     ,y = covariate
     ,color = metric
     ,fill = metric
-    # ,shape = metric
+    ,shape = metric
   )) +
   geom_vline(aes(xintercept= es_mean, color = metric),show.legend = F)+
   geom_vline(aes(xintercept= standard_distance, color = metric),show.legend = F,linetype="dotdash")+
-  geom_vline(xintercept= .1, color = "black",linetype="dashed")+
+  geom_vline(xintercept= .1, color = "black",linetype="dashed", alpha = .6)+
   geom_vline(xintercept= 0, color = "black",linetype="solid",alpha =.3)+
   facet_wrap(facets = c("distribution"), scales = "free_x")+
-  # scale_shape_manual(values = c("max"=20,"mean"=10))+
-  # scale_shape_manual(values = c("20"))+
-  geom_point(shape=21,alpha = .2, size = 3)+
-  geom_point(shape=21,alpha = .8, size = 3,fill=NA)+
+  scale_shape_manual(values = c("max"=21,"mean"=23,"unweighted"=22))+
+  
+  geom_point(alpha = .2, size = 3        , data = . %>% filter(metric!="mean"))+
+  geom_point(alpha = .8, size = 3,fill=NA, data = . %>% filter(metric!="mean"))+
+  
+  geom_point(alpha = .2, size = 1        , data = . %>% filter(metric=="mean"),show.legend=F)+
+  geom_point(alpha = .8, size = 1,fill=NA, data = . %>% filter(metric=="mean"),show.legend = F)+
+  
+  
   # scale_x_continuous(breaks = seq(0,.3,.05), minor_breaks = seq(0,.3,.01),labels = RemoveLeadingZero)+
   scale_x_continuous(breaks = seq(-1,.9,.05), minor_breaks = seq(-1,.9,.01),labels = RemoveLeadingZero)+
+  scale_color_manual(values = c("max"="red",'mean'="black","unweighted"="blue"))+
+  scale_fill_manual(values = c("max"="red",'mean'="black","unweighted"="blue"))+
   labs(
     x = "Group imbalance (lower = better)"
-    ,fill = "Metric\nof group\nimbalance"
+    ,fill  = "Metric\nof group\nimbalance"
     ,color =  "Metric\nof group\nimbalance"
-    ,title = "Group balance across individual covariates"
+    ,shape =  "Metric\nof group\nimbalance"
+    ,title = paste0("Group balance across individual covariates. Intervention = ", intervention_labels[intervention_i])
     ,subtitle = "solid color = average effect size; dotdash color = standard statistical distance "
     ,caption = "Standard Effect Size interpretation: <.01 = 'very small' | <.2 = 'Small` | <.5 = 'Medium'"
   )
-g
-g %>% quick_save("group-imbalance",width=11,height=7)
+# g
+ggsave(
+  filename = paste0(intervention_i,"-0-group-imbalance.png")
+  ,plot = g
+  ,path = folder_for_diagnostic_graphs
+  ,device = "png"
+  ,width=12
+  ,height=7
+)
 
+}
 # ---- save-to-disk ------------------------------------------------------------
 
 # ---- publish ------------------------------------------------------------
