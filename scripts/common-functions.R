@@ -33,25 +33,25 @@ quick_save <- function(g,name,...){
 }
 
 # adds neat styling to your knitr table
-neat <- function(x, output_format = "html"){
-  # knitr.table.format = output_format
-  if(output_format == "pandoc"){
-    x_t <- knitr::kable(x, format = "pandoc")
-  }else{
-    x_t <- x %>%
-      # x %>%
-      # knitr::kable() %>%
-      knitr::kable(format=output_format) %>%
-      kableExtra::kable_styling(
-        bootstrap_options = c("striped", "hover", "condensed","responsive"),
-        # bootstrap_options = c( "condensed"),
-        full_width = F,
-        position = "left"
-      )
-  }
-  return(x_t)
-}
-# ds %>% distinct(id) %>% count() %>% neat(10)
+neat <- 
+  function(x, output_format = "html",...){
+    # knitr.table.format = output_format
+    if(output_format == "pandoc"){
+      x_t <- knitr::kable(x, format = "pandoc")
+    }else{
+      x_t <- x %>%
+        # x %>%
+        # knitr::kable() %>%
+        knitr::kable(format=output_format,...) %>%
+        kableExtra::kable_styling(
+          bootstrap_options = c("striped", "hover", "condensed","responsive"),
+          # bootstrap_options = c( "condensed"),
+          full_width = F,
+          position = "left"
+        )
+    }
+    return(x_t)
+  } %>% distinct(id) %>% count() %>% neat(10)
 
 # adds a formated datatable
 neat_DT <- function(x, filter_="top",...){
