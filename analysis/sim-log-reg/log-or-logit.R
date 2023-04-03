@@ -40,14 +40,11 @@ d %>% explore::explore(outcome,target = sex)
 m0 <- glm(outcome ~ 1, data = d, family= "binomial")
 m0 %>% broom::tidy(exp=T)
 
-It represents the probability with which a randomly selected case from this population will result in a positive outcome. We may be able to improve on this
+# It represents the probability with which a randomly selected case from this population will result in a positive outcome. We may be able to improve on this
 
 
 m0 %>% broom::augment()
 m0 %>% make_auc_graph()
-
-
-
 
 m1 <- glm(outcome ~ 1 + sex, data = d, family= binomial(link="log"))
 m1 %>% broom::tidy(exp=T)
