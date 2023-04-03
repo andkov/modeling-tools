@@ -19,39 +19,11 @@ base::source("./scripts/common-functions.R") # project-level
 
 # ---- declare-globals ---------------------------------------------------------
 # printed figures will go here when `quick_save("name",w=8,h=6)` is used:
-prints_folder <- paste0("./analysis/nia-effects/prints/")
+prints_folder <- paste0("./analysis/effects-gaussian/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-path_data_input <- "./analysis/effects-gaussian/nia/nia-3-cra-effects-full.csv"
-
-
+path_data_input <- "./data-private/raw/effects-gaussian/model-solution/nia-3-cra-effects-full.csv"
 # ---- declare-functions -------------------------------------------------------
-
-# ---- load-data ---------------------------------------------------------------
-ds0 <- 
-  readr::read_csv(path_data_input) %>% 
-  janitor::clean_names() %>% 
-  mutate(
-    value_level = case_when(
-      term %in% c(
-        "earnings_total_before" 
-        ,"income_net_before"     
-        ,"income_taxable_before" 
-        ,"income_total_before"   
-      ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll rescale it to 1000
-    )
-  ) 
-
-
-
-ds0 %>% glimpse()
-# ---- inspect-data ------------------------------------------------------------
-ds0 %>% count(intervention)
-ds0 %>% count(outcome)
-ds0 %>% count(var_name)
-ds0 %>% group_by(var_name,value_level) %>% count() %>% print_all()
-
-
 
 # ---- declare-labels ----------------------------------------------------------
 
@@ -69,10 +41,10 @@ intervention_labels <- c(
 intervention_names <- intervention_labels %>%  names()
 
 outcome_labels <- c(
-  "earnings_total_delta"  = "Total earnings (delta)"
-  ,"income_net_delta"     = "Net income (delta)"
-  ,"income_taxable_delta" = "Taxable income (delta)"
-  ,"income_total_delta"   = "Total income (delta)"
+  "earnings_total_delta"  = "Total earnings"
+  ,"income_net_delta"     = "Net income"
+  ,"income_taxable_delta" = "Taxable income"
+  ,"income_total_delta"   = "Total income"
 )
 outcome_names <- outcome_labels %>%  names()
 
@@ -91,7 +63,7 @@ predictor_labels <- c(
   ,"spell_duration"          = "Duration of IS"
   ,"year_before"             = "Year before IS"
   ,"earnings_total_before"   = "Earnings before IS"
-  ,"income_net_before"       = "Net Income before IS "
+  ,"income_net_before"       = "Net Income before IS"
   ,"income_total_before"     = "Total Income before IS"
   ,"income_taxable_before"   = "Taxable Income before IS"
 )
@@ -100,7 +72,7 @@ predictor_names <- predictor_labels %>% names()
 # ds0 %>% group_by(var_name,value_level) %>% count()
 
 ds_pred <- tibble::tribble(
-  ~var_name,~value_level,~value_order,~value_display_label
+  ~var_name,~value_level,~value_order,~value_level_display
   
   ,"tx"                    ,"FALSE"                ,0 , "No Intervention"
   ,"tx"                    ,"TRUE"                 ,1 , "Yes Intervention"
@@ -157,12 +129,13 @@ ds_pred <- tibble::tribble(
   ,"spell_duration"        ,"12-23 months"         ,4      ,"12-23 months"         
   ,"spell_duration"        ,"24+ months"           ,5      ,"24+ months"           
   
-  ,"year_before"           ,"2016"                 ,0      ,"2016"                 
-  ,"year_before"           ,"2012"                 ,-4     ,"2012"                 
-  ,"year_before"           ,"2013"                 ,-3     ,"2013"                 
-  ,"year_before"           ,"2014"                 ,-2     ,"2014"                 
-  ,"year_before"           ,"2015"                 ,-1     ,"2015"                 
-  ,"year_before"           ,"2017"                 ,1      ,"2017"                 
+  ,"year_before"           ,"2018"                 ,1      ,"2018"                 
+  ,"year_before"           ,"2017"                 ,0      ,"2017"                 
+  ,"year_before"           ,"2016"                 ,-1      ,"2016"                 
+  ,"year_before"           ,"2015"                 ,-2     ,"2015"                 
+  ,"year_before"           ,"2014"                 ,-3     ,"2014"                 
+  ,"year_before"           ,"2013"                 ,-4     ,"2013"                 
+  ,"year_before"           ,"2012"                 ,-5     ,"2012"                 
   
   ,"earnings_total_before" ,"0 dollars"            ,0 , "0K 2022"
   ,"earnings_total_before" ,"1K 2022"              ,1 , "1K 2022"
@@ -178,21 +151,70 @@ ds_pred <- tibble::tribble(
     ,row_number = row_number()
   )
 
-ds_pred
+# ds_pred
+
+# ---- load-data ---------------------------------------------------------------
+ds0 <- 
+  readr::read_csv(path_data_input) %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    value_level = case_when(
+      term %in% c(
+        "earnings_total_before" 
+        ,"income_net_before"     
+        ,"income_taxable_before" 
+        ,"income_total_before"   
+      ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll re-scale it to 1000
+    )
+  ) 
+
+ds0 %>% glimpse()
+# ---- inspect-data ------------------------------------------------------------
+# the data contains coefficients of a GLM model, specified as:
+# outcome_k ~ intervention_p + common_covariates + unique_covariate_k
+# Here is how a single model looks like in this table:
+ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+# We have a table like this for each outcome-intervention combination: 
+ds0 %>%  group_by(intervention,outcome) %>% count() %>% print_all()
+# The outcome is the change in financial health from before to after being on Income Support
+# The intervention is participation (binary) in a particular program before ending IS
+
+# Things to notice:
+# 1) columns `var_name` and `value_label` are the tidied column `term`
+# 2) intervention enters the model with a generic name `tx`
+# 3) the last covariate corresponds to the choice of outcome measurement
+# (i.e. when we use `income_net_delta` as the outcome, we control for `income_net_before`)
+ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% 
+  filter(term == "income_net_before") %>% select(outcome, term)
+# 4) A set of common covariates includes:
+ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% 
+  filter(!var_name %in% c(NA_character_, "tx","income_net_before")) %>% 
+  select(var_name) %>% distinct() %>% 
+  print_all()
+# it is repeated in each model. 
+
+# ---- goals -------------------------------------------------------------------
+# Using raw tables of model coefficients and meta data, derive data forms for
+# 1) Generic reporting 
+# 2) Visualization of main effects
+
+
 # ---- tweak-data-raw --------------------------------------------------------------
 # tidy up for generic reporting
 
+# This data form will minimize transformations and keep as much original structure as possible
+# 1. Re-scale selected coefficients for easier interpretation
+# 1. Round the values for reporting
+# 1. Add display labels
 ds_raw <- 
-  ds0 %>% 
-  mutate(
-    intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
-    ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
-  ) %>% 
+  ds0 %>%
   select(-term) %>% 
+  # rename for meaningful and convenient reference
   rename(
     "predictor" = "var_name"
     ,"level"    = "value_level"
   )  %>% 
+  # re-scale unique continuous for better comparison
   mutate(
     estimate = case_when(
       predictor %in% c(
@@ -200,10 +222,11 @@ ds_raw <-
       ) ~ (estimate * 1000)
       , TRUE ~ estimate
     )
-  ) %>% 
+  ) %>%
+  # round up for reporting
   mutate(
     across(
-      .cols = c("estimate", "conf_low", "conf_high")
+      .cols = c("estimate", "conf_low", "conf_high", "std_error")
       ,.fns = ~round(.,0)
     )
   ) %>% 
@@ -215,46 +238,52 @@ ds_raw <-
   ) %>% 
   select(
     intervention, outcome, predictor, level, everything()
-  )
-ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
-# ds_raw %>% readr::write_rds("./analysis/effects-gaussian/ds1.rds")
-# ds_raw %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-raw.csv")
-# ds_raw %>% names()
-# ds_raw %>% count(intervention)
-# ds_raw %>% count(outcome)
+  ) %>% 
+  # add display labels
+  mutate(
+    intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
+    ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
+  )  
+ds_raw %>% filter(intervention=="Exposure Course",outcome=="Net income") %>% print_all()
+# `ds_raw` is a typical table of coefficients, but it lacks some details we could use in reporting effects
+# To improve on this table, we re-shape and augment it with additional information
 
 # ---- tweak-data-1 --------------------------------------------------------------
 # prepare to create effect graph
-ds0 %>% count(intervention)
-ds0 %>% count(outcome)
+ds0 %>% count(intervention)# 8 interventions
+ds0 %>% count(outcome) # 4 outcomes
+ds0 %>% group_by(var_name, value_level) %>% count() %>% print_all() # predictors and their levels
+
+
 cat("\014")
 ds_pred %>% print_all() # model stencil
 d_model <- ds0 %>%  filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 
+
 # table of slope coefficients
 d_coef <- 
-  # ds0 %>%
-  d_model %>%
+  ds0 %>%
+  # d_model %>%
   filter(term != "(Intercept)") %>%
   select(-term) %>% 
   relocate(c("var_name","value_level"), .after = "outcome") 
 # d_coef %>% print_all()
 
 d_coef_intercept <-
-  # ds0 %>%
-  d_model %>%
+  ds0 %>%
+  # d_model %>%
   distinct(intervention,outcome) %>% 
   tidyr::expand_grid(
-   ds_pred %>% 
-     # filter(var_name == "tx",value_level == "FALSE") %>% 
-     filter(reference) %>% 
-     select(var_name, value_level)
-  )
-d_coef_intercept %>% print_all()
+    ds_pred %>% 
+      # filter(var_name == "tx",value_level == "FALSE") %>% 
+      filter(reference) %>% 
+      select(var_name, value_level)
+  ) 
+# d_coef_intercept %>% print_all()
 
 
 ds1a <- 
-  bind_rows(d_coef_intercept, d_coef) %>%
+  bind_rows(d_coef_intercept, d_coef) %>%# print_all()
   relocate(c("var_name","value_level"), .after = "outcome") %>%
   left_join(
     ds_pred
@@ -272,7 +301,7 @@ ds1a <-
   # ) %>% 
   relocate(intercept, .after  = "value_level") %>% 
   arrange(intervention, outcome, row_number) 
-
+ds1a %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 # correct for a unique predictor in each model (delta vs before)
 # which also happens to be a continuous predictor
 ds1 <- 
@@ -280,21 +309,18 @@ ds1 <-
   mutate(
     unique_pred = (var_name %in% str_replace(outcome_names,"_delta","_before")) 
     ,target_pred = str_remove(outcome,"_delta$") ==
-    str_remove(var_name,"_before$")
+      str_remove(var_name,"_before$")
   ) %>% 
   filter(
     !(unique_pred & !target_pred)
   ) %>% 
   select(-c("unique_pred","target_pred"))
-# ds1 %>% select(-c(4:11)) %>% print_all()
+# ds1 %>% select(-c(8:11)) %>% print_all()
 
 ds1 
 # ds1 %>% print_all()
 ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 ds1 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
- 
-
-
 
 
 # original scale of unique (to each outcome) predictor was in dollors
@@ -303,9 +329,9 @@ ds2 <-
   ds1 %>% 
   mutate(
     need_to_scale = case_when(
-      var_name %in% c(
+      (var_name %in% c(
         "income_net_before","income_taxable_before","income_total_before","earnings_total_before"
-      ) ~ TRUE
+      )) & !reference ~ TRUE
       , TRUE ~ FALSE
     )
     ,estimate = case_when(need_to_scale ~ estimate*1000, TRUE~estimate)
@@ -315,63 +341,275 @@ ds2 <-
     
   ) %>%
   filter(
-    !(need_to_scale & is.na(estimate))
+    !( (need_to_scale & is.na(estimate))  )
   )  %>% 
-  select(-need_to_scale) 
-ds2 %>% print_all()
+  select(-need_to_scale) %>% 
+  # rename unique continuous predictor to a common name
+  mutate(
+    var_name_common = case_when(
+      var_name %in% c("income_net_before",
+                      "income_total_before",
+                      "income_taxable_before",
+                      "earnings_total_before")
+      ~ "reported_before_is",
+      TRUE ~ var_name
+    )
+  )
+# ds2 %>% print_all()
+ds2 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+
+# add intercept
+ds3 <-
+  ds2 %>% 
+  bind_rows(
+    ds0 %>% 
+      filter(term == "(Intercept)") %>% 
+      select(-term) %>% 
+      mutate(
+        value_level_display = "Reference Group"
+        ,var_name = value_level
+        ,reference = NA
+        ,value_order = 0L
+        ,row_number = 0L
+        ,var_name_common = value_level
+        
+      )
+  ) %>% 
+  # mutate(
+  #   intercept = case_when(var_name=="(Intercept)"~estimate,TRUE~intercept)
+  # ) %>% 
+  arrange(
+    intervention, outcome, row_number
+  ) #%>% 
+# select(
+#   -std_error
+#   ,-statistic
+# )
+# ds3 %>% print_all()
+ds3 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
 
 # factors 
-ds3 <- 
-  ds2 %>% 
+ds4 <- 
+  ds3 %>% 
   mutate(
     intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
     ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
   ) %>% 
   # select(-term) %>% 
-  rename(
-    "predictor" = "var_name"
-    ,"level"    = "value_level"
-  )  %>% 
+  # rename(
+  #   "predictor" = "var_name"
+  #   ,"level"    = "value_level"
+  # )  %>% 
   mutate(
-    predictor = factor(predictor, levels = predictor_names, labels = predictor_labels)
-  )
-ds3 %>% print_all()
-
-ds3 %>%  filter(intervention=="Exposure Course",outcome=="Net income (delta)") %>% print_all()
-
-ds2 %>% readr::write_csv("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.csv")
-ds2 %>% readr::write_rds("./analysis/effects-gaussian/nia-fiesta-model-results-tidy.rds")
-# ----- ------
-
-
-# ---- table-1 -----------------------------------------------------------------
-
-ds1 %>% 
-  select(
-    intervention, outcome, predictor, level, estimate, p_value, conf_low, conf_high
-  ) %>% 
-  DT::datatable(
-    class   = 'cell-border stripe'
-    ,filter  = "top"
-    ,options = list(
-      pageLength = 34,
-      autoWidth  = FALSE
+    var_name_display = factor(
+      var_name
+      , levels = c(predictor_names, "(Intercept)")
+      , labels = c(predictor_labels, "(Intercept)")
     )
+    
+  ) %>% 
+  relocate(
+    c("var_name_display","value_level_display")
+    ,.after = "outcome"
   )
+# ds4 %>% print_all()
+
+ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ds1 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ds2 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ds3 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
+ds4 %>%  filter(intervention=="Exposure Course",outcome=="Net income") %>% print_all()
+
+
+# ---- reference-group -----------------------------------------------------------------
+# The table
+# definition of a reference group
+d <- 
+  ds_pred %>% 
+  filter(reference) %>% 
+  mutate(
+    var_name = factor(var_name, levels = predictor_names, labels = predictor_labels)
+  ) %>% 
+  select(var_name, value_level_display) %>% 
+  mutate(
+    value_level_display = toupper(as.character(value_level_display))
+  ) %>% 
+  distinct() %>% 
+  rename(
+    'Predictor' = var_name
+    ,'LEVEL' = value_level_display
+  )
+d %>% print_all()
+# note that only one of the unique covariates will be applied, respective of the outcome
+
 # ---- graph-1 -----------------------------------------------------------------
+# Target
+# Show the main effects of covariates in each model
+# Note: there is great automated solution for this task: GGally::ggcoef_model(), see 
+# however, it hits a glm model object, which may not be available
+
 
 # ---- graph-2 -----------------------------------------------------------------
+# Target: 
+# show the main effect of tx for the reference group across outcome-intervention pairs
 
-# ---- save-to-disk ------------------------------------------------------------
+dg1 <- 
+  ds4 %>% 
+  filter(var_name %in% c("tx")) %>% 
+  mutate(
+    impact_direction = case_when(
+      estimate >0L ~ "positive",
+      estimate <=0L ~ "negative"
+    )
+    ,sign_at_05 = p_value <= .05
+  ) 
+dg1
 
-# ---- publish ------------------------------------------------------------
-path <- "./analysis/.../report-isolated.Rmd" # connect with Rmd for publishing
-rmarkdown::render(
-  input = path ,
-  output_format=c(
-    "html_document"
-    # "word_document"
-    # "pdf_document"
-  ),
-  clean=TRUE
-)
+g1 <- 
+  dg1 %>% 
+  ggplot(aes(y =intervention, shape = value_level_display))+
+  # Reference
+  geom_point(
+    aes(x = intercept)
+    ,data = . %>% filter(value_level == FALSE)
+    # ,shape = 21
+  )+
+  # Intervention
+  geom_point(
+    aes(x=estimate+intercept, fill = sign_at_05)
+    # ,data = . %>% filter(value_level == TRUE)
+    ,data = . %>% filter(value_level_display == "Yes Intervention")
+    ,shape = 21
+    ,size = 2
+  )+
+  geom_segment(
+    aes(x=intercept+estimate, xend = intercept, yend = intervention)
+  )+
+  geom_text(aes(label = scales::comma(estimate,1) ,x=intercept+estimate, color = impact_direction, alpha = sign_at_05)
+            ,size = 4, nudge_y = .2)+
+  # geom_text(aes(label = scales::comma(intercept,1),x=intercept), data = . %>% filter(value_level=="FALSE")
+  geom_text(aes(label = scales::comma(intercept,1),x=intercept), data = . %>% filter(value_level_display=="No Intervention")
+            ,size = 2.5, alpha = .5, color = "grey40",nudge_y=-.15)+
+  facet_wrap(facets = "outcome", nrow=1)
+g1
+g2 <- 
+  g1 + 
+  scale_color_manual(values = c("positive" = "blue", "negative" = "red"))+
+  scale_fill_manual(values = c("TRUE" = "black", "FALSE" = "white"))+
+  # scale_shape_manual(values = c("TRUE"=21, "FALSE"=124))+
+  scale_shape_manual(values = c("Yes Intervention"=21, "No Intervention"=124))+
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = .2))+
+  scale_x_continuous(
+    breaks = seq(10000,30000,5000)
+    ,labels = scales::comma_format()
+    # ,limits = c(14000,26000)
+    ,expand =  expansion(mult = c(0.2,0.2))
+  )+
+  guides(alpha = F)+
+  labs(
+    shape = ""
+    ,color = "Direction of impact"
+    ,fill = "Significant at .05"
+    ,x = "Change in the amount reported to CRA, in 2022 dollars"
+    ,title = "Net impact of intervention in the year after the first Income Support spell"
+    # ,subtitle  = ""
+  )
+g2
+dg1
+g2 %>% quick_save("1",w=11,h=5)
+
+
+
+# ---- graph-3 -----------------------------------------------------------------
+# Target:
+# Show the main effect of tx for different levels of a categorical covariate
+
+# target_predictor <- "gender2"
+target_predictor <- "age_category5"
+# target_predictor <- "dependent4"
+
+
+dg1 <- 
+  ds3 %>% 
+  # filter(intervention %in% c("workshop_noncp")) %>%
+  # filter(intervention %in% c("ab_job_corps","career_planning")) %>%
+  filter(
+    var_name %in% c("(Intercept)","tx",target_predictor)
+  ) %>% 
+  group_by(intervention, outcome) %>% 
+  mutate(
+    tx_effect = max(estimate[which(value_level_display == "Yes Intervention")],na.rm = T)
+    ,std_error = case_when(
+      reference & !var_name == "tx" ~ std_error[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ std_error
+    )
+    ,statistic = case_when(
+      reference & !var_name == "tx" ~ statistic[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ statistic
+    )
+    ,p_value = case_when(
+      reference & !var_name == "tx" ~ p_value[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ p_value
+    )
+    ,conf_low = case_when(
+      reference & !var_name == "tx" ~ conf_low[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ conf_low
+    )
+    ,conf_high = case_when(
+      reference & !var_name == "tx" ~ conf_high[which(value_level_display == "Yes Intervention")]
+      ,TRUE ~ conf_high
+    )
+    ,estimate = case_when(reference ~ 0,TRUE ~ estimate)
+  ) %>% 
+  ungroup() %>% 
+  relocate(tx_effect, .after = "intercept") %>% 
+  # filter(!var_name %in% c("(Intercept)","tx")) %>% 
+  filter(!var_name %in% c("tx")) %>% 
+  mutate(
+    estimate_adj = estimate + intercept + tx_effect 
+    ,conf_low_adj = conf_low + intercept + tx_effect
+    ,conf_high_adj = conf_high + intercept + tx_effect
+    ,sign_05 = p_value <= .01
+    ,estimate_adj = case_when(
+      var_name == "(Intercept)" ~ estimate, TRUE ~ estimate_adj
+      
+    )
+  ) %>% 
+  select(-std_error, -statistic, -conf_low, -conf_high)
+dg1 %>% print(n=16)
+
+pred_levels <- dg1 %>% 
+  filter(value_level != "(Intercept)") %>% 
+  distinct(value_level, value_order,reference) %>% 
+  arrange(desc(reference), value_order) 
+custom_shapes <- c(3, 25,24, 21, 22, 23)
+(pred_level_values <- c( "(Intercept)",(pred_levels %>% pull(value_level))) )
+(pred_level_shapes <- custom_shapes[1:length(pred_level_values)])
+names(pred_level_shapes) <- pred_level_values
+pred_level_shapes
+
+g1 <-
+  dg1 %>% 
+  
+  ggplot(aes(x=estimate_adj, y = intervention, fill = sign_05, color = sign_05))+
+  # geom_point()+
+  # geom_point(aes(shape = value_level))+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6, color ="black")+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name !="(Intercept)"), size = 3, alpha = .6)+
+  geom_point(aes(shape = value_level), data = . %>% filter(var_name =="(Intercept)"), color="black", fill = "black",
+             size = 4)+
+  facet_wrap(facets = "outcome", nrow=1)
+g2 <- g1 +
+  scale_shape_manual(
+    values = pred_level_shapes
+  )+
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "white"))+
+  scale_color_manual(values = c("TRUE" = "red", "FALSE" = "grey60"))+
+  labs(
+    fill = "Significant\nat .05", color = "Significant\nat .05"
+  )
+
+g2  
+g2 %>% quick_save("test", w=11,h=5)
+
+

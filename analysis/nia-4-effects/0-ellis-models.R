@@ -478,7 +478,7 @@ d <-
     ,'LEVEL' = value_level_display
   )
 d %>% print_all()
-d %>% neat(align=c("r","l"))
+# note that only one of the unique covariates will be applied, respective of the outcome
 
 
 
@@ -486,34 +486,15 @@ d %>% neat(align=c("r","l"))
 # demonstration of treatment effect for the reference group
 
 dg1 <- 
-  # ds0 %>%
-  # ds_raw %>%
   ds4 %>% 
-  # filter(intervention=="exposure_course",outcome=="income_net_delta") %>%
-  # filter(term %in% c("(Intercept)","txTRUE") ) %>% 
   filter(var_name %in% c("tx")) %>% 
-  # left_join(
-  #   ds1 %>% distinct(intervention, outcome,intercept)
-  # ) %>% 
-  # mutate(
-  #   intervention = factor(intervention, levels = intervention_names, labels = intervention_labels)
-  #   ,outcome     = factor(outcome, levels = outcome_names, labels = outcome_labels)
-  # ) %>% 
-  # mutate(
-  #   condition = value_level %>% factor() %>% fct_recode(
-  #     "Reference" = "(Intercept)"
-  #     ,"Intervention" = "TRUE" 
-#   )
-# ) %>% 
-# select(-var_name, -value_level, -term) %>% 
-# relocate(condition, .after = "outcome") %>% 
-mutate(
-  impact_direction = case_when(
-    estimate >0L ~ "positive",
-    estimate <=0L ~ "negative"
-  )
-  ,sign_at_05 = p_value <= .05
-) 
+  mutate(
+    impact_direction = case_when(
+      estimate >0L ~ "positive",
+      estimate <=0L ~ "negative"
+    )
+    ,sign_at_05 = p_value <= .05
+  ) 
 dg1
 
 g1 <- 

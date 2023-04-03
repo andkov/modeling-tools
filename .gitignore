@@ -18,6 +18,9 @@ vignettes/*.html
 vignettes/*.pdf
 vignettes/*.R
 
+analysis/retired/*
+analysis/retired/*.*
+
 # The devtools zip is downloaded when the package is updating itself.  If it's not deleted, there's no reason to commit it to the repository.
 devtools.zip
 
@@ -111,3 +114,26 @@ Desktop.ini
 #     2. reorganized and moved above this chunk (so it won't be confused with files added unintentionally).
 quick-start.Rproj
 analysis/nia-4-effects/prints/1.jpg
+analysis/nia-4-effects/prints/career_planning-0-group-imbalance.jpg
+analysis/nia-4-effects/prints/test.jpg
+data-private/raw/balance-twang/balance-table-career_planning.csv
+data-private/raw/balance-twang/balance-table-exposure_course.csv
+data-private/raw/effects-gaussian/model-plots/career_planning-earnings_total_delta.jpg
+data-private/raw/effects-gaussian/model-plots/exposure_course-income_net_delta.jpg
+data-private/raw/effects-gaussian/model-solution/nia-3-cra-effects-full.csv
+data-private/raw/effects-gaussian/twang-diagnostics/balance-table-career_planning.csv
+data-private/raw/effects-gaussian/twang-diagnostics/balance-table-exposure_course.csv
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-0-group-imbalance.png
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-1-optimize.png
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-2-boxplot.png
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-3-es.png
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-4-t.png
+data-private/raw/effects-gaussian/twang-diagnostics/career_planning/career_planning-5-ks.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-0-group-imbalance.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-1-optimize.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-2-boxplot.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-3-es.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-4-t.png
+data-private/raw/effects-gaussian/twang-diagnostics/exposure_course/exposure_course-5-ks.png
+data-private/raw/unpack-in-data-private-raw.zip
+data-private/raw/effects-gaussian.zip
