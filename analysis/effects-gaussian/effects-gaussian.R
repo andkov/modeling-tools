@@ -69,38 +69,36 @@ predictor_labels <- c(
 )
 predictor_names <- predictor_labels %>% names()
 
-# ds0 %>% group_by(var_name,value_level) %>% count()
-
 ds_pred <- tibble::tribble(
   ~var_name,~value_level,~value_order,~value_level_display
   
-  ,"tx"                    ,"FALSE"                ,0 , "No Intervention"
-  ,"tx"                    ,"TRUE"                 ,1 , "Yes Intervention"
+  ,"tx"                    ,"FALSE"                ,0      , "No Intervention"
+  ,"tx"                    ,"TRUE"                 ,1      , "Yes Intervention"
   
-  ,"age_category5"         ,"middle age 1"         ,0  , "25-34"
-  ,"age_category5"         ,"middle age 2"         ,1  , "35-44"
-  ,"age_category5"         ,"middle age 3"         ,2  , "45-54"
-  ,"age_category5"         ,"senior"               ,3  , "55+"
-  ,"age_category5"         ,"youth"                ,-1 ,"16-24"
+  ,"age_category5"         ,"middle age 1"         ,0      , "25-34"
+  ,"age_category5"         ,"middle age 2"         ,1      , "35-44"
+  ,"age_category5"         ,"middle age 3"         ,2      , "45-54"
+  ,"age_category5"         ,"senior"               ,3      , "55+"
+  ,"age_category5"         ,"youth"                ,-1     ,"16-24"
   
-  ,"dependent4"            ,"0 dependents"         ,0  , "No dependents"
-  ,"dependent4"            ,"1 dependent"          ,1  ,"1 dependent"   
-  ,"dependent4"            ,"2 dependents"         ,2  ,"2 dependents"  
-  ,"dependent4"            ,"3+ dependents"        ,3  ,"3+ dependents" 
+  ,"dependent4"            ,"0 dependents"         ,0      , "No dependents"
+  ,"dependent4"            ,"1 dependent"          ,1      ,"1 dependent"   
+  ,"dependent4"            ,"2 dependents"         ,2      ,"2 dependents"  
+  ,"dependent4"            ,"3+ dependents"        ,3      ,"3+ dependents" 
   
-  ,"disability2"           ,"Without Disability"   ,0  , "Without Disability" 
-  ,"disability2"           ,"With Disability"      ,1  , "With Disability"    
+  ,"disability2"           ,"Without Disability"   ,0      , "Without Disability" 
+  ,"disability2"           ,"With Disability"      ,1      , "With Disability"    
   
-  ,"education4"            ,"High School"          ,0  , "High School"        
-  ,"education4"            ,"Less HS"              ,-1 , "Less HS"            
-  ,"education4"            ,"Post HS"              ,1  , "Post HS"            
-  ,"education4"            ,"University Degree"    ,2  , "University Degree"  
-  ,"education4"            ,"(Missing)"            ,3  , "(Missing)"          
+  ,"education4"            ,"High School"          ,0      , "High School"        
+  ,"education4"            ,"Less HS"              ,-1     , "Less HS"            
+  ,"education4"            ,"Post HS"              ,1      , "Post HS"            
+  ,"education4"            ,"University Degree"    ,2      , "University Degree"  
+  ,"education4"            ,"(Missing)"            ,3      , "(Missing)"          
   
-  ,"ethnicity"             ,"Caucasian"            ,0 , "Caucasian"          
-  ,"ethnicity"             ,"Visible Minority"     ,1 , "Visible Minority"   
-  ,"ethnicity"             ,"Indigenous"           ,2 , "Indigenous"         
-  ,"ethnicity"             ,"(Missing)"            ,3 , "(Missing)"         
+  ,"ethnicity"             ,"Caucasian"            ,0      , "Caucasian"          
+  ,"ethnicity"             ,"Visible Minority"     ,1      , "Visible Minority"   
+  ,"ethnicity"             ,"Indigenous"           ,2      , "Indigenous"         
+  ,"ethnicity"             ,"(Missing)"            ,3      , "(Missing)"         
   
   ,"gender2"               ,"Men"                  ,0      ,"Men"                  
   ,"gender2"               ,"Women"                ,1      ,"Women"                
@@ -131,66 +129,66 @@ ds_pred <- tibble::tribble(
   
   ,"year_before"           ,"2018"                 ,1      ,"2018"                 
   ,"year_before"           ,"2017"                 ,0      ,"2017"                 
-  ,"year_before"           ,"2016"                 ,-1      ,"2016"                 
+  ,"year_before"           ,"2016"                 ,-1     ,"2016"                 
   ,"year_before"           ,"2015"                 ,-2     ,"2015"                 
   ,"year_before"           ,"2014"                 ,-3     ,"2014"                 
   ,"year_before"           ,"2013"                 ,-4     ,"2013"                 
   ,"year_before"           ,"2012"                 ,-5     ,"2012"                 
   
-  ,"earnings_total_before" ,"0 dollars"            ,0 , "0K 2022"
-  ,"earnings_total_before" ,"1K 2022"              ,1 , "1K 2022"
-  ,"income_net_before"     ,"0 dollars"            ,0 , "0K 2022"
-  ,"income_net_before"     ,"1K 2022"              ,1 , "1K 2022"
-  ,"income_taxable_before" ,"0 dollars"            ,0 , "0K 2022"
-  ,"income_taxable_before" ,"1K 2022"              ,1 , "1K 2022"
-  ,"income_total_before"   ,"0 dollars"            ,0 , "0K 2022"
-  ,"income_total_before"   ,"1K 2022"              ,1 , "1K 2022"
+  ,"earnings_total_before" ,"0 dollars"            ,0      , "0K 2022"
+  ,"earnings_total_before" ,"1K 2022"              ,1      , "1K 2022"
+  ,"income_net_before"     ,"0 dollars"            ,0      , "0K 2022"
+  ,"income_net_before"     ,"1K 2022"              ,1      , "1K 2022"
+  ,"income_taxable_before" ,"0 dollars"            ,0      , "0K 2022"
+  ,"income_taxable_before" ,"1K 2022"              ,1      , "1K 2022"
+  ,"income_total_before"   ,"0 dollars"            ,0      , "0K 2022"
+  ,"income_total_before"   ,"1K 2022"              ,1      , "1K 2022"
 ) %>% 
   mutate(
     reference = value_order==0L
     ,row_number = row_number()
   )
 
-# ds_pred
 
 # ---- load-data ---------------------------------------------------------------
 ds0 <- 
   readr::read_csv(path_data_input) %>% 
-  janitor::clean_names() %>% 
-  mutate(
-    value_level = case_when(
-      term %in% c(
-        "earnings_total_before" 
-        ,"income_net_before"     
-        ,"income_taxable_before" 
-        ,"income_total_before"   
-      ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll re-scale it to 1000
-    )
-  ) 
+  janitor::clean_names() #%>% 
+  # mutate(
+  #   value_level = case_when(
+  #     term %in% c(
+  #       "earnings_total_before" 
+  #       ,"income_net_before"     
+  #       ,"income_taxable_before" 
+  #       ,"income_total_before"   
+  #     ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll re-scale it to 1000
+  #   )
+  # ) 
 
 ds0 %>% glimpse()
 # ---- inspect-data ------------------------------------------------------------
 # the data contains coefficients of a GLM model, specified as:
-# outcome_k ~ intervention_p + common_covariates + unique_covariate_k
-# Here is how a single model looks like in this table:
+# outcome ~ intervention + common_covariates + unique_covariate
+# there are total of 32 models (unique pairs of outcome-intervention )
+ds0 %>%  distinct(outcome, intervention)
+# Here is how a single model looks like:
 ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% print_all()
-# We have a table like this for each outcome-intervention combination: 
-ds0 %>%  group_by(intervention,outcome) %>% count() %>% print_all()
-# The outcome is the change in financial health from before to after being on Income Support
+# The outcome is the change in financial stability from before to after being on Income Support 
 # The intervention is participation (binary) in a particular program before ending IS
 
 # Things to notice:
 # 1) columns `var_name` and `value_label` are the tidied column `term`
 # 2) intervention enters the model with a generic name `tx`
-# 3) the last covariate corresponds to the choice of outcome measurement
+# 3) the last covariate corresponds to the choice of outcome measurement (unique covariate)
 # (i.e. when we use `income_net_delta` as the outcome, we control for `income_net_before`)
 ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% 
-  filter(term == "income_net_before") %>% select(outcome, term)
-# 4) A set of common covariates includes:
+  filter(term == "income_net_before")
+# 4) `value_level` for unique covariate is NA because it is a continuous variable 
+# The scale of this covariate is dollars, we will rescale it to thousands for ease of interpretation
+# 5) A set of common covariates includes:
 ds0 %>% filter(intervention=="exposure_course",outcome=="income_net_delta") %>% 
   filter(!var_name %in% c(NA_character_, "tx","income_net_before")) %>% 
-  select(var_name) %>% distinct() %>% 
-  print_all()
+  select(var_name) %>% distinct() %>% print_all()
 # it is repeated in each model. 
 
 # ---- goals -------------------------------------------------------------------
