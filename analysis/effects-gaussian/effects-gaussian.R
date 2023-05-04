@@ -153,7 +153,14 @@ ds_pred <- tibble::tribble(
 # ---- load-data ---------------------------------------------------------------
 ds0 <- 
   readr::read_csv(path_data_input) %>% 
-  janitor::clean_names() #%>% 
+  janitor::clean_names() %>% 
+  rename(
+    predictor_name = var_name
+    ,predictor_levels = value_level
+  ) %>% 
+  select(
+    outcome, intervention, term, predictor_name, predictor_levels, everything()
+  )
   # mutate(
   #   value_level = case_when(
   #     term %in% c(
@@ -164,6 +171,7 @@ ds0 <-
   #     ) ~ "1K 2022", TRUE ~ value_level # originally 1 CAN, but we'll re-scale it to 1000
   #   )
   # ) 
+
 
 ds0 %>% glimpse()
 # ---- inspect-data ------------------------------------------------------------
