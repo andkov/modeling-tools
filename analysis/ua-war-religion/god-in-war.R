@@ -14,6 +14,7 @@ library(stringr)   # strings
 library(lubridate) # dates
 library(labelled)  # labels
 library(scales)    # format
+library(dplyr)     # data wrangling
 # -- 2.Import only certain functions of a package into the search path.
 import::from("magrittr", "%>%")
 # -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
@@ -28,26 +29,22 @@ requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 base::source("./scripts/common-functions.R") # project-level
 
 # ---- declare-globals ---------------------------------------------------------
-# printed figures will go here:
-# prints_folder <- paste0("./analysis/.../prints/")
-# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+# default location for prints by quick_save():
+prints_folder <- paste0("./analysis/ua-war-religion/prints/")
+if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
-# ---- declare-functions -------------------------------------------------------
-# printed figures will go here:
-prints_folder <- paste0("./analysis/report-example/prints/")
-if (!fs::dir_exists(prints_folder)) {fs::dir_create(prints_folder)}
 # ---- load-data ---------------------------------------------------------------
-load("./analysis/ua-war-religion/toy-data.RData")
-
+load("./analysis/ua-war-religion/materials/toy-data.RData")
 
 # ---- inspect-data ------------------------------------------------------------
-
-filtered_data %>% tableone::CreateTableOne(data=.)
+filtered_data %>% glimpse()
 filtered_data %>% tableone::CreateTableOne(data=., strata = "wave")
 filtered_data %>% explore::describe_all()
 
-# religiosity - 
-
+# describe items used to derive affected_index
+ds_var <- 
+  tibble(var_name = names(war_var_labels), var_value = war_var_labels) %>% 
+  print()
 
 # ---- tweak-data --------------------------------------------------------------
 ds0 <- 
@@ -55,26 +52,35 @@ ds0 <-
   # integer indicator for the wave to ease some graphing
   mutate(waveL = case_when(wave =="wave1"~1L,TRUE ~ 2L) %>% as.integer()) %>%   # for geom_smooth to work
   select(
-    key # person id
-    ,wave # factor
-    ,waveL # integer
-    # outcome
-    ,c15
-    ,c16
-    ,c17
-    ,religiosity
-    # measures available only in wave 2
-    ,affected_index
-    ,affected_index_std
-    ,affected_index_dummy
-    ,loss_dummy3 # 
+    key   # respondent identifier
+    ,wave  # as a  factor
+    ,waveL # as an integer # for geom_smooth
     
-  )
-
-ds_var <- 
-  tibble(var_name = names(war_var_labels), var_value = war_var_labels)
-
-
+    # variables measured at both waves
+    # outcome, religiosity 
+    ,c15 # how religious are you ?         0-10 # filtered_data %>% count(c15)
+    ,c16 # how often do you attend church? 1-7  # filtered_data %>% count(c16)
+    ,c17 # how often do you pray?          1-7  # filtered_data %>% count(c17)
+    ,religiosity # mean of standardized(M=0,SD=1) items c16, c16, c17
+    
+    # variables measured at wave 2 ONLY (because happened after full-scale invasion)
+    ,loss_dummy3 # know someone who died from war
+    ,displaced   # moved since full-scale invasion
+    # overall index, sum of the following binary variables:
+       # loss_dummy3, 
+       # displaced,   
+       # q2.2.1  # loss of income
+       # q2.2.2  # loss of job
+       # q2.2.3  # physical health deterioration
+       # q2.2.4  # mental health deterioration
+       # q2.2.5  # family separation
+       # q2.2.6  # loss or damage to housing
+       # q2.2.7  # loss or damage to other assets
+       # q2.2.8  # injury to you or family members
+    ,affected_index       # 0-10 # larger is more affected by war
+    ,affected_index_std   # standardized: mean=0, sd=1 
+    ,affected_index_dummy # above average adversity: affected_index_std > 0
+ )
 # ---- table-1 -----------------------------------------------------------------
 
 
