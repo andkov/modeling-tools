@@ -1,10 +1,23 @@
+#' ---
+#' title: "God in War: Changing religiosity since the full-scale invasion"
+#' author: "TBD"
+#' date: "last Updated: `r Sys.Date()`"
+#' ---
+#+ echo=F
+# rmarkdown::render(input = "./analysis/ua-war-religion/god-in-war.R") # run to knit, don't uncomment
+#+ echo=F ----------------------------------------------------------------------
+library(knitr)
+# align the root with the project working directory
+knitr::opts_knit$set(root.dir='../../')  #Don't combine this call with any, align with project root
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+#+ echo=F ----------------------------------------------------------------------
 rm(list = ls(all.names = TRUE)) # Clear the memory of variables from previous run. This is not called by knitr, because it's above the first chunk.
 cat("\014") # Clear the console
 # verify root location
 cat("Working directory: ", getwd()) # Must be set to Project Directory
 # Project Directory should be the root by default unless overwritten
-
-# ---- load-packages -----------------------------------------------------------
+# rmarkdown::render(input = "./analysis/ua-war-religion/god-in-war.R") # run to knit, don't uncomment
+#+ load-packages -----------------------------------------------------------
 # Choose to be greedy: load only what's needed
 # Three ways, from least (1) to most(3) greedy:
 # -- 1.Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
@@ -28,18 +41,19 @@ requireNamespace("janitor"  )# tidy data
 requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
 requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 
-# ---- load-sources ------------------------------------------------------------
+#+ load-sources ------------------------------------------------------------
 base::source("./scripts/common-functions.R") # project-level
+base::source("./scripts/modeling/model-basic.R") # project-level
 
-# ---- declare-globals ---------------------------------------------------------
+#+ declare-globals ---------------------------------------------------------
 # default location for prints by quick_save():
 prints_folder <- paste0("./analysis/ua-war-religion/prints/")
 if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
-# ---- load-data ---------------------------------------------------------------
+#+ load-data ---------------------------------------------------------------
 load("./analysis/ua-war-religion/materials/toy-data.RData")
 
-# ---- inspect-data ------------------------------------------------------------
+#+ inspect-data ------------------------------------------------------------
 filtered_data %>% glimpse()
 # filtered_data %>% tableone::CreateTableOne(data=., strata = "wave") # takes long
 filtered_data %>% explore::describe_all()
@@ -49,15 +63,15 @@ ds_var <-
   tibble(var_name = names(war_var_labels), var_value = war_var_labels) %>% 
   print()
 
-# ---- tweak-data-0 --------------------------------------------------------------
+#+ tweak-data-0 --------------------------------------------------------------
 ds0 <- 
   filtered_data %>% # toy data
   # real_data %>% # full sample data, to be added during evaluation
   # integer indicator for the wave to ease some graphing
   mutate(
     # wave1 - Dec 2021, wave2 - Sep 2022. Fieldwork duration ~2 weeks
-    wave = wave %>% fct_recode("before"="wave1", "after"="wave2")
-    ,waveL = case_when(wave =="before" ~ 0L,TRUE ~ 1L) %>% as.integer()  # for geom_smooth to work
+    wave = wave %>% fct_recode("Before"="wave1", "After"="wave2")
+    ,waveL = case_when(wave =="Before" ~ 0L,TRUE ~ 1L) %>% as.integer()  # for geom_smooth to work
   ) %>% 
   select(
     key    # respondent identifier
@@ -93,14 +107,15 @@ ds0 <-
 ds0 %>% glimpse()
 
 # rm(filtered_data, war_var_labels)
-# ---- tweak-data-1 ------------------------------------------------------------
+#+ tweak-data-1 ------------------------------------------------------------
 
 # compute new variables 
 ds1 <-
   ds0 %>%
+  arrange(key,waveL) %>% 
   mutate(
     km_to_war_bin = cut(km_to_war, breaks = c(10,seq(50,750,50)))
-    ,km100_to_war = km_to_war/100 # rescale for convenient interpretation
+    ,km100_to_war = km_to_war/100 # re-scale for convenient interpretation
     ,church_weekly = case_when(
       church  %in% c(1,2,3)   ~ 1L
       ,church %in% c(4,5,6,7) ~ 0L
@@ -116,10 +131,7 @@ ds1 <-
       ,pray %in% c(2,3,4,5,6,7) ~ 0L
       ,TRUE ~ NA
     )
-    # sum_loss_or_displaced = loss_dummy3  + displaced
     ,sum_loss_or_displaced =  rowSums(across(.cols=c("loss_dummy3", "displaced")))
-    
-    # ,loss_or_displaced = loss_dummy3==1L | displaced==1L
     ,loss_or_displaced = case_when(
       sum_loss_or_displaced %in% c(1,2) ~ TRUE,
       sum_loss_or_displaced %in% c(0) ~ FALSE,
@@ -130,32 +142,45 @@ ds1 <-
       sum_loss_or_displaced %in% c(0,1) ~ FALSE,
       TRUE ~ NA
     )
-  )
+  ) %>% 
+  group_by(key) %>% 
+  arrange(key,waveL) %>% 
+  mutate(
+    relig_change =  religiosity - dplyr::lag(religiosity) 
+    ,relig_increase = relig_change > 0
+  ) %>% 
+  # select(key, wave, religiosity, relig_change, relig_increase) %>%
+  arrange(key,desc(waveL)) %>%
+  tidyr::fill(relig_change, relig_increase) %>% # makes person-level
+  arrange(key,waveL) %>%
+  ungroup() 
 ds1 %>% glimpse()
-# ---- temp -------------
-# 
+ds1 %>% select(key, wave, religiosity, relig_change, relig_increase) %>% head(6)
 
-
-# ---- table-1 -----------------------------------------------------------------
-# Religiosity - Outcome
+#+ outcome-1 -----------------------------------------------------------------
+# Religiosity - Outcome variable
 # Our outcome is self-reported religiosity of respondents (items c15:c17)
 # How does it change since the onset of the full-scale invasion in Feb 2022?
-# measures of religiosity
 d1 <- 
   ds1 %>% 
   select(
     wave,waveL,
-    religious, church, pray,                                # raw
-    church_weekly, church_monthly, pray_daily, religiosity  # derived
+    religious, church, pray,      # c15, c16, c17                              
+    church_weekly
+    ,church_monthly
+    ,pray_daily
+    ,religiosity   # additive index, standardized
+    ,relig_change   # change in standardized religiosity index # person-level
+    ,relig_increase # binary                                   # person-level
     ) %>% 
   mutate(across(c("religious","church","pray"), .fns= ~as.integer(.))) 
 
-d1 %>% filter(wave=="before") %>% explore::describe_all()
-d1 %>% filter(wave=="after") %>% explore::describe_all()
+d1 %>% filter(wave=="Before") %>% explore::describe_all()
+d1 %>% filter(wave=="After") %>% explore::describe_all()
 d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 # examining the raw group differences we observe (cross-sectional view) 
 # 1) an increase in self-reported religiosity from 4.7 to 5.68 (on a 11-point scale 0-10)
-# means of `church` and `pray` summarize items on ordinal scale, 
+# means of `church` and `pray` summarize items are on ordinal scale, so not really kosher
 # 2) an increase in composite index of religiosity from -.21 to .04 (but its scale is not interpretable)
 # 3) percent who attends church at least weekly has doubled (.08 to .16)
 # 4) percent who prays daily increased by 2/3 ( from 29% to %48)
@@ -164,9 +189,9 @@ d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 # 5) the mean of religiosity index increased by .25 points (from -.21 to .04)
 # however, the scale of this metric is not readily interpretable
 
-# Affect of War - Intervention
+#+ intervention-1 -----------------------------------------------------------------
+# Affect of War - Intervention variable
 # Measuring the degree to which responded were affected by war (items 2.2 and 2.3)
-# measures of intervention
 d2 <- 
   ds1 %>% 
   select(
@@ -180,12 +205,12 @@ d2 <-
     ,loss_or_displaced
     ,loss_and_displaced
   ) 
-d2 %>% filter(wave=="before") %>% explore::describe_all()
-d2 %>% filter(wave=="after") %>% explore::describe_all()
+d2 %>% filter(wave=="Before") %>% explore::describe_all()
+d2 %>% filter(wave=="After") %>% explore::describe_all()
 d2 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE,
                                factorVars = c("sum_loss_or_displaced"))
 
-# 1) 36 % experienced loss of someone they knew personally (some NAs) / almost every 2nd person
+# 1) 36 % experienced loss of someone they knew personally (some NAs) / every third
 # 2) 16% experienced change of residence since invasion / ~ every 8th respondent
 # 3) 46% experienced either loss or displacement / ~ every 2nd respondent
 # 4)  6% experienced both loss and displacement
@@ -193,16 +218,16 @@ d2 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE,
 # this index is not easily interpretable, but could be thought of as an average
 # number of "loss" items a respondent endorsed in sections 2.3 and 2.2 
 # std and std_dummy are questionable, disregarded in this exercise
-ds1 %>% filter(wave=="after") %>% TabularManifest::histogram_continuous("affected_index")
-ds1 %>% filter(wave=="after") %>% TabularManifest::histogram_continuous("affected_index_std")
+ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index")
+ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index_std") # same shape, different center
 
-
-# ---- graph-1 -----------------------------------------------------------------
+#+ graph-1-cross-sectional -----------------------------------------------------------------
 # some views of the distribution of the modeled outcome measure
 # we know that average religiosity shifted up
 ds1 %>% select(wave, religiosity) %>% tableone::CreateTableOne(data=.,strata="wave")
 # but we need to understand this shift in context of changing variability between waves
-ds1 %>%
+g1a <-
+  ds1 %>%
   group_by(wave) %>% 
   mutate(
     mean=mean(religiosity)
@@ -217,113 +242,144 @@ ds1 %>%
   geom_text(aes(label=round(median,2), x = median),y=Inf,vjust=1.2, hjust=-.3,color="blue")+
   facet_grid(wave~.)+
   labs(x="Standardized index of religiosity")
+g1a
 # alternative view, with a statistical test
-ds1 %>% 
+g1b <- 
+  ds1 %>% 
   ggpubr::ggboxplot(x = "wave", y = "religiosity",
             color = "wave",
             add = "jitter")+
   stat_compare_means()
+g1b
 # alternative view, dedicated statistical procedure of the paired T-test 
-rstatix::t_test(ds1,religiosity~wave,ref.group = "before",paired = TRUE)
+results_of_t_test <- 
+  rstatix::t_test(ds1,religiosity~wave,ref.group = "After",paired = TRUE)
 result_of_t.test <- 
   t.test(
-  ds1 %>% filter(wave=="before") %>% pull(religiosity)
-  ,ds1 %>% filter(wave=="after") %>% pull(religiosity)
+  ds1 %>% filter(wave=="After") %>% pull(religiosity)
+  ,ds1 %>% filter(wave=="Before") %>% pull(religiosity)
   ,paired = TRUE
 ) %>% print()
-# However, this difference (.25) measures cross-sectional change
-# So we should evaluate individual change as well
-g1 <- 
+# However, this difference (.25) measures the cross-sectional change
+# And we need to evaluate individual change as well
+
+#+ graph-2-within-person-over-time -----------------------------------------
+# let's plot the observed within-person change
+g2a <- 
   ds1 %>% 
   ggplot(aes(x=waveL, y = religiosity))+ # note re-centering to align with model coefficients
   geom_point(alpha = .2)+
-  geom_line(aes(group = key),alpha = .2)+
+  geom_line(aes(group = key),alpha = .15)+
   # geom_smooth(method = "lm")+
   scale_x_continuous(breaks = c(0,1))+
   labs(
     title = "Individual change in standardized religiosity index "
     ,subtitle = "Religiosity Index = (Church attendance, Prayer, Self-reported Religiosity) | M=0,SD=1"
   )
-g1
-
-# One way to summarize this individual change is by finding the "average" trajectory between two waves
+g2a
+# One way to summarize this individual change is by finding the "average" trajectory between two waves:
 line_equation <- 
   ggpmisc::stat_poly_eq(formula = y ~ + x 
-                        ,aes(label = paste(after_stat(eq.label)))
+                        # ,aes(label = paste0(c(after_stat(rr.label),after_stat(eq.label)))) # can't get the same behavior
+                        ,aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~"))
                         ,parse = TRUE
                         ,label.x = 0.1
                         ,label.y = 1.5,color = "blue",vjust=1.2) 
-g2 <-
-  g1 +
-  geom_smooth(method = "lm")+
+g2b <-
+  g2a +
+  geom_smooth(method = "lm",color="blue")+
   line_equation
-g2  
-# notice that it estimates the same group means we see in descriptive:
+g2b  
+# notice that it estimates the same group means we see in manifest group means:
 d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 # and the estimated group difference from the paired t.test() procedure
 result_of_t.test
-# This is a formal test of hypothesis
-# H1: Religiosity increased since the full-scale invasion
-# it can also be evaluated with following model in glm()
+
+
+#+ model-1 -----------------------------------------------------------------
+# Let's do a formal test of the hypothesis
+# H1: Religiosity changed since the full-scale invasion
+# it can be evaluated with the following model in glm()
 # Baseline model, wave only
 m1 <- glm( religiosity ~ wave, data = ds1)
 m1 %>% tidy()
 m1 %>% GGally::ggcoef()
-m1 %>% GGally::ggcoef_model()
 emm1 <- m1 %>% emmeans::emmeans(~wave) %>% print()
 emm1 %>% plot()
+m1 %>% GGally::ggcoef_model()
 
+# For learning purposes, let's compare model prediction to previous views of data
+gm1 <- 
+  m1 %>% 
+  augment() %>% # add fitted values
+  bind_cols(ds1 %>% select(-c("wave","religiosity"))) %>% # add original data
+  # ggplot(aes(x=waveL, y = religiosity))+ # note re-centering to align with model coefficients
+  # ggplot(aes(x=waveL, y = .fitted))+ # note re-centering to align with model coefficients
+  ggplot(aes(x=waveL))+ 
+  # Observed
+  geom_point(aes(y=religiosity),alpha = .2)+
+  geom_line(aes(y=religiosity, group = key),alpha = .2)+
+  geom_smooth(aes(y=religiosity), method = "lm")+
+  # Reconstructed from model prediction
+  geom_line(aes(y=.fitted), color = "red", size=4, alpha = .2)+ # model predicted values 
+  scale_x_continuous(breaks = c(0,1))+
+  labs(
+    title = "Individual change in standardized religiosity index "
+    ,subtitle = "Religiosity Index = (Church attendance, Prayer, Self-reported Religiosity) | M=0,SD=1"
+  )
+gm1
+# People became more religious, by (.25 on religiosity index) much  
 
-# Distance to Warzone in 100 km
-m2a <- glm( religiosity ~ wave + km100_to_war, data = ds1 )
-m2a %>% tidy() 
-m2a %>% GGally::ggcoef_model()
-emm2a <- m2a %>% emmeans::emmeans(c("wave","km100_to_war"))
-emm2a %>% plot()
-
-m2b <- glm( religiosity ~ wave*km100_to_war, data = ds1 )
-m2b %>% tidy() 
-m2b %>% GGally::ggcoef_model()
-emm2b <- m2b %>% emmeans::emmeans(c("wave","km100_to_war"))
-emm2b <- m2b %>% emmeans::emmeans(c("wave","km100_to_war"))
-emm2b %>% plot()
-
-
-# The demographic features and history of Ukraine create a strong geographic effect:
-# The closer to the West, the more religious population becomes
-g4a <-
-  ds1 %>% 
-  ggplot(aes(x=km100_to_war, y=religiosity))+
-  geom_point(shape=21)+
-  facet_grid(.~wave)+
-  geom_smooth(method = "lm")+
-  line_equation
-g4a
-
-g4b <-
-  ds1 %>% 
+#+ examine-covariate-1-km_to_war -------
+# History and demography of Ukraine shape the relationship between geography and religiosity
+# The closer to the West/farther from Russia, the more religious people become
+g3a <-
+  ds1 %>%
   ggplot(aes(x=km100_to_war, y=religiosity))+
   geom_point(shape=21)+
   geom_smooth(aes(color=wave),method = "lm")+
-  geom_smooth(method = "lm")+
+  geom_smooth(method = "lm", linetype = "dashed")+
   line_equation
-g4b
-
-# formal test of the hypothesis:
-# H1: Distance to War/Russia affects religiosity (index)
-model_rel_geo <- glm(religiosity ~ km100_to_war*wave, data = ds1)
+g3a
+# by an average of about .12 points of the religiosity index for every 100k away from russia
+# Very similar relationship is observed for both waves
+g3a +  facet_grid(.~wave)
+# let's formally test the hypothesis
+# H1: Distance to War/Russia explains variability in religiosity (index) 
+model_rel_geo <- glm(religiosity ~ km100_to_war, data = ds1)
 model_rel_geo %>% tidy()
-# The effect of interaction is not detected, in other words
-# Increase in religiosity is universal across geography, in other words
-# Geographic distribution of religiosity has not changed since the full-time invasion, in other words
-# It's not the region/distance to war that can explain change in religiosity
-# emm_rel_geo <- model_rel_geo %>%  emmeans::emmeans(specs = c("km100_to_war","wave"), at = list(km100_to_war = c(.1,1,2,3,4,5,6,7)))
-emm_rel_geo <- model_rel_geo %>%  emmeans::emmeans(specs = c("wave","km100_to_war"), at = list(km100_to_war = c(.1,1,2,3,4,5,6,7)))
+model_rel_geo %>% get_rsquared()
+# Yes, about 10% of it 
+emm_rel_geo <- model_rel_geo %>%  
+  emmeans::emmeans(
+     specs = c("km100_to_war") 
+    ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+  )
 emm_rel_geo
 emm_rel_geo %>% plot()
-# ---- graph -----
 
-g3 <- 
+#+ model-2 -----------------------------------------------------------------
+
+# To formally test the hypothesis:
+# H1: Distance to War/Russia affects the CHANGE in religiosity (index) since the full-scale invasion
+m2 <- glm(religiosity ~ km100_to_war*wave, data = ds1)
+m2 %>% tidy()
+# The effect of interaction is not detected, in other words
+# Increase in religiosity is universal across geography, in other words
+# It's not the region/distance to war that can explain the change in religiosity since the full-scale invasion
+emm2 <- m2 %>%  
+  emmeans::emmeans(
+    # specs = c("wave","km100_to_war")
+    specs = c("km100_to_war","wave") # different perspective
+    ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+  )
+emm2
+emm2 %>% plot()
+
+#+ graph -----
+# let's examine this effect visually within different bins of the covariate
+# to ensure we are not dealing with a type of simpson's paradox
+g4 <- 
   ds1 %>% 
   ggplot(aes(x=waveL, y = religiosity))+ # note re-centering to align with model coefficients
   geom_point(alpha = .2)+
@@ -331,50 +387,63 @@ g3 <-
   # geom_smooth(method = "lm")+
   scale_x_continuous(breaks = c(0,1))+
   labs(
-    title = "Individual change in standardized religiosity index "
+    title = "Individual change in standardized religiosity index by distance to occupied/Russia"
     ,subtitle = "Religiosity Index = (Church attendance, Prayer, Self-reported Religiosity) | M=0,SD=1"
   )+
   facet_wrap(facets = "km_to_war_bin", scales = "fixed") +
   geom_smooth(method = "lm")+
   line_equation
-g3  
+g4  
+
+#+ model-3 -------------------------
+
+# DO peple who live farther wave from Russia have different reaction (in reliogisity)
+# to the affect of the war? 
+m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war + loss_dummy3*km100_to_war, data = ds1 )
+# m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war                           , data = ds1 )
+m3a %>% tidy() 
+m3a %>% GGally::ggcoef_model()
+emm3a <- m3a %>% emmeans::emmeans(
+  specs = c("loss_dummy3", "km100_to_war") 
+  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+) %>% print()
+emm3a %>% plot()
 
 
+m3b <- glm( religiosity ~ wave + displaced + km100_to_war + displaced*km100_to_war, data = ds1 )
+# m3b <- glm( religiosity ~ wave + displaced + km100_to_war                           , data = ds1 )
+m3b %>% tidy() 
+m3b %>% GGally::ggcoef_model()
+emm3b <- m3b %>% emmeans::emmeans(
+  specs = c("displaced", "km100_to_war") 
+  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+) %>% print()
+emm3b %>% plot()
 
 
-
-m2 <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war, data = ds1 )
-m2 %>% tidy() 
-m2 %>% GGally::ggcoef_model()
-emm2 <- m2 %>% emmeans::emmeans(c("loss_dummy3","displaced", by = "km100_to_war"))
-emm2 %>% plot()
-# ---- graph-2 -----------------------------------------------------------------
-
-
-m3 <- glm( religiosity ~ wave*km100_to_war, data = ds1 )
-m3 %>% tidy() 
-m3 %>% GGally::ggcoef_model()
-emm3 <- m3 %>% emmeans::emmeans(c("loss_dummy3","displaced", by = "km100_to_war"))
-emm3 %>% plot()
+m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war  , data = ds1 )
+# m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war                           , data = ds1 )
+m3c %>% tidy() 
+m3c %>% GGally::ggcoef_model()
+emm3c <- m3b %>% emmeans::emmeans(
+  specs = c("displaced", "km100_to_war") 
+  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+) %>% print()
+emm3c %>% plot()
 
 
-# ---- model-1 -----------------------------------------------------------------
+m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war + loss_dummy3*displaced, data = ds1 )
+# m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
+m3d %>% tidy() 
+m3d %>% GGally::ggcoef_model()
+emm3d <- m3d %>% emmeans::emmeans(
+  specs = c("displaced","loss_dummy3" ,"km100_to_war") 
+  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+) %>% print()
+emm3d %>% plot()
 
+#+ save-to-disk ------------------------------------------------------------
 
-
-# ---- save-to-disk ------------------------------------------------------------
-
-# ---- publish ------------------------------------------------------------
-path <- "./analysis/.../report-isolated.Rmd"
-rmarkdown::rendggcoef_plot()rmarkdown::render(
-  input = path ,
-  output_format=c(
-    "html_document"
-    # "word_document"
-    # "pdf_document"
-  ),
-  clean=TRUE
-)
 
 # Scrap Book all the way down
 # ----- scrapbook-1 -----------------------------------------------------------
