@@ -192,11 +192,12 @@ d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 #+ intervention-1 -----------------------------------------------------------------
 # Affect of War - Intervention variable
 # Measuring the degree to which responded were affected by war (items 2.2 and 2.3)
+ds_var
 d2 <- 
   ds1 %>% 
   select(
     wave,
-    loss_dummy3 # lost someone in war
+    loss_dummy3 # lost someone in war, composite of 
     , displaced # moved since invasion
     , affected_index # sum of loss, displaced, and other affect items: 2.2.1-8
     , affected_index_std # M=0;SD=1
@@ -218,8 +219,8 @@ d2 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE,
 # this index is not easily interpretable, but could be thought of as an average
 # number of "loss" items a respondent endorsed in sections 2.3 and 2.2 
 # std and std_dummy are questionable, disregarded in this exercise
-ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index")
-ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index_std") # same shape, different center
+ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index") # only a few distinct values, as artifact of addition
+ds1 %>% filter(wave=="After") %>% TabularManifest::histogram_continuous("affected_index_std") # same shape, different center and units
 
 #+ graph-1-cross-sectional -----------------------------------------------------------------
 # some views of the distribution of the modeled outcome measure
