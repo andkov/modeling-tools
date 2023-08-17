@@ -1,2 +1,2 @@
-# quick-start
-Provides a quick start into a basic data analysis project
+# Modeling tools
+Sandbox for application of typcial tools used for statistical modeling.
