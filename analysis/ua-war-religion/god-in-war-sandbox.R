@@ -422,6 +422,19 @@ rm(dm,m)
 ds1 |> 
   dplyr::count(wave, loss_dummy3)
 
+ds1 |> 
+  dplyr::group_by(key) |> 
+  dplyr::mutate(
+    ever_loss = max(loss_dummy3)
+  ) |>
+  dplyr::ungroup() |> 
+  dplyr::group_by(wave, ever_loss) |> 
+  dplyr::summarize(
+    rel_mean = mean(religiosity)
+  ) |> 
+  dplyr::ungroup() |> 
+  dplyr::select(wave, ever_loss, rel_mean)
+
 m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war + loss_dummy3*km100_to_war, data = ds1 )
 # m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war                           , data = ds1 )
 m3a %>% tidy() 
