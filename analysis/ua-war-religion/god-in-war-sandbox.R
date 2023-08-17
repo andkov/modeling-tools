@@ -409,6 +409,19 @@ g4
 
 # DO peple who live farther wave from Russia have different reaction (in reliogisity)
 # to the affect of the war? 
+dm <- ds1 %>%
+  # tidyr::drop_na(loss_dummy3) %>% 
+  select(key, waveL, loss_dummy3,religiosity ) %>% mutate(did = waveL*loss_dummy3)
+# due to design. tje dif-in-dif dummy (interaction between time and treated) is
+# perfectly confounded with the treated indicator
+m <- glm( religiosity ~  waveL + did, data = dm );tidy(m)
+m <- glm( religiosity ~  waveL + loss_dummy3, data = dm );tidy(m)
+rm(dm,m)
+
+
+ds1 |> 
+  dplyr::count(wave, loss_dummy3)
+
 m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war + loss_dummy3*km100_to_war, data = ds1 )
 # m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war                           , data = ds1 )
 m3a %>% tidy() 
@@ -419,33 +432,53 @@ emm3a <- m3a %>% emmeans::emmeans(
 ) %>% print()
 emm3a %>% plot()
 
-hat_name <- "emmean" # Gaussian output
-# hat_name <- "prob" # logistic output
-# hat_name <- "rate" # Poisson output
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+# eq_emmeans <- "~ wave | km100_to_war"
+# eq_emmeans <- "~ wave | loss_dummy3"
+eq_emmeans <- "~ wave * loss_dummy3 | km100_to_war"
+
 e <-
   emmeans::emmeans(
     object = m3a, 
-    as.formula("~ wave | km100_to_war"), # | loss_dummy3"),
+    as.formula(eq_emmeans), 
     data = ds1,
     type = "response",
-    at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+    at   = list(km100_to_war = c(.1,1,7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
   )  
-# d_predict <- 
+print(e)
+
+d_predict <-
   seq_len(nrow(e@linfct)) |>
   purrr::map_dfr(function(i) as.data.frame(e[i])) |>
   dplyr::mutate(
     outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
   ) |>
   dplyr::select(
     outcome,
     wave,
+    loss_dummy3,
     km100_to_war,
     y_hat       = !!rlang::ensym(hat_name),
-    se          = SE
+    se          = SE,
     ci_lower    = lower.CL,  #asymp.UCL
     ci_upper    = upper.CL #asymp.UCL
   ) 
 
+d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  facet_wrap("km100_to_war") +
+  theme_minimal()
+#       outcome   wave loss_dummy3        y_hat         se   ci_lower    ci_upper
+# 1 religiosity Before           0 -0.203914108 0.05606794 -0.3141630 -0.09366524
+# 2 religiosity Before           1 -0.109804913 0.13634093 -0.3778981  0.15828830
+# 3 religiosity  After           0  0.001778506 0.07425803 -0.1442384  0.14779536
+# 4 religiosity  After           1  0.095887701 0.09966701 -0.1000920  0.29186736
   
 #   predict_cells_1 <- function(d, m, hat_name, outcome_name, eq_emmeans) {
 #   # checkmate::assert_character(eq_emmeans, pattern = "^~.+", len = 1, any.missing = FALSE)
