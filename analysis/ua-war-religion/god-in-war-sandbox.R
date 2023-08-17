@@ -189,6 +189,15 @@ d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 # 5) the mean of religiosity index increased by .25 points (from -.21 to .04)
 # however, the scale of this metric is not readily interpretable
 
+# All but seven people are two nonmissing values of church_weekly
+# ds1 |> 
+#   dplyr::group_by(key) |> 
+#   dplyr::summarize(
+#     point_count = sum(!is.na(church_weekly))
+#   ) |> 
+#   dplyr::count(point_count)
+
+
 #+ intervention-1 -----------------------------------------------------------------
 # Affect of War - Intervention variable
 # Measuring the degree to which responded were affected by war (items 2.2 and 2.3)
@@ -410,7 +419,65 @@ emm3a <- m3a %>% emmeans::emmeans(
 ) %>% print()
 emm3a %>% plot()
 
+hat_name <- "emmean" # Gaussian output
+# hat_name <- "prob" # logistic output
+# hat_name <- "rate" # Poisson output
+e <-
+  emmeans::emmeans(
+    object = m3a, 
+    as.formula("~ wave | km100_to_war"), # | loss_dummy3"),
+    data = ds1,
+    type = "response",
+    at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+# d_predict <- 
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
 
+  
+#   predict_cells_1 <- function(d, m, hat_name, outcome_name, eq_emmeans) {
+#   # checkmate::assert_character(eq_emmeans, pattern = "^~.+", len = 1, any.missing = FALSE)
+#   e <-
+#     emmeans::emmeans(
+#       m, 
+#       as.formula(eq_emmeans),
+#       data = d,
+#       type = "response",
+#       at   = list(tx = levels_tx_1, asthma = levels_asthma)
+#     )  
+#   print(e)
+# 
+#   d_predict <- 
+#     seq_len(nrow(e@linfct)) |>
+#     purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+#     dplyr::mutate(
+#       outcome = outcome_name,
+#     ) |>
+#     dplyr::select(
+#       outcome,
+#       asthma,
+#       tx,
+#       y_hat       = !!rlang::ensym(hat_name),
+#       se          = SE,
+#       ci_lower    = asymp.LCL,
+#       ci_upper    = asymp.UCL
+#     )    
+#   print(d_predict)
+# 
+#   d_predict
+# }
 m3b <- glm( religiosity ~ wave + displaced + km100_to_war + displaced*km100_to_war, data = ds1 )
 # m3b <- glm( religiosity ~ wave + displaced + km100_to_war                           , data = ds1 )
 m3b %>% tidy() 
@@ -457,7 +524,7 @@ emm3e %>% plot()
 
 
 #+ model-4 -----------------
-m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced +, data = ds1 )
+m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced, data = ds1 )
 # m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
 m4 %>% tidy() 
 m3d %>% GGally::ggcoef_model()
