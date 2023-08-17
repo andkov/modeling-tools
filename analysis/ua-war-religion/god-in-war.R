@@ -90,8 +90,8 @@ ds0 <-
     ,loss_dummy3 # know someone who died from war
     ,displaced   # moved since full-scale invasion
     # overall index, sum of the following binary variables:
-       # loss_dummy3, 
-       # displaced,   
+       # loss_dummy3, # coarsened  q2.3 
+       # displaced,   # coarsened  q1.3
        # q2.2.1  # loss of income
        # q2.2.2  # loss of job
        # q2.2.3  # physical health deterioration
