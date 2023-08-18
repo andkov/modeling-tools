@@ -4,7 +4,7 @@
 #' date: "last Updated: `r Sys.Date()`"
 #' ---
 #+ echo=F
-# rmarkdown::render(input = "./analysis/ua-war-religion/god-in-war.R") # run to knit, don't uncomment
+# rmarkdown::render(input = "./analysis/ua-war-religion/god-in-war-sandbox-andriy.R") # run to knit, don't uncomment
 #+ echo=F ----------------------------------------------------------------------
 library(knitr)
 # align the root with the project working directory
@@ -54,7 +54,7 @@ if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 load("./analysis/ua-war-religion/materials/toy-data.RData")
 
 #+ inspect-data ------------------------------------------------------------
-filtered_data %>% glimpse()
+filtered_data %>% glimpse(80)
 # filtered_data %>% tableone::CreateTableOne(data=., strata = "wave") # takes long
 filtered_data %>% explore::describe_all()
 
@@ -90,21 +90,21 @@ ds0 <-
     ,loss_dummy3 # know someone who died from war
     ,displaced   # moved since full-scale invasion
     # overall index, sum of the following binary variables:
-       # loss_dummy3, # coarsened  q2.3 
-       # displaced,   # coarsened  q1.3
-       # q2.2.1  # loss of income
-       # q2.2.2  # loss of job
-       # q2.2.3  # physical health deterioration
-       # q2.2.4  # mental health deterioration
-       # q2.2.5  # family separation
-       # q2.2.6  # loss or damage to housing
-       # q2.2.7  # loss or damage to other assets
-       # q2.2.8  # injury to you or family members
+    # loss_dummy3, # coarsened  q2.3 
+    # displaced,   # coarsened  q1.3
+    # q2.2.1  # loss of income
+    # q2.2.2  # loss of job
+    # q2.2.3  # physical health deterioration
+    # q2.2.4  # mental health deterioration
+    # q2.2.5  # family separation
+    # q2.2.6  # loss or damage to housing
+    # q2.2.7  # loss or damage to other assets
+    # q2.2.8  # injury to you or family members
     ,affected_index       # 0-10 # larger is more affected by war
     ,affected_index_std   # standardized: mean=0, sd=1 
     ,affected_index_dummy # above average adversity: affected_index_std > 0
- )
-ds0 %>% glimpse()
+  )
+ds0 %>% glimpse(80)
 
 # rm(filtered_data, war_var_labels)
 #+ tweak-data-1 ------------------------------------------------------------
@@ -114,7 +114,7 @@ ds1 <-
   ds0 %>%
   arrange(key,waveL) %>% 
   mutate(
-    km_to_war_bin = cut(km_to_war, breaks = c(10,seq(50,750,50)))
+    km_to_war_bin = cut(km_to_war, breaks = c(0,10,seq(100,700,300)))
     ,km100_to_war = km_to_war/100 # re-scale for convenient interpretation
     ,church_weekly = case_when(
       church  %in% c(1,2,3)   ~ 1L
@@ -153,8 +153,13 @@ ds1 <-
   arrange(key,desc(waveL)) %>%
   tidyr::fill(relig_change, relig_increase) %>% # makes person-level
   arrange(key,waveL) %>%
-  ungroup() 
-ds1 %>% glimpse()
+  ungroup() %>% 
+  mutate(across(
+    c("church_weekly","church_monthly", "pray_daily")
+    ,~as.logical(.))
+    
+  )
+ds1 %>% glimpse(80)
 ds1 %>% select(key, wave, religiosity, relig_change, relig_increase) %>% head(6)
 
 #+ outcome-1 -----------------------------------------------------------------
@@ -164,15 +169,17 @@ ds1 %>% select(key, wave, religiosity, relig_change, relig_increase) %>% head(6)
 d1 <- 
   ds1 %>% 
   select(
-    wave,waveL,
-    religious, church, pray,      # c15, c16, c17                              
-    church_weekly
-    ,church_monthly
-    ,pray_daily
-    ,religiosity   # additive index, standardized
-    ,relig_change   # change in standardized religiosity index # person-level
-    ,relig_increase # binary                                   # person-level
-    ) %>% 
+    wave,waveL
+    ,religious   # how religious are you ?         0-10 # filtered_data %>% count(c15)          
+    ,church      # how often do you attend church? 1-7  # filtered_data %>% count(c16)       
+    ,pray        # how often do you pray?          1-7  # filtered_data %>% count(c17)     
+    ,church_weekly  # binary, derived
+    ,church_monthly # binary, derived
+    ,pray_daily     # binary, derived
+    ,religiosity    # additive index of (religious, church, pray), standardized
+    ,relig_change   # change in standardized religiosity index # person-level indicator
+    ,relig_increase # binary, positive religious response      # person-level indicator
+  ) %>% 
   mutate(across(c("religious","church","pray"), .fns= ~as.integer(.))) 
 
 d1 %>% filter(wave=="Before") %>% explore::describe_all()
@@ -188,6 +195,16 @@ d1 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE)
 # after the full-scale invasion every second Ukrainian prays daily
 # 5) the mean of religiosity index increased by .25 points (from -.21 to .04)
 # however, the scale of this metric is not readily interpretable
+# 6) positive religious response is more typical, 57% report higher religiosity since the full-scale invasion
+
+# All but seven people are two nonmissing values of church_weekly
+# ds1 |> 
+#   dplyr::group_by(key) |> 
+#   dplyr::summarize(
+#     point_count = sum(!is.na(church_weekly))
+#   ) |> 
+#   dplyr::count(point_count)
+
 
 #+ intervention-1 -----------------------------------------------------------------
 # Affect of War - Intervention variable
@@ -209,7 +226,7 @@ d2 <-
 d2 %>% filter(wave=="Before") %>% explore::describe_all()
 d2 %>% filter(wave=="After") %>% explore::describe_all()
 d2 %>% tableone::CreateTableOne(data=., strata = "wave",testNonNormal = TRUE,
-                               factorVars = c("sum_loss_or_displaced"))
+                                factorVars = c("sum_loss_or_displaced"))
 
 # 1) 36 % experienced loss of someone they knew personally (some NAs) / every third
 # 2) 16% experienced change of residence since invasion / ~ every 8th respondent
@@ -233,7 +250,7 @@ g1a <-
   mutate(
     mean=mean(religiosity)
     ,median = quantile(religiosity,.50)
-    ) %>% 
+  ) %>% 
   ungroup %>% 
   ggplot(aes(x=religiosity))+
   geom_histogram(alpha = .4)+
@@ -248,8 +265,8 @@ g1a
 g1b <- 
   ds1 %>% 
   ggpubr::ggboxplot(x = "wave", y = "religiosity",
-            color = "wave",
-            add = "jitter")+
+                    color = "wave",
+                    add = "jitter")+
   stat_compare_means()
 g1b
 # alternative view, dedicated statistical procedure of the paired T-test 
@@ -257,10 +274,10 @@ results_of_t_test <-
   rstatix::t_test(ds1,religiosity~wave,ref.group = "After",paired = TRUE)
 result_of_t.test <- 
   t.test(
-  ds1 %>% filter(wave=="After") %>% pull(religiosity)
-  ,ds1 %>% filter(wave=="Before") %>% pull(religiosity)
-  ,paired = TRUE
-) %>% print()
+    ds1 %>% filter(wave=="After") %>% pull(religiosity)
+    ,ds1 %>% filter(wave=="Before") %>% pull(religiosity)
+    ,paired = TRUE
+  ) %>% print()
 # However, this difference (.25) measures the cross-sectional change
 # And we need to evaluate individual change as well
 
@@ -298,6 +315,8 @@ result_of_t.test
 
 
 #+ model-1 -----------------------------------------------------------------
+# Baseline growth model (wave)
+
 # Let's do a formal test of the hypothesis
 # H1: Religiosity changed since the full-scale invasion
 # it can be evaluated with the following model in glm()
@@ -307,12 +326,12 @@ m1 %>% tidy()
 m1 %>% GGally::ggcoef()
 emm1 <- m1 %>% emmeans::emmeans(~wave) %>% print()
 emm1 %>% plot()
-m1 %>% GGally::ggcoef_model()
+m1 %>% GGally::ggcoef_model() # displacement view
 
 # For learning purposes, let's compare model prediction to previous views of data
 gm1 <- 
   m1 %>% 
-  augment() %>% # add fitted values
+  broom::augment() %>% # add fitted values
   bind_cols(ds1 %>% select(-c("wave","religiosity"))) %>% # add original data
   # ggplot(aes(x=waveL, y = religiosity))+ # note re-centering to align with model coefficients
   # ggplot(aes(x=waveL, y = .fitted))+ # note re-centering to align with model coefficients
@@ -338,7 +357,7 @@ g3a <-
   ds1 %>%
   ggplot(aes(x=km100_to_war, y=religiosity))+
   geom_point(shape=21)+
-  geom_smooth(aes(color=wave),method = "lm")+
+  geom_smooth(aes(color=wave),method = "lm")+ # compare loess to lm
   geom_smooth(method = "lm", linetype = "dashed")+
   line_equation
 g3a
@@ -353,35 +372,86 @@ model_rel_geo %>% get_rsquared()
 # Yes, about 10% of it 
 emm_rel_geo <- model_rel_geo %>%  
   emmeans::emmeans(
-     specs = c("km100_to_war") 
+    specs =  ~ km100_to_war # try adding pairwise before ~
     ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
   )
 emm_rel_geo
-emm_rel_geo %>% plot()
+emm_rel_geo %>% plot(contrasts=TRUE)
+emm_rel_geo %>% emmeans::contrast()
 
 #+ model-2 -----------------------------------------------------------------
+# Baseline growth model (wave) with 
+# ONE continuous confounder (km100_to_war)
 
 # To formally test the hypothesis:
 # H1: Distance to War/Russia affects the CHANGE in religiosity (index) since the full-scale invasion
-m2 <- glm(religiosity ~ km100_to_war*wave, data = ds1)
+m2  <- glm(religiosity ~ wave + km100_to_war + km100_to_war*wave, data = ds1)
+m2b <- glm(religiosity ~ wave + km100_to_war, data = ds1);anova(m2,m2b)
 m2 %>% tidy()
+m2 %>% GGally::ggcoef_model()
 # The effect of interaction is not detected, in other words
 # Increase in religiosity is universal across geography, in other words
 # It's not the region/distance to war that can explain the change in religiosity since the full-scale invasion
 emm2 <- m2 %>%  
   emmeans::emmeans(
-    # specs = c("wave","km100_to_war")
-    specs = c("km100_to_war","wave") # different perspective
-    ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-  )
-emm2
-emm2 %>% plot()
+    specs = ~ wave | km100_to_war
+    ,at   = list(km100_to_war = c(1,4,7)) # custom points to evaluate
+  ) %>% print()
 
-#+ graph -----
+emm2 %>% plot(comparisons=TRUE)
+
+# a more elaborate specification, a step closer to functions
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+eq_emmeans <- "~ wave | km100_to_war" # equation to constructing comparison table
+e <-
+  emmeans::emmeans(
+    object = m2, 
+    as.formula(eq_emmeans),  # allows to pass strings to functions
+    data = ds1, # what you pass to glm() so we can tap into other vars when graphing
+    type = "response", # default when Gaussian
+    at   = list(km100_to_war = c(0,1,4,7)) # try adding 0 to align with tidy(m2)
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7)) # more specific
+  )  
+print(e)
+plot(e)
+emmeans::contrast(e) # try adjust = "bonferroni" or other
+# Create data set containing model predictions for conditions specified by `eq_emmeans` 
+d_predict <-
+  seq_len(nrow(e@linfct)) %>%                         # notice emmeans object `e`!
+  purrr::map_dfr(function(i) as.data.frame(e[i])) %>% # notice emmeans object `e`!
+  dplyr::mutate( #  now tweak for graphing
+    outcome = "religiosity",
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    km100_to_war,
+    # rename on the fly and remind what we're bringing from emmeans object
+    y_hat       = !!rlang::ensym(hat_name), # the outcome, modeled values
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+d_predict |> 
+  ggplot(aes(x = km100_to_war, y = y_hat, group=wave)) +
+  geom_point() +
+  geom_line() + 
+  # facet_wrap("km100_to_war") +
+  theme_minimal()
+e # to compare again
+m2 %>% tidy() # with model summary from broom
+#+ graph-4 -----
+# if data allows, we can examine more specific boundaries of the covariate
 # let's examine this effect visually within different bins of the covariate
-# to ensure we are not dealing with a type of simpson's paradox
+# to ensure we are not dealing with a type of Simpson's paradox
 g4 <- 
   ds1 %>% 
+  mutate(
+    km_to_war_bin = cut(km_to_war, breaks = c(0,10,seq(100,700,300)))
+  ) %>% 
   ggplot(aes(x=waveL, y = religiosity))+ # note re-centering to align with model coefficients
   geom_point(alpha = .2)+
   geom_line(aes(group = key),alpha = .2)+
@@ -396,68 +466,230 @@ g4 <-
   line_equation
 g4  
 
-#+ model-3 -------------------------
+#+ quick-question-1-the-DID-term -------------------------
+# Some literature on DID defines the DID term as an interaction term between wave and treatement
+# y ~ wave + treatment + wave*treatment 
+# however, in this simplification they are perfection confounded, to demonstrate 
+dm <- 
+  ds1 %>%
+  select(key, waveL, loss_dummy3,religiosity ) %>% 
+  mutate(did = waveL*loss_dummy3) # define the interaction term, DID
+m <- glm( religiosity ~  waveL + did, data = dm );tidy(m)
+m <- glm( religiosity ~  waveL + loss_dummy3, data = dm );tidy(m)
+rm(dm,m) # QED, clean up
 
-# DO peple who live farther wave from Russia have different reaction (in reliogisity)
-# to the affect of the war? 
-m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war + loss_dummy3*km100_to_war, data = ds1 )
-# m3a <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war                           , data = ds1 )
-m3a %>% tidy() 
-m3a %>% GGally::ggcoef_model()
-emm3a <- m3a %>% emmeans::emmeans(
-  specs = c("loss_dummy3", "km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
+#+ model-3 ----------------
+# ONE intervention variable (loss_dummy3) with
+# ONE continuous confounder (km100_to_war)
+
+# This model allows us to test the hypothesis
+# H1: People who live farther from Russia have different religious response to invasion
+
+m3 <- glm( religiosity ~ wave + loss_dummy3 + km100_to_war + loss_dummy3*km100_to_war, data = ds1 )
+m3 %>% tidy() 
+m3 %>% GGally::ggcoef_model()
+emm3 <- m3 %>% emmeans::emmeans(
+  specs = as.formula(" ~ loss_dummy3 | km100_to_war") 
+  ,at   = list(km100_to_war = c(.1,1,4,7)) # custom points to evaluate
 ) %>% print()
-emm3a %>% plot()
+emm3 %>% plot()
+
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+eq_emmeans <- "~ wave * loss_dummy3 | km100_to_war" # remember this for arrange data in the table, not model specification
+
+e <-
+  emmeans::emmeans(
+    object = m3, 
+    as.formula(eq_emmeans), 
+    data = ds1,
+    type = "response",
+    at   = list(km100_to_war = c(1,4, 7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+print(e)
+
+d_predict <-
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    loss_dummy3,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  facet_wrap("km100_to_war") +
+  theme_minimal()
 
 
-m3b <- glm( religiosity ~ wave + displaced + km100_to_war + displaced*km100_to_war, data = ds1 )
-# m3b <- glm( religiosity ~ wave + displaced + km100_to_war                           , data = ds1 )
-m3b %>% tidy() 
-m3b %>% GGally::ggcoef_model()
-emm3b <- m3b %>% emmeans::emmeans(
-  specs = c("displaced", "km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3b %>% plot()
+#+ model-4 -----------------
+# TWO intervention variables (loss_dummy3, displaced) and 
+# ONE continuous confounder (km100_to_war)
+# Main effects only, no interactions 
+m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war, data = ds1 )
+m4 %>% tidy() 
+m4 %>% GGally::ggcoef_model()
+
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# EM equation shapes the output to the console, but it doesn't change the y-hat for any cell.
+eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war" # but remember that intervention can't be separated from wave
+# eq_emmeans <- " ~ loss_dummy3 * displaced | km100_to_war" # removing wave creates problems for ds_predict
+
+# 
+e <-
+  emmeans::emmeans(
+    object = m4, 
+    specs = as.formula(eq_emmeans), 
+    data = ds1,
+    type = "response",
+    at   = list(km100_to_war = c(1,4,7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+
+# https://cran.r-project.org/web/packages/emmeans/vignettes/comparisons.html
+print(e)
+# plot(e, comparisons = TRUE) # chokes up when wave is present, does not seem to be realted to model misspecification
+plot(e) # Blue - conf.intv, cannot use them for multiple comparisons!
+emmeans::pwpp(e)
+emmeans::contrast(e) #, adjust = "bonferroni") # alternative table
+graphics::pairs(e) # alternative table, TODO: explore discrepancy due to method
+
+d_predict <-
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
+    displaced = factor(displaced)
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    loss_dummy3,
+    displaced,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+m4g <-
+  d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  # facet_wrap("km100_to_war") +
+  facet_grid(displaced ~ km100_to_war)+
+  theme_minimal()
+m4g 
+
+# But this model does not allow terms to interact (except for intervention with wave, by design)
+# Next model adds interactions
+#+ model-5 -----------------
+# TWO intervention variables (loss_dummy3, displaced) and 
+# ONE continuous confounder (km100_to_war)
+# Including two-way interactions
+m5 <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war +
+             loss_dummy3*displaced + loss_dummy3*km100_to_war + displaced*km100_to_war 
+           # + loss_dummy3*displaced*km100_to_war # experimental
+           , data = ds1 )
+m5 %>% tidy() 
+m5 %>% GGally::ggcoef_model()
+
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war" # but remember that intervention can't be separated from wave
+# eq_emmeans <- " ~ loss_dummy3 * displaced | km100_to_war" # removing wave creates problems for ds_predict
+# 
+e <-
+  emmeans::emmeans(
+    object = m5, 
+    specs = as.formula(eq_emmeans), 
+    data = ds1,
+    type = "response",
+    at   = list(km100_to_war = c(1,4,7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+
+# https://cran.r-project.org/web/packages/emmeans/vignettes/comparisons.html
+print(e)
+# plot(e, comparisons = TRUE) # chokes up when wave is present, does not seem to be realted to model misspecification
+plot(e) # Blue - conf.intv, cannot use them for multiple comparisons!
+emmeans::pwpp(e)
+emmeans::contrast(e) #, adjust = "bonferroni") # alternative table
+graphics::pairs(e) # alternative table, TODO: explore discrepancy due to method
+
+d_predict <-
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
+    displaced = factor(displaced)
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    loss_dummy3,
+    displaced,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+m5g <-
+  d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  # facet_wrap("km100_to_war") +
+  facet_grid(displaced ~ km100_to_war)+
+  theme_minimal()
+m5g
 
 
-m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war  , data = ds1 )
-# m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war                           , data = ds1 )
-m3c %>% tidy() 
-m3c %>% GGally::ggcoef_model()
-emm3c <- m3b %>% emmeans::emmeans(
-  specs = c("displaced", "km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3c %>% plot()
-
-
-m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war + loss_dummy3*displaced, data = ds1 )
-# m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
-m3d %>% tidy() 
-m3d %>% GGally::ggcoef_model()
-emm3d <- m3d %>% emmeans::emmeans(
-  specs = c("displaced","loss_dummy3" ,"km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3d %>% plot()
+#+ graph-5-alt-summary-change -------------
+# Experimental, Exploratory
+# to summarize the effect among those who increased religiosity vs those who decreased
+g5 <- 
+  ds1 %>% 
+  ggplot(aes(x=waveL, y = religiosity, color = relig_increase))+ # note re-centering to align with model coefficients
+  geom_point(alpha = .2)+
+  geom_line(aes(group = key),alpha = .15)+
+  # geom_smooth(method = "lm")+
+  scale_x_continuous(breaks = c(0,1))+
+  labs(
+    title = "Individual change in standardized religiosity index "
+    ,subtitle = "Religiosity Index = (Church attendance, Prayer, Self-reported Religiosity) | M=0,SD=1"
+  )
+g5
+ds1 %>% group_by(relig_increase, wave) %>% summarize(mean=mean(religiosity),n=n())
+# those who declined in religiosity (composite index) declined by .38
+# while those who increased their religiosity, increased it by much more, by .74
+# to paraphrase:
+# positive response (increase in religiosity) was about 2 time stronger than negative response( decrease in religiosity)
+g5 <-
+  g5 +
+  geom_smooth(method = "lm",color="blue")+
+  line_equation +
+  facet_grid(.~relig_increase)
+g5
 
 #+ save-to-disk ------------------------------------------------------------
 
-
-# Scrap Book all the way down
-# ----- scrapbook-1 -----------------------------------------------------------
-# g1 <- 
-#   ds1 %>% 
-#   ggplot(aes(
-#     x = c16
-#     ,y = km_to_war_bin
-#     ,color = wave
-#   ))+
-#   geom_point(
-#     shape = 21, alpha = .4
-#     # ,position="jitter"
-#   )+
-#   labs()
-# g1
