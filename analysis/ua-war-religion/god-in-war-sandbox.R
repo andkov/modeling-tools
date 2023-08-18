@@ -347,7 +347,7 @@ g3a <-
   ds1 %>%
   ggplot(aes(x=km100_to_war, y=religiosity))+
   geom_point(shape=21)+
-  geom_smooth(aes(color=wave),method = "lm")+
+  geom_smooth(aes(color=wave),method = "loess")+
   geom_smooth(method = "lm", linetype = "dashed")+
   line_equation
 g3a
@@ -592,7 +592,7 @@ hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from
 eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war"
 e <-
   emmeans::emmeans(
-    object = m4, 
+    object = m5, 
     specs = as.formula(eq_emmeans), 
     data = ds1,
     type = "response",
