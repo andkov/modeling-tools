@@ -524,61 +524,113 @@ d_predict |>
 # 
 #   d_predict
 # }
-m3b <- glm( religiosity ~ wave + displaced + km100_to_war + displaced*km100_to_war, data = ds1 )
-# m3b <- glm( religiosity ~ wave + displaced + km100_to_war                           , data = ds1 )
-m3b %>% tidy() 
-m3b %>% GGally::ggcoef_model()
-emm3b <- m3b %>% emmeans::emmeans(
-  specs = c("displaced", "km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3b %>% plot()
-
-
-m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war  , data = ds1 )
-# m3c <- glm( religiosity ~ wave + affected_index_std + km100_to_war                           , data = ds1 )
-m3c %>% tidy() 
-m3c %>% GGally::ggcoef_model()
-emm3c <- m3b %>% emmeans::emmeans(
-  specs = c("displaced", "km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3c %>% plot()
-
-
-m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war + loss_dummy3*displaced, data = ds1 )
-# m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
-m3d %>% tidy() 
-m3d %>% GGally::ggcoef_model()
-emm3d <- m3d %>% emmeans::emmeans(
-  specs = c("displaced","loss_dummy3" ,"km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3d %>% plot()
-
-m3e <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war + loss_dummy3*displaced+
-            loss_dummy3*km100_to_war+ displaced*km100_to_war, data = ds1 )
-# m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
-m3e %>% tidy() 
-m3e %>% GGally::ggcoef_model()
-#
-emm3e <- m3d %>% emmeans::emmeans(
-  specs = c("displaced","loss_dummy3" ,"km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3e %>% plot()
-
 
 #+ model-4 -----------------
-m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced, data = ds1 )
-# m3d <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war                           , data = ds1 )
+m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war, data = ds1 )
+# m4 <- glm( religiosity ~ wave + loss_dummy3 + displaced               , data = ds1 )
 m4 %>% tidy() 
-m3d %>% GGally::ggcoef_model()
-emm3d <- m3d %>% emmeans::emmeans(
-  specs = c("displaced","loss_dummy3" ,"km100_to_war") 
-  ,at   = list(km100_to_war = c(.1,1,2,3,4,5,6,7)) # custom points to evaluate
-) %>% print()
-emm3d %>% plot()
+m4 %>% GGally::ggcoef_model()
+
+# m4 %>% emmeans::emmeans(specs = pairwise ~ loss_dummy3 + displaced)
+
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+
+eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war"
+e <-
+  emmeans::emmeans(
+    object = m4, 
+    specs = as.formula(eq_emmeans), 
+    data = ds1,
+    type = "response",
+    at   = list(km100_to_war = c(1,4,7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+print(e)
+
+d_predict <-
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
+    displaced = factor(displaced)
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    loss_dummy3,
+    displaced,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  # facet_wrap("km100_to_war") +
+  facet_grid(displaced ~ km100_to_war)+
+  theme_minimal()
+
+#+ model-5 -----------------
+m5 <- glm( religiosity ~ wave + loss_dummy3 + displaced + km100_to_war +
+             loss_dummy3*displaced + loss_dummy3*km100_to_war + displaced*km100_to_war 
+             # + loss_dummy3*displaced*km100_to_war
+           , data = ds1 )
+m5 %>% tidy() 
+m5 %>% GGally::ggcoef_model()
+
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+
+eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war"
+e <-
+  emmeans::emmeans(
+    object = m4, 
+    specs = as.formula(eq_emmeans), 
+    data = ds1,
+    type = "response",
+    at   = list(km100_to_war = c(1,4,7))
+    # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
+  )  
+print(e)
+
+d_predict <-
+  seq_len(nrow(e@linfct)) |>
+  purrr::map_dfr(function(i) as.data.frame(e[i])) |>
+  dplyr::mutate(
+    outcome = "religiosity",
+    loss_dummy3 = factor(loss_dummy3),
+    displaced = factor(displaced)
+  ) |>
+  dplyr::select(
+    outcome,
+    wave,
+    loss_dummy3,
+    displaced,
+    km100_to_war,
+    y_hat       = !!rlang::ensym(hat_name),
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+d_predict |> 
+  ggplot(aes(x = wave, y = y_hat, group = loss_dummy3, color = loss_dummy3, fill = loss_dummy3)) +
+  geom_point() +
+  geom_line() + 
+  # facet_wrap("km100_to_war") +
+  facet_grid(displaced ~ km100_to_war)+
+  theme_minimal()
+
+
+
 
 
 #+ graph-5 -------------
