@@ -537,7 +537,9 @@ hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from
 # hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
 # hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
 
-eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war"
+# EM equation shapes the output to the console, but it doesn't change the y-hat for any cell.
+# eq_emmeans <- " ~ wave * loss_dummy3 * displaced | km100_to_war"
+eq_emmeans <- " ~ loss_dummy3 * displaced | wave"
 e <-
   emmeans::emmeans(
     object = m4, 
@@ -547,7 +549,13 @@ e <-
     at   = list(km100_to_war = c(1,4,7))
     # at   = list(wave = c("Before", "After"), km100_to_war = c(.1,1,7))#, loss_dummy3 = c("0", "1"))
   )  
+
+# https://cran.r-project.org/web/packages/emmeans/vignettes/comparisons.html
 print(e)
+plot(e, comparisons = TRUE)
+emmeans::pwpp(e)
+emmeans::contrast(e) #, adjust = "bonferroni")
+graphics::pairs(e)
 
 d_predict <-
   seq_len(nrow(e@linfct)) |>
