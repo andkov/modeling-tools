@@ -139,3 +139,4 @@ data-private/raw/unpack-in-data-private-raw.zip
 data-private/raw/effects-gaussian.zip
 
 analysis/ua-war-religion/materials/*
+!analysis/ua-war-religion/materials/README.md
