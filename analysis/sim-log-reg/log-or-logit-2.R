@@ -9,7 +9,7 @@ source("./scripts/graphing/graph-presets.R")
 source("./analysis/sim-log-reg/support-functions.R")
 getwd()
 
-## Log vs Logit remindier
+## Log vs Logit reminder
 d1 <-
   tibble(prob = seq(0,1,.01)) %>% 
   mutate(
@@ -73,17 +73,17 @@ d %>% tableone::CreateTableOne(data=.) # Observed mean of TRUE = 32.6
 # when using  LOGIT link function
 m0_logit %>% print() # raw coefficient is on the logit scale
 # to transform back to the original scale (probability), must use `plogis()``
-coef(m0_logit)[1] %>% plogis()  # to rescale manually
-coef(m0_logit)[1] %>% LaplacesDemon::invlogit()  # to rescale manually
+coef(m0_logit)[1] %>% plogis()  # to re-scale manually
+coef(m0_logit)[1] %>% LaplacesDemon::invlogit()  # to re-scale manually
 m0_logit %>% broom::tidy(exp=F) # default , leaves coefficient on original scale = logit(prop)
-m0_logit %>% broom::tidy(exp=T) # or exp(coef(m0_logit)[1]); INCORRECT rescaling
-# Important: when using defaults (familiy = binomical), must NOT use broom::tidy(exp=T)
+m0_logit %>% broom::tidy(exp=T) # or exp(coef(m0_logit)[1]); INCORRECT re-scaling
+# Important: when using defaults (family = binomial), must NOT use broom::tidy(exp=T)
 m0_logit %>% coef() %>% exp()                     # wrong!!
 m0_logit %>% coef() %>% LaplacesDemon::invlogit() # correct!!
 m0_logit %>% coef() %>% plogis() # correct!!
 
 # when using  LOG link function
-coef(m0_log)[1] %>% exp()  # to rescale manually
+coef(m0_log)[1] %>% exp()  # to re-scale manually
 m0_log   %>% broom::tidy(exp=F) # leaves coefficient on original scale = log(prob)
 m0_log   %>% broom::tidy(exp=T) # re-scales the estimate correctly
 
@@ -95,9 +95,9 @@ m1_logit <- glm(outcome ~ 1 + sex, data = d, family= binomial(link="logit"))
 m1_log   <- glm(outcome ~ 1 + sex, data = d, family= binomial(link="log"))
 
 
-# When usuing link="log', rescaling of the coefficiens is straightforward
+# When using link="log', re-scaling of the coefficients is straightforward
 m1_log %>% broom::tidy(exp=T)
-# But to  interpret the coefficients we must add them before rescaling
+# But to  interpret the coefficients we must add them before re-scaling
 # Thus the expected value of sex='Male' will be calculated as
 m1_logit %>% broom::tidy(exp=F) # raw, on logit scale
 m1_logit %>% broom::tidy(exp=F) %>% 
