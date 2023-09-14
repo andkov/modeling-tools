@@ -1,0 +1,46 @@
+---
+title: "Package `emmeans` in evaluating two-point change"
+author: "Andriy Koval"
+format: revealjs
+editor: visual
+---
+
+## How to follow along
+
+-   (Easy, recommended) Copy the folder `/modeling-tools/` from `M:\SPQ\PQA\R&A\_Research and Open Data\Capacity Building\Training\R\session-materials\2023-08-18\` , paste somewhere on your hard drive and double-click `./modeling-tools.Rproj` to launch the project in RStudio
+-   (Harder, but more fun!). Clone <https://github.com/andkov/modeling-tools> and cope the file `toy-data.RData` from `M:\SPQ\PQA\R&A\_Research and Open Data\Capacity Building\Training\R\session-materials\2023-08-18` and place it into `./analysis/ua-war-religion/materials/` of the cloned repo.
+
+## Audience
+
+-   future me (cheat sheet for reference for models of this type & shape)
+
+-   those might run models of this type
+
+-   those who might interpret the models of this type
+
+## Case Study - Sample
+
+-   European Social Survey
+
+-   Wave 0 = December 2021 ( N = \~2,000)
+
+-   Wave 1, Ukrainian follow-up = September 2022 (\~6 months into the war) (N = \~ 1,000, who could be tracked)
+
+-   Toy data set (N = 200 of those in both waves)
+
+## Case Study - Model
+
+-   Outcome = Religiosity (Church attendance, Praying, Self-perception)
+
+-   Intervention ( Experienced loss of a person, Had to move , Index (these +8 others))
+
+-   Continuous Confounder = Distance to Occupied territory or Russia (km100_to_war), basically east to west
+
+## Resources
+
+-   The [collection of official vignettes](https://cran.r-project.org/web/packages/emmeans/) at the main documentation page, appears to be most helpful so far. Probably will require multiple readings. Thorough, practical, but requires some time to master.
+-   I found [this video](https://www.youtube.com/watch?v=_okuMw4JFfU&t=204s) pretty helpful, both as an a quick intro and a later reference
+
+## 
+
+## 
