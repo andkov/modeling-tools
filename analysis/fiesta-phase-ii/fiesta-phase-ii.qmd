@@ -1,0 +1,224 @@
+---
+title: "FIESTA Phase II"
+subtitle: "Two time points, Fixed Effects"
+author: "Research and Open Data"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+This report exemplifies a workflow in which executable code and annotations for humans are written in a single `.qmd` document.
+
+<!--  Set the working directory to the repository's base directory; this assumes the report is nested inside of two directories.-->
+
+```{r}
+#| code-summary: Reconciles working directory between execution modes
+#| echo: false
+#| results: hide
+#| message: false 
+# cat("Working directory: ", getwd())
+# library(knitr)
+# opts_knit$set(root.dir='../../') # keep this chunk isolated  
+```
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+knitr::opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 6, # inches
+  fig.height   = 4, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+```
+
+# Environment
+
+> Reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+#| # Choose to be greedy: load only what's needed
+# Three ways, from least (1) to most(3) greedy:
+# -- 1.Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+library(ggplot2)   # graphs
+library(forcats)   # factors
+library(stringr)   # strings
+library(lubridate) # dates
+library(labelled)  # labels
+library(scales)    # format
+library(dplyr)     # loading dplyr explicitly is my guilty pleasure
+library(broom)     # for model
+library(emmeans)   # for interpreting model results
+library(magrittr)
+# -- 2.Import only certain functions of a package into the search path.
+import::from("magrittr", "%>%")
+# -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+requireNamespace("readr"    )# data import/export
+requireNamespace("readxl"   )# data import/export
+requireNamespace("tidyr"    )# tidy data
+requireNamespace("janitor"  )# tidy data
+requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
+requireNamespace("testit"   )# For asserting conditions meet expected patterns.
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+base::source("../../scripts/common-functions.R") # project-level
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+# prints_folder <- paste0("./analysis/report-example/prints/")
+# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+
+# placeholder
+```
+
+# Data
+
+Let us assume that a rectangle `ds0` represents a set of survey responses for a given period of time.
+
+```{r}
+#| warning=F
+nia_null <- readr::read_csv("8-model-A/model-solution/nia-effects-null.csv")
+nia_full <- readr::read_csv("8-model-A/model-solution/nia-effects-full.csv")
+
+```
+
+What's inside this *analysis rectange*?
+
+```{r}
+# Null model
+# Balancing equation: outcome ~ covariates + (interventions - focal_intervention)
+# Effect model:       outcome ~ intervention
+# EM means formula:   outcome ~ tx * wave
+nia_null
+
+# Full model 
+# Balancing equation: outcome ~ covariates + (interventions - focal_intervention)
+# Effect model:       outcome ~ covariates + (interventions - focal_intervention)
+# EMmeans formula :   outcome ~ tx * wave * sex2 * age_in_years * dependent2 * marital2
+# EMmeans reference levels:
+# tx                  = c(FALSE, TRUE)
+# waveL               = c(0,1)
+# sex2                = c("Men", "Women")
+# age_in_years        = c(20, 30, 40, 50, 60)
+# dependent2          = c("0 dependents", "1+ dependents")
+# marital3            = c("married", "single")
+# education4          = c("High School")
+# disability2         = c("No Disability")
+# ethnicity           = c("Caucasian")
+# immigration         = c("born in Canada")
+# region7             = c("Edmonton")
+# spell_duration_cat  = c("2-3 months")
+# years_btw_waves_cat = c("2")
+# fy_is_start         = c("2017")
+# career_planning     = c(0)
+# job_placement       = c(0)
+# exposure_course     = c(0)
+# workshop_noncp      = c(0)
+# english_as_second   = c(0)
+# training_for_work   = c(0)
+# work_foundation     = c(0)
+# assessment_snd      = c(0)
+# assessment_ea       = c(0)
+nia_full
+
+```
+
+# Analysis
+
+## Main Effect - Null Model
+
+```{r}
+nia_null %>% 
+  ggplot(aes(x=waveL, y = y_hat, color = tx))+
+  geom_point()+
+  geom_line()+
+  facet_wrap("intervention")+
+  labs(
+    title = "Main effect"
+  )
+```
+
+## Marginal Means - Full Model
+
+```{r}
+nia_full %>% 
+  filter(age_in_years==20) %>% 
+  filter(intervention == "career_planning") %>% 
+  filter(marital2 == "single") %>% 
+  {
+    ggplot(data=., aes(x=waveL, y= y_hat, color = tx))+
+    geom_point()+
+    geom_line()+
+    geom_label(aes(label = scales::comma(y_hat, accuracy = 1)))+
+    scale_y_continuous(breaks = seq(10000,30000,5000), labels = scales::comma_format())+
+    scale_x_continuous(breaks = c(0,1), minor_breaks = c(0,1))+
+    facet_wrap(c("sex2","dependent2"))+
+    labs(
+      title = "Marginal Means"
+      ,y = pull(.,intervention) %>% unique()
+      ,color = "Received\nIntervention"
+    )  
+  }
+  
+  
+```
+
+## Q.4 Sex difference in the outcome
+
+Is the outcome (employment) related to the sex of the client? Who is more likely to report being employed after the program?
