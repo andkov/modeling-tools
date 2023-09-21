@@ -10,7 +10,7 @@ ggplot2::theme_set(
   )+
     theme(
       strip.background = element_rect(fill="grey95", color = NA)
-      ,panel.grid = element_line(color = "grey95")
+      ,panel.grid = element_line(color = "grey92")
       ,panel.border = element_rect(color = "grey80")
       ,axis.ticks = element_blank()
       ,text=element_text(size=baseSize)
