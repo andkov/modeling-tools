@@ -1,0 +1,250 @@
+---
+title: "Interaction Effect Simulator"
+author: "Andriy Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    css: styles.css
+    self-contained: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+This report examines the logic of interaction in an additive model using a prosthetic data.
+
+<!--  Set the working directory to the repository's base directory; this assumes the report is nested inside of two directories.-->
+
+```{r}
+#| code-summary: Reconciles working directory between execution modes
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd())
+library(knitr)
+opts_knit$set(root.dir='../../') # keep this chunk isolated  
+```
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 6, # inches
+  fig.height   = 4, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+```
+
+# Environment
+
+> Reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+#| # Choose to be greedy: load only what's needed
+# Three ways, from least (1) to most(3) greedy:
+# -- 1.Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+library(ggplot2)   # graphs
+library(forcats)   # factors
+library(stringr)   # strings
+library(lubridate) # dates
+library(labelled)  # labels
+library(scales)    # format
+library(dplyr)     # loading dplyr explicitly is my guilty pleasure
+library(broom)     # for model
+library(emmeans)   # for interpreting model results
+library(magrittr)
+# -- 2.Import only certain functions of a package into the search path.
+import::from("magrittr", "%>%")
+# -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+requireNamespace("readr"    )# data import/export
+requireNamespace("readxl"   )# data import/export
+requireNamespace("tidyr"    )# tidy data
+requireNamespace("janitor"  )# tidy data
+requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
+requireNamespace("testit"   )# For asserting conditions meet expected patterns.
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+base::source("./scripts/common-functions.R") # project-level
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+prints_folder <- paste0("./analysis/interaction-effect-simulator/prints/")
+if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+
+line_equation <- 
+  ggpmisc::stat_poly_eq(formula = y ~ + x 
+                        # ,aes(label = paste0(c(after_stat(rr.label),after_stat(eq.label)))) # can't get the same behavior
+                        ,aes(label = paste(..eq.label.., sep = "~~~"))
+                        ,parse = TRUE
+                        ,label.x = 0.1
+                        ,label.y = 1.5,color = "blue",vjust=1.2)  
+
+  scale_y_continuous(breaks=seq(0,100,1))+
+  scale_x_continuous(breaks = c(0,1))
+```
+
+# Data
+
+Let us consider a simple case with minimum data
+
+```{r}
+#| warning: false
+#| code-summary: Create an artificial data set
+ds0 <- tibble::tribble(
+  ~id, ~sex, ~age,     ~earn_before,     ~earn_after,
+    1,  "M",   20,            16,           22,
+    2,  "M",   20,            19,           21,
+    3,  "F",   20,            18,           18.5,
+    4,  "F",   20,            14,           15,
+    5,  "M",   40,            25,           19,
+    6,  "M",   40,            27,           23,
+    7,  "F",   40,            21,           20,
+    8,  "F",   40,            26,           25,
+)
+ds0
+
+ds1 <- 
+  ds0 %>% 
+  tidyr::pivot_longer(
+    cols = c("earn_before","earn_after")
+    ,names_to = "wave"
+    ,values_to = "earn"
+  ) %>% 
+  mutate(
+    wave = wave %>%  str_remove("earn_")
+    ,waveL = case_when(wave=="before"~0L,wave=="after"~1L)
+  )
+ds1
+```
+
+```{r}
+g1 <- 
+  ds1 %>% 
+  ggplot(aes(x=waveL,y=earn, group=id, color=sex, fill=sex, shape=sex))+
+  geom_point(size=4)+
+  scale_shape_manual(values = c("M"=25, "F"=24))+
+  scale_y_continuous(breaks=seq(0,100,1))+
+  scale_x_continuous(breaks = c(0,1))+
+  geom_line()+
+  labs(title = "Illustrative example")
+  
+g1
+```
+
+```{r}
+#| code-summary: Model 1
+
+# Step 1: Specify and Estimate the model
+eq_formula <- as.formula("earn ~ waveL")# Model equation
+m <- glm(
+  formula = eq_formula
+  ,data = ds1
+)
+
+# Step 2: Estimate Marginal Means 
+eq_emmeans <- "~ waveL" %>% as.formula() # EMM equation
+e <- 
+  m %>%  
+  emmeans::emmeans(
+    specs =   eq_emmeans# try adding pairwise before ~
+    ,at   = list(waveL = c(0L,1L)) # custom points to evaluate
+  )
+e
+
+# Step 3: Extract EMM for plotting
+# Create data set containing model predictions for conditions specified by `eq_emmeans` 
+hat_name <- "emmean" # Gaussian output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "prob" # logistic output from emmeans (as opposed to `fitted` from broom)
+# hat_name <- "rate" # Poisson output from emmeans (as opposed to `fitted` from broom)
+d_predict <-
+  seq_len(nrow(e@linfct)) %>%                         # notice emmeans object `e`!
+  purrr::map_dfr(function(i) as.data.frame(e[i])) %>% # notice emmeans object `e`!
+  dplyr::mutate( #  now tweak for graphing
+    outcome = "earn" # to document the name of the outcome
+    ,wave=factor(waveL,c(0,1),c("Before","After"))
+  ) |>
+  dplyr::select(
+    outcome,
+    waveL,
+    wave,
+    # rename on the fly and remind what we're bringing from emmeans object
+    y_hat       = !!rlang::ensym(hat_name), # the outcome, modeled values
+    se          = SE,
+    ci_lower    = lower.CL,  #asymp.UCL
+    ci_upper    = upper.CL #asymp.UCL
+  ) 
+
+# Step 4: Examine the effects
+
+```
+
+```{r}
+g <- 
+  d_predict %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=wave, group =1))+
+  # geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), linewidth = 4, alpha = .2 )+
+  geom_point(shape = 21, size=3)+
+  geom_line(color = "black")+
+  line_equation_only+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+
+ds1 
+d_predict
+ds1_predict <- 
+  ds1 %>% 
+
+```
+
