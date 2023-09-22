@@ -18,19 +18,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-This report exemplifies a workflow in which executable code and annotations for humans are written in a single `.qmd` document.
-
-<!--  Set the working directory to the repository's base directory; this assumes the report is nested inside of two directories.-->
-
-```{r}
-#| code-summary: Reconciles working directory between execution modes
-#| echo: false
-#| results: hide
-#| message: false 
-# cat("Working directory: ", getwd())
-# library(knitr)
-# opts_knit$set(root.dir='../../') # keep this chunk isolated  
-```
+This report presents the results of the Phase II of the FIESTA project. 
 
 ```{r}
 #| label: set_options
@@ -101,7 +89,6 @@ requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 #| results: hide
 #| message: false
 #| code-fold: true
-base::source("../../scripts/common-functions.R") # project-level
 ```
 
 ```{r}
@@ -111,9 +98,30 @@ base::source("../../scripts/common-functions.R") # project-level
 #| results: hide
 #| message: false 
 #| code-fold: true
-# prints_folder <- paste0("./analysis/report-example/prints/")
-# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
+# visual style applied to all graphs
+baseSize <- 10
+ggplot2::theme_set(
+  ggplot2::theme_bw(
+  )+
+    theme(
+      strip.background = element_rect(fill="grey95", color = NA)
+      ,panel.grid = element_line(color = "grey95")
+      ,panel.border = element_rect(color = "grey80")
+      ,axis.ticks = element_blank()
+      ,text=element_text(size=baseSize)
+    )
+)
+
+# corporate colors
+abcol <- c(
+  "stone"     = "#5f6a72" # stone   - grey
+  ,"dusk"     = "#d40072" # dusk    - magenta
+  ,"sunset"   = "#ff7900" # sunset  - brown
+  ,"pasture"  = "#77b800" # pasture - green
+  ,"sky"      = "#00aad2" # sky     - blue
+  ,"prairie"  = "#edb700" # prairie - yellow
+)
 ```
 
 ```{r}
@@ -196,42 +204,49 @@ nia_null %>%
 ## Marginal Means - Full Model
 
 ```{r}
-intervention_i <- "career"
+intervention_i <- "career_planning"
+marital_i      <- "single"
+sex_i          <- "Men"
+dependent_i    <- "0"
+age_i          <- "20"
+intervention_i_pretty <- snakecase::to_title_case(intervention_i)
+
 nia_full %>% 
-  filter(age_in_years==20) %>% 
-  filter(intervention == "career_planning") %>% 
-  filter(marital2 == "single") %>% 
-  # mutate(waveL = factor(waveL)) %>% 
-  mutate(y_hat = y_hat/1000) %>% 
+  filter(intervention == intervention_i) %>% 
+  filter(age_in_years==age_i) %>% 
+  filter(marital2 == marital_i) %>% 
+  mutate(y_hat = y_hat/1000) %>% # for  more convenient metric
   {
-    ggplot(data=., aes(x=waveL, y= y_hat, color = tx))+
+    ggplot(data=., aes(x=waveL, y= y_hat, color = tx, linetype = tx))+
     geom_point()+
+    # geom_line(key_glyph = draw_key_rect)+
     geom_line(key_glyph = draw_key_rect)+
     # see more at: https://ggplot2.tidyverse.org/reference/draw_key.html
-    # ggrepel::geom_label_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
     ggrepel::geom_text_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
-    
     scale_y_continuous(breaks = seq(10,30,5), labels = scales::comma_format())+
     scale_x_continuous(breaks = c(0,1), minor_breaks = c(0,1))+
     facet_wrap(c("sex2","dependent2"))+
-    scale_color_manual(values = c("TRUE"="navyblue","FALSE"="grey40"))+
+    scale_color_manual(values = c("TRUE"="blue","FALSE"="grey50"))+
+    scale_linetype_manual(values = c("TRUE"="solid","FALSE"="dashed"))+
     
   guides(
     colour = guide_legend(override.aes = list(alpha = 1))
+    ,linetype = "none"
   )+
   theme(
     panel.grid.major.x = element_blank()
   )+
   labs(
-      title = "Marginal Means"
-      ,y = pull(.,intervention) %>% unique()
-      ,color = "Received\nIntervention"
+      title = paste0("Estimated effect of ", intervention_i_pretty, " on Total Earnings (in thousands)")
+      ,subtitle = paste0(
+        "Marital status: ", marital_i, " | Age: ", age_i,"\n\n", # will change with specs
+        "High School | Cacausian | Born in Canada | Edmonton | No disability | IS = 2-3 months | FY start = 2017" # won't change with specs
+      )
+      ,y = intervention_i_pretty
+      ,color = paste0("Had at least one\n",intervention_i_pretty,"\nbefore end of spell")
+      ,x = "Timing before (0) or after (1) Income Support spell"
     )  
   }
   
   
 ```
-
-## Q.4 Sex difference in the outcome
-
-Is the outcome (employment) related to the sex of the client? Who is more likely to report being employed after the program?
