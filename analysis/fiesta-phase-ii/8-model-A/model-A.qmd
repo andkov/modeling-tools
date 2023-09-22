@@ -1,0 +1,1087 @@
+---
+title: "Model A"
+subtitle: "Effect of Intervention on Financial Recovery after the first Income Support"
+author: "Andriy Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: litera
+    highlight-style: nord
+    embed-resources: true
+    standalone: true
+    monofont: consolas
+    code-line-numbers: true
+    df-print: paged
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+<!--  Set the working directory to the repository's base directory; this assumes the report is nested inside of two directories.-->
+
+```{r}
+#| code-summary: Reconciles working directory between execution modes
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd())
+library(knitr)
+opts_knit$set(root.dir='../../') # keep this chunk isolated  
+```
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 6, # inches
+  fig.height   = 4, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+  ,cache = TRUE
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+read_chunk("./analysis/8-model-A/model-A.R") #This allows knitr to call chunks tagged in the underlying *.R file.
+```
+
+This script summarizes the data described by `EDA-tax_year` with statistical models that use data from two time points: before and after person's first Income Support spell.
+
+# Environment
+
+This section reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-globals-for-nia
+#| code-summary: Set of variables used for net impact analysis
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+# Context
+
+Please see `EDA-tax_year` for detailed description of all relevant tables. Here, we providing a brief summary as a reminder.
+
+-   Derivatives of `ds_tax_year`:
+
+    -   `ds0` - verbatim copy of `ds_tax_year`, one row = one year of tax data
+
+    -   `ds1` - adds filters for suspicious values/outliers of the outcomes
+
+    -   `ds2` - adds new convenience variables, added covariates from `ds_covars`
+
+    -   `ds3` - drops cases with suspicious values (convenient for models and graphs)
+
+    -   `ds3_long` - `ds3` pivoted longer with respect to **timeline variables** (years to IS, tax year, age) and **outcome variables** (total earnings, total income, and their logs)
+
+    -   `ds4` - specific to the chosen outcome (in this case, `earnings_total`), filters `ds3` to keep only two time points per person: tax years *before* and *after* their Income Support spell (i.e. tax years at least partially overlapping with the IS event, in this case the first instance of IS)
+
+    -   `ds5` - labels factor levels and adds convenience variables for modeling and graphing
+
+```{r}
+#| label: load-data
+#| code-summary: Load data rectangles to be used in the report
+#| warning: false
+#| cache: true
+#| results: markup
+#| echo: true
+#| code-fold: true
+```
+
+```{r}
+#| label: tweak-data-0
+#| code-summary: Creates data state `ds0`, verbatim copy of `ds_tax_year`. Creates `ds_covars` with chosen demographics at first IS spell.
+#| echo: true
+#| results: hide
+#| message: false
+#| cache: true
+#| code-fold: true
+```
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Creates form `ds1`. Adds filters for questionable values of the outcome
+#| echo: true
+#| results: hide
+#| message: false
+#| cache: true
+#| code-fold: true
+```
+
+# Data
+
+To recollect the structure of longitudinal data, examine a single case:
+
+```{r results='show', message=FALSE, echo=T, class.source="fold-hide" }
+#| code-summary: View for one person
+#| results: hold
+#| code-fold: true
+
+# notice that it's possible to have a negative income
+# another reason to prefer "earnings_total" as the key outcome
+ds2 %>% # 
+  filter(person_oid == 4389937 ) %>%
+  # keep_random_id() %>4389937 % 
+  select(
+    person_oid
+    ,tax_year
+    ,income_total
+    ,earnings_total
+    # ,year_before_is
+    # ,years_is
+    # ,year_after_is
+    ,months_is_that_year
+    ,age_in_seq
+    ,age_in_years
+  ) %>% 
+  mask_ids() #%>% 
+  # neat()
+```
+
+> Note that we use `ds2` to show the type of cases removed from `ds3`
+
+However, for the purposes of the current model (`model-A`), which evaluates change between only two time points, 
+  - `Before`  the start of the first Income Support spell   
+  - `After` the end of the first Income Support spell   
+  
+```{r}
+#| code-summary: a person who did NOT have a given intervention, `career_planning`
+
+ds5 %>% 
+  keep_random_id(seed=45) %>%
+  mask_ids() %>%
+  select(all_of(c(design,outcomes,intervention[1], covariates[1:2]))) %>% 
+  print()
+```
+  
+```{r}
+#| code-summary: a person who did have a given intervention
+ds5 %>% 
+  keep_random_id(seed=4) %>%
+  mask_ids() %>%
+  select(all_of(c(design,outcomes,intervention[1], covariates[1:2]))) %>% 
+  print()
+```
+
+We measure  **INTERVENTION** as the
+
+> number of events before the END of the first IS spell
+
+Note, that currently we do not limit a look-back window, which means we do not know **when exactly** the intervention took place: *before* the person started Income Support or *after* they exited from the program. This is important to remember when interpreting model results.  
+
+# Variables
+
+We organize our rectangle into the following groups of variables: design, outcomes, covariates,  and interventions. This section reviews their distributional properties
+
+## Design
+```{r}
+#| label: inspect-design
+#| code-summary: Summarize design variables
+```
+
+## Outcomes
+
+## Covariates
+
+## Interventions
+
+## Reference group
+
+
+# Demographics
+
+```{r}
+#| label: sex-marital-children
+#| code-summary: Explore groups prevalent in sex-marital-children variables
+#| fig.width: 10
+#| fig.height: 7
+#| out.width: 1000 px
+d <-
+  ds5 %>%
+  filter(waveL==0) %>% 
+  group_by(sex2, dependent2, marital2) %>%
+  summarize(
+    person_count = n_distinct(person_oid)
+    ,earnings_median = median(earnings_total, na.rm = T)
+    ,age_median = median(age_in_seq, na.rm = T)
+    # ,earnings_mean = mean(earnings_total, na.rm = T)
+    # ,age_mean = mean(age_in_years, na.rm = T)
+    ,.groups = "drop"
+  ) %>%
+  mutate(
+    total_count = sum(person_count)
+    ,person_prop = person_count/total_count
+    ,person_pct = scales::percent(person_prop, accuracy = .1)
+  ) %>%
+  # filter(waveL==1) %>%
+  # filter(!sex2=="Unknown") %>%
+  # filter(!marital2=="(Missing)") %>%
+  select(everything())
+# d %>% print_all()
+
+g <-
+  d %>%
+  ggplot(aes(y=person_count,x=sex2, fill=dependent2))+
+  geom_col(position = position_dodge())+
+  geom_label(aes(label = person_pct))+
+  facet_wrap(c("marital2"))+
+  scale_y_continuous(breaks = seq(0,10000,1000), labels = scales::comma_format())+
+  labs(
+    title = "Size of the group (sex-marital-dependents) as percent from total"
+    ,subtitle = "Groups (bars) are mutually exclusive and exhausive:"
+  )
+g
+```
+
+
+# Model 1 - Null Growth
+
+```{r}
+#| label: model-1
+#| code-fold: true
+#| echo: true
+```
+
+::: panel-tabset
+## Predicted
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: true
+g <- 
+  d_predict %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=wave, group =1))+
+  geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 4, alpha = .2 )+
+  geom_point(shape = 21, size=3)+
+  geom_line(color = "black")+
+  line_equation_only+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Summary
+
+```{r}
+#| code-fold: false
+#| echo: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: false
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: false
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: false
+e %>% plot( comparisons=TRUE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: false
+e %>% emmeans::contrast()
+```
+:::
+
+# Model 2 - Age
+
+```{r}
+#| label: model-2-examine-age
+#| code-summary: create graphs plotting relationship between age and outcome
+#| code-fold: true
+#| cache: true 
+```
+
+::: panel-tabset
+## Observed
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+#| cache: true
+ds5 %>% select(wave,earnings_total, age_in_years) %>% tableone::CreateTableOne(data=.,strata="wave")
+```
+
+## Seed = 42
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| cache: true
+#| echo: false
+lsg$`42`
+```
+
+## Seed = 43
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+#| cache: true
+lsg$`43`
+```
+
+## Seed = 44
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+#| cache: true
+lsg$`44`
+```
+
+## Seed = 45
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+#| cache: true
+lsg$`45`
+```
+:::
+
+Now let's evaluate a new model with added predictor `age`, allowing it to interact with the time variable `wave`
+
+```{r}
+#| label: model-2
+#| code-fold: true
+#| cache: true
+```
+
+::: panel-tabset
+## Predicted 1
+
+```{r}
+#| code-fold: true
+#| cache: true
+g <- 
+  d_predict %>% 
+  ggplot(aes(x=age_in_years, y = y_hat, color=wave))+
+  geom_segment(aes(xend=age_in_years,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line()+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Predicted 2
+
+```{r}
+#| code-fold: true
+#| cache: true
+g <- 
+  d_predict %>% 
+  mutate(age_in_years = factor(age_in_years) %>% fct_rev()) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=age_in_years))+
+  geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line()+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+#| cache: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+#| cache: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: true
+#| cache: true
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: true
+e %>% plot( comparisons=FALSE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: true
+e %>% emmeans::contrast()
+```
+:::
+
+# Model 3 - Sex
+
+```{r}
+#| label: model-3-examine-sex
+#| code-summary: create graphs plotting relationship between sex and outcome
+#| code-fold: true
+```
+
+::: panel-tabset
+## Observed
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+ds5 %>% select(wave,earnings_total, sex2) %>% tableone::CreateTableOne(data=.,strata="wave")
+```
+
+## Seed = 42
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+lsg$`42`
+```
+
+## Seed = 43
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+lsg$`43`
+```
+
+## Seed = 44
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+lsg$`44`
+```
+
+## Seed = 45
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+lsg$`45`
+```
+:::
+
+Now let's evaluate a new model with the predictor `sex2` added to the Null Growth model, allowing it to interact with the time variable `wave`
+
+```{r}
+#| label: model-3
+#| code-fold: true
+```
+
+::: panel-tabset
+## Predicted 1
+
+```{r}
+#| code-fold: true
+g <- 
+  d_predict %>% 
+  ggplot(aes(x=sex2, y = y_hat, color=wave))+
+  geom_segment(aes(xend=sex2,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line(aes(group=wave))+
+  # geom_errorbar(aes(ymin=ci_lower, ymax=ci_upper),size=4, width = 1,alpha =.2)
+  # geom_vline(aes(ymin=ci_lower, ymax=ci_upper))
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Predicted 2
+
+```{r}
+#| code-fold: true
+g <- 
+  d_predict %>% 
+  # mutate(sex2 = factor(sex2) %>% fct_rev()) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=sex2))+
+  geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line()+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: true
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: true
+e %>% plot( comparisons=TRUE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: true
+e %>% emmeans::contrast()
+```
+:::
+
+# Model 4 - Sex\*Age
+
+## Descriptives
+
+```{r}
+#| label: model-4-examine-sex-age
+#| code-summary: create graphs plotting relationship between sex and outcome
+#| code-fold: true
+```
+
+::: panel-tabset
+## Observed
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+#| echo: false
+ds5 %>% select(wave,earnings_total, sex2,age_in_years) %>% tableone::CreateTableOne(data=.,strata="wave")
+```
+
+## Seed = 42
+
+```{r}
+#| code-fold: true
+#| out-width: 1000px
+#| fig-width: 12
+#| fig-height: 4
+#| echo: false
+lsg$`42`
+```
+
+## Seed = 43
+
+```{r}
+#| code-fold: true
+#| out-width: 1000px
+#| fig-width: 12
+#| fig-height: 4
+#| echo: false
+lsg$`43`
+```
+
+## Seed = 44
+
+```{r}
+#| code-fold: true
+#| out-width: 1000px
+#| fig-width: 12
+#| fig-height: 4
+#| echo: false
+lsg$`44`
+```
+
+## Seed = 45
+
+```{r}
+#| code-fold: true
+#| out-width: 1000px
+#| fig-width: 12
+#| fig-height: 4
+#| echo: false
+lsg$`45`
+```
+:::
+
+Now let's evaluate a new model with the predictors `sex2` and `age` added to the Null Growth model, allowing it to interact with the time variable `wave`
+
+## Model 4
+
+```{r}
+#| label: model-4
+#| code-fold: true
+```
+
+::: panel-tabset
+## Predicted 1
+
+```{r}
+#| code-fold: true
+#| out-width: 900px
+g <- 
+  d_predict %>% 
+  mutate(age_in_years = factor(age_in_years)) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=age_in_years))+
+  geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line(aes(group=age_in_years))+
+  facet_wrap("sex2", nrow=1)+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format(), breaks = seq(0,50000,2000))+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+  # geom_errorbar(aes(ymin=ci_lower, ymax=ci_upper),size=4, width = 1,alpha =.2)
+  # geom_vline(aes(ymin=ci_lower, ymax=ci_upper))
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Predicted 2
+
+```{r}
+#| code-fold: true
+#| fig-width: 10
+#| fig-height: 3
+#| out-width: 1000px
+g <- 
+  d_predict %>% 
+  # mutate(sex2 = factor(sex2) %>% fct_rev()) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=sex2))+
+  geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=3)+
+  geom_line()+
+  facet_wrap("age_in_years",nrow=1)+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format())+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+  labs(title = "Estimated Marginal Means with 95% confidence intervals")
+g
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: true
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: true
+e %>% plot( comparisons=FALSE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: true
+e %>% emmeans::contrast()
+```
+:::
+
+# Model 5
+
+```{r}
+#| label: model-5
+#| code-fold: true
+```
+
+::: panel-tabset
+## Predicted 1: Men
+
+```{r}
+#| code-fold: true
+#| out-width: 1200px
+#| fig-width: 12
+#| fig-height: 10
+g <- 
+  d_predict %>% 
+  filter(sex2=="Men") %>% 
+  mutate(
+    years_btw_waves_cat = years_btw_waves_cat %>% fct_relabel(
+      .fun = ~paste0(.," years b/w waves"))
+  ) %>% 
+  mutate(age_in_years = factor(age_in_years)) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=age_in_years))+
+  # geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=2)+
+  geom_line(aes(group=age_in_years), linewidth=1.3, alpha = .4)+
+  facet_wrap(facets = c("years_btw_waves_cat","dependent4"))+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format(), breaks = seq(0,50000,5000), limits = c(10000, 40000))+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+labs(
+    title = "Estimated Marginal Means with 95% confidence intervals"
+    ,subtitle = "Men | Never married | High School | Cacausian| Born in Canada | Edmonton | IS = 2-3 months | FY start = 2017 | No disability |"
+    )
+g
+g %>% quick_save("men",w=12,h=10)
+
+```
+
+## Predicted 1: Women
+
+```{r}
+#| code-fold: true
+#| out-width: 1200px
+#| fig-width: 12
+#| fig-height: 10
+g <- 
+  d_predict %>% 
+  filter(sex2=="Women") %>% 
+  mutate(
+    years_btw_waves_cat = years_btw_waves_cat %>% fct_relabel(
+      .fun = ~paste0(.," years b/w waves"))
+  ) %>% 
+  mutate(age_in_years = factor(age_in_years)) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color=age_in_years))+
+  # geom_segment(aes(xend=waveL,y=ci_lower, yend=ci_upper), size = 3, alpha = .4 )+
+  geom_point(shape = 21, size=2)+
+  geom_line(aes(group=age_in_years), linewidth=1.3, alpha = .4)+
+  facet_wrap(facets = c("years_btw_waves_cat","dependent4"))+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format(), breaks = seq(0,50000,5000),limits = c(10000, 40000))+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+  labs(
+    title = "Estimated Marginal Means with 95% confidence intervals"
+    ,subtitle = "Women | Never married | High School | Cacausian| Born in Canada | Edmonton | IS = 2-3 months | FY start = 2017 | No disability |"
+    )
+g
+g %>% quick_save("women",w=12,h=10)
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+:::
+
+# Model 7 - TX ONLY
+
+```{r}
+#| label: model-7
+#| code-fold: true
+```
+
+::: panel-tabset
+
+## Predicted 
+
+```{r}
+#| code-fold: true
+#| fig.width: 9
+#| fig.height: 5
+#| out.width: 1000 px
+g <- 
+  d_predict %>%# select()
+  ggplot(aes(x=waveL,y = y_hat, color=tx))+
+  geom_point( size=2)+
+  geom_line( linewidth=1.3, alpha = .4)+
+  # facet_wrap(facets = c("dependent2", "age_in_years"), ncol=5)+
+  # facet_wrap(facets = c("age_in_years"), ncol=5)+
+  # scale_shape_manual(values = c("Men"=25,"Women"=24))+
+  geom_label(aes(label=comma(y_hat, accuracy = 1)))+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_fill_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format(), breaks = seq(0,50000,5000))+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+  labs(
+    title = "Estimated Marginal Means for chosen levels of covariates"
+    ,subtitle = "Model: earnings_total ~ waveL*tx"
+  )
+g
+# g %>% quick_save("test",w=12,h=10)
+
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: true
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: true
+e %>% plot( comparisons = TRUE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: true
+e %>% emmeans::contrast()
+```
+
+:::
+
+# Model 8 - TX with Covariates
+
+```{r}
+#| label: model-8
+#| code-fold: true
+```
+
+::: panel-tabset
+
+## Predicted 
+
+```{r}
+#| code-fold: true
+#| fig.width: 9
+#| fig.height: 5
+#| out.width: 1000 px
+
+g <- 
+  d_predict %>%# select()
+  ggplot(aes(x=waveL,y = y_hat, color=tx))+
+  geom_point( size=2)+
+  geom_line( linewidth=1.3, alpha = .4)+
+  # facet_wrap(facets = c("dependent2", "age_in_years"), ncol=5)+
+  # facet_wrap(facets = c("age_in_years"), ncol=5)+
+  # scale_shape_manual(values = c("Men"=25,"Women"=24))+
+    geom_label(aes(label=comma(y_hat, accuracy = 1)))+
+  scale_color_brewer(type="qual",palette = "Dark2")+
+  scale_fill_brewer(type="qual",palette = "Dark2")+
+  scale_y_continuous(labels = scales::comma_format(), breaks = seq(0,50000,5000))+
+  scale_x_continuous(breaks = c(0,1), labels = scales::comma_format(accuracy = 1))+
+  labs(
+    title = "Estimated Marginal Means for chosen levels of covariates"
+    ,subtitle = "Reference: Men | 21 yo | 0 dependents | Never married | High School | Cacausian \n| Born in Canada | Edmonton | No disability | IS = 2-3 months | FY start = 2017"
+  )
+g
+# g %>% quick_save("test",w=12,h=10)
+```
+
+## Summary
+
+```{r}
+#| code-fold: true
+eq_formula %>% print()
+m %>% glance()
+m %>% get_rsquared()
+```
+
+## Coef table
+
+```{r}
+#| code-fold: true
+m %>% tidy() %>%
+  mutate(across(.cols = 2:4,.fns=~scales::comma(., accuracy=.1))) %>% 
+  mutate(across(.cols = 5,.fns=~scales::comma(., accuracy=.001)))
+```
+
+
+## Means
+
+```{r}
+#| code-fold: true
+e
+```
+
+## EM Plot
+
+```{r}
+#| code-fold: true
+e %>% plot( comparisons = TRUE)  # try adjust = "bonferroni" or other
+```
+
+## Contrasts
+
+```{r}
+#| code-fold: true
+e %>% emmeans::contrast()
+```
+
+:::
+
+
+# Model 9 - Balanced Group
+
+The implementation of `Model 9` is carried out in a dedicated script `./analysis/8-model-A/group-balancing.R`.
+Future applications should streamline the process more. 
+
+# Session Information {#session-info}
+
+For the sake of documentation and reproducibility, the current report was rendered in the following environment. Click the line below to expand.
+
+<details>
+
+<summary>Packages used</summary>
+
+Packages used in current report
+
+```{r}
+#| label: session-info
+#| echo: false
+#| code-fold: true
+if( requireNamespace("devtools", quietly = TRUE) ) {
+  devtools::session_info()
+} else {
+  sessionInfo()
+}
+```
+
+</details>
+
+```{r}
+#| label: session-duration
+#| echo: false
+#| code-fold: true
+report_render_duration_in_seconds <- round(as.numeric(difftime(Sys.time(), report_render_start_time, units="secs")))
+```
+
+Report rendered by `r Sys.info()["user"]` at `r strftime(Sys.time(), "%Y-%m-%d, %H:%M %z")` in `r report_render_duration_in_seconds` seconds.
