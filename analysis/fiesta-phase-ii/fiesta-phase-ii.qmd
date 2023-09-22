@@ -12,7 +12,7 @@ format:
     highlight-style: github
     colde-line-numbers: true
     css: styles.css
-    self-contained: true
+    embed-resources: true 
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -138,7 +138,7 @@ nia_full <- readr::read_csv("8-model-A/model-solution/nia-effects-full.csv")
 
 ```
 
-What's inside this *analysis rectange*?
+What's inside this *analysis rectangle*?
 
 ```{r}
 # Null model
@@ -150,8 +150,8 @@ nia_null
 # Full model 
 # Balancing equation: outcome ~ covariates + (interventions - focal_intervention)
 # Effect model:       outcome ~ covariates + (interventions - focal_intervention)
-# EMmeans formula :   outcome ~ tx * wave * sex2 * age_in_years * dependent2 * marital2
-# EMmeans reference levels:
+# EM means formula :   outcome ~ tx * wave * sex2 * age_in_years * dependent2 * marital2
+# EM means reference levels:
 # tx                  = c(FALSE, TRUE)
 # waveL               = c(0,1)
 # sex2                = c("Men", "Women")
@@ -176,7 +176,6 @@ nia_null
 # assessment_snd      = c(0)
 # assessment_ea       = c(0)
 nia_full
-
 ```
 
 # Analysis
@@ -197,19 +196,33 @@ nia_null %>%
 ## Marginal Means - Full Model
 
 ```{r}
+intervention_i <- "career"
 nia_full %>% 
   filter(age_in_years==20) %>% 
   filter(intervention == "career_planning") %>% 
   filter(marital2 == "single") %>% 
+  # mutate(waveL = factor(waveL)) %>% 
+  mutate(y_hat = y_hat/1000) %>% 
   {
     ggplot(data=., aes(x=waveL, y= y_hat, color = tx))+
     geom_point()+
-    geom_line()+
-    geom_label(aes(label = scales::comma(y_hat, accuracy = 1)))+
-    scale_y_continuous(breaks = seq(10000,30000,5000), labels = scales::comma_format())+
+    geom_line(key_glyph = draw_key_rect)+
+    # see more at: https://ggplot2.tidyverse.org/reference/draw_key.html
+    # ggrepel::geom_label_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
+    ggrepel::geom_text_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
+    
+    scale_y_continuous(breaks = seq(10,30,5), labels = scales::comma_format())+
     scale_x_continuous(breaks = c(0,1), minor_breaks = c(0,1))+
     facet_wrap(c("sex2","dependent2"))+
-    labs(
+    scale_color_manual(values = c("TRUE"="navyblue","FALSE"="grey40"))+
+    
+  guides(
+    colour = guide_legend(override.aes = list(alpha = 1))
+  )+
+  theme(
+    panel.grid.major.x = element_blank()
+  )+
+  labs(
       title = "Marginal Means"
       ,y = pull(.,intervention) %>% unique()
       ,color = "Received\nIntervention"
