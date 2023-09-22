@@ -188,13 +188,26 @@ nia_full
 
 # Analysis
 
+Important Caveats
+
+1. We operationalize "receiving intervention" as having at least one target program event any time before the end of the Income Support spell, without any look-back window limitation.
+
+2. We entered other intervention into the effect estimation model and fixed the levels to `0` when estimating marginal means. This means that model predictions isolate the influence of the target intervention from the rest.   
+
+3. Four demographic variables (`sex2`, `marital2`, `dependent2`, and `age_in_years`) are used to calculate the predicted values for specific levels of interest. The levels of other predictors (`education4`,`disability2`, `ethnicity`,`immigration`, `region7`, `spell_duration_cat`,`years_between_waves_cat`, and `fy_is_start`) are fixed at the level derived from a empirical center (most commonly occurring combination of levels on all covariates)
+
+4. The Full model is double-robust: we use the same set of predictors in the group balancing model, as in the effect estimation model
+
+
 ## Main Effect - Null Model
 
 ```{r}
 nia_null %>% 
+  mutate(y_hat = y_hat/1000) %>% 
   ggplot(aes(x=waveL, y = y_hat, color = tx))+
   geom_point()+
   geom_line()+
+   ggrepel::geom_text_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
   facet_wrap("intervention")+
   labs(
     title = "Main effect"
@@ -228,10 +241,9 @@ nia_full %>%
     facet_wrap(c("sex2","dependent2"))+
     scale_color_manual(values = c("TRUE"="blue","FALSE"="grey50"))+
     scale_linetype_manual(values = c("TRUE"="solid","FALSE"="dashed"))+
-    
-  guides(
-    colour = guide_legend(override.aes = list(alpha = 1))
-    ,linetype = "none"
+    guides(
+      colour = guide_legend(override.aes = list(alpha = 1))
+      ,linetype = "none"
   )+
   theme(
     panel.grid.major.x = element_blank()
