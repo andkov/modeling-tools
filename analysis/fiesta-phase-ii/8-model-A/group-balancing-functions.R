@@ -253,7 +253,7 @@ compute_effect_on_binary <- function(
   # model <- survey::svyglm(model_equation, design = design.ps, family = binomial(link="log")) %>% suppressWarnings()
   # model <- survey::svyglm(model_equation, design = design.ps, family = binomial(link="log")) %>% suppressWarnings()
   # model <- survey::svyglm(model_equation, design = design.ps, family = binomial(link="log"),start=c(.5,.5)) %>% suppressWarnings()
-  # adding preditor cause the following error:
+  # adding predictor causes the following error:
   # Error: no valid set of coefficients has been found: please supply starting values
   
   # summary(model)
