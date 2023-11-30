@@ -279,7 +279,7 @@ g <-
     ,subtitle = "solid color = average effect size; dotdash color = standard statistical distance "
     ,caption = "Standard Effect Size interpretation: <.01 = 'very small' | <.2 = 'Small` | <.5 = 'Medium'"
   )
-# g
+g
 
 g %>% 
   quick_save(
