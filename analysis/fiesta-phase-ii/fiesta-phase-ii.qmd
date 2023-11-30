@@ -37,8 +37,8 @@ knitr::opts_chunk$set(
   tidy         = FALSE,
   # dpi        = 400, # dots per inch,
   # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
-  fig.width    = 6, # inches
-  fig.height   = 4, # inches
+  fig.width    = 9, # inches
+  fig.height   = 6, # inches
   fig.path     = 'figure-png-iso/' # where figures are stored
 )
 echo_chunks    <- FALSE #Toggle for debugging.
