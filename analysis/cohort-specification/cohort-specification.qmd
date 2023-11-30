@@ -1,0 +1,339 @@
+---
+title: "CEIS prevention effect"
+subtitle: "Definitions and Specifications"
+author: "Andriy Koval"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+knitr::opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 9, # inches
+  fig.height   = 6, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+```
+
+# Environment
+
+> Reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+#| # Choose to be greedy: load only what's needed
+# Three ways, from least (1) to most(3) greedy:
+# -- 1.Attach these packages so their functions don't need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+library(ggplot2)   # graphs
+library(forcats)   # factors
+library(stringr)   # strings
+library(lubridate) # dates
+library(labelled)  # labels
+library(scales)    # format
+library(dplyr)     # loading dplyr explicitly is my guilty pleasure
+library(broom)     # for model
+library(emmeans)   # for interpreting model results
+library(magrittr)
+# -- 2.Import only certain functions of a package into the search path.
+import::from("magrittr", "%>%")
+# -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+requireNamespace("readr"    )# data import/export
+requireNamespace("readxl"   )# data import/export
+requireNamespace("tidyr"    )# tidy data
+requireNamespace("janitor"  )# tidy data
+requireNamespace("dplyr"    )# Avoid attaching dplyr, b/c its function names conflict with a lot of packages (esp base, stats, and plyr).
+requireNamespace("testit"   )# For asserting conditions meet expected patterns.
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+
+# visual style applied to all graphs
+baseSize <- 10
+ggplot2::theme_set(
+  ggplot2::theme_bw(
+  )+
+    theme(
+      strip.background = element_rect(fill="grey95", color = NA)
+      ,panel.grid = element_line(color = "grey95")
+      ,panel.border = element_rect(color = "grey80")
+      ,axis.ticks = element_blank()
+      ,text=element_text(size=baseSize)
+    )
+)
+
+# corporate colors
+abcol <- c(
+  "stone"     = "#5f6a72" # stone   - grey
+  ,"dusk"     = "#d40072" # dusk    - magenta
+  ,"sunset"   = "#ff7900" # sunset  - brown
+  ,"pasture"  = "#77b800" # pasture - green
+  ,"sky"      = "#00aad2" # sky     - blue
+  ,"prairie"  = "#edb700" # prairie - yellow
+)
+
+prints_folder <- "./"
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+
+quick_save <- function(g,name,...){
+  ggplot2::ggsave(
+    filename = paste0(name,".jpg"),
+    plot     = g,
+    device   = "jpg",
+    path     = prints_folder, # expects this definition in `define-globals` chunk
+    # width    = width,
+    # height   = height,
+    # units = "cm",
+    dpi      = 'retina',
+    limitsize = FALSE,
+    ...
+  )
+}
+
+```
+
+
+# Definitions and Specifications
+
+## Terminology operationalization
+
+**First CEIS event** -- start of any CEIS program in the focal year, preceded by an empty lookback window (no CEIS or IS events, but EA are allowed)
+
+**Focal year** -- an arbitrary calendar year (Jan 1 -- Dec 31), chosen to represent our population of interest, right now we use 2017.
+
+**CEIS window** -- 365 days following the first CEIS event
+
+**Look-back window** -- 365\*2 days preceding the first CEIS event
+
+**Outcome window** -- 365\*2 days following the end of the CEIS window
+
+## Research sample inclusion criteria
+
+### Person
+
+-   Must have at least one CEIS event inside the focal year
+
+-   CEIS event must be preceded by an empty lookback window (no CEIS or IS events, whole or partial, occur during the window)
+
+-   EA events are ignored.
+
+### Event
+
+-   Must **start** within CEIS or Outcome window.
+
+-   If an event spans multiple windows or goes beyond, we count the event towards the total event tally for that window (`IS_COUNT_IN_CEIS_WINDOW`, `IS_COUNT_IN_OUTCOME_WINDOW`), and count the days enclosed by the window (`IS_DURATION_IN_CEIS_WINDOW`, `IS_DURATION_IN_OUTCOME_WINDOW`)
+
+## Deliverables
+
+### 1. Event table - `P202310_R01._20231017_EVENT_V**`
+
+The resultant table should contain the following fields:
+
+-   PERSON_OID
+-   DATE_START
+-   DATE_END
+-   EDB_SERVICE_ID
+-   PROGRAM_CLASS0
+
+### 2. Person table - `P202310_R01._20231017_PERSON_V**`
+
+-   PERSON_OID
+
+-   DATE_START_FIRST_CEIS
+
+-   FLT_CEIS_IN_FOCAL
+
+-   FLT_IS_IN_CEIS_WINDOW
+
+-   FLT_IS_IN_OUTCOME_WINDOW
+
+-   IS_COUNT_IN_CEIS_WINDOW
+
+-   IS_DURATION_IN_CEIS_WINDOW
+
+-   IS_COUNT_IN_OUTCOME_WINDOW
+
+-   IS_DURATION_IN_OUTCOME_WINDOW
+
+## Computed fields in PERSON table
+
+-   `FLT_CEIS_IN_FOCAL` - binary. Sample inclusion criteria.\
+
+-   `FLT_IS_IN_CEIS_WINDOW` -- binary. Identifies individuals within the research sample who started IS during the CEIS window\
+
+-   `FLT_IS_IN_OUTCOME_WINDOW` -- binary. Identifies individuals within the research sample who started IS during the outcome window.\
+
+-   `DATE_START_FIRST_CEIS` -- date, the date of the first CEIS event for that individual.\
+
+-   `IS_COUNT_IN_CEIS_WINDOW` -- integer, the number of IS events that took place (completely or partially) inside the CEIS window.\
+
+-   `IS_DURATION_IN_CEIS_WINDOW` -- the total number of months during which this individual received Income Support within the CEIS window.\
+
+-   `IS_COUNT_IN_OUTCOME_WINDOW` -- the number of IS events that took place (completely or partially) inside the Outcome window.\
+
+-   `IS_DURATION_IN_OUTCOME_WINDOW` -- the total number of months during which this individual received Income Support within the Outcome window.
+
+## Miscellaneous specifications
+
+-   Place the resultant table in the RESEARCH_PROJECT_CACHE_UAT\
+-   `P202310_R01._20231017_GRAINA_V01`
+-   \[P\]roject started in the month of \[2023\]-\[10\], \[R\]request number is \[01\]. Project started on the date \[2023\]-\[10\]\[17\], the grain of this table is \[GRAINA\] and the \[V\]ersion number is \[01\].
+
+# Data
+
+Consider a set of fictional cased constructed to demonstrate cohort inclusion criteria
+
+```{r}
+#| label: load-data
+#| code-summary: Manual definition of the artificatial cases
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+ds0 <-
+  tibble::tribble(
+    ~name, ~person_id, ~event_id, ~event_type, ~date_start, ~date_end,
+    "Anna",    "1", "11", "CEIS","2017-03-14", "2017-03-14",
+    "Anna",    "1", "12", "CEIS","2017-05-11", "2017-05-11",
+    "Anna",    "1", "13", "CEIS","2018-10-06", "2018-10-06",
+    
+    "Boris",   "2", "21", "CEIS","2017-09-26", "2017-09-26",
+    "Boris",   "2", "22", "CEIS","2018-11-23", "2018-11-23",
+    "Boris",   "2", "23", "IS",  "2019-01-01", "2019-03-31",
+    "Boris",   "2", "24", "IS",  "2019-12-01", "2020-03-31",
+    
+    "Charlie", "3", "31", "CEIS","2017-01-21", "2017-01-21",
+    "Charlie", "3", "32", "IS","2017-04-01", "2017-08-31",
+    "Charlie", "3", "33", "CEIS","2017-10-10", "2017-10-10",
+    "Charlie", "3", "34", "IS","2019-04-01", "2019-12-31",
+    
+    "Dennis",  "4", "41", "CEIS","2017-05-08", "2017-05-08",
+    "Dennis",  "4", "42", "IS","2017-11-01", "2018-12-31",
+    "Dennis",  "4", "43", "CEIS","2018-09-23", "2018-09-23",
+    "Dennis",  "4", "42", "CEIS","2018-08-07", "2017-08-07",
+    "Dennis",  "4", "42", "CEIS","2018-11-07", "2018-11-07",
+    
+    "Evan",    "5", "51", "IS","2017-02-01", "2017-05-31",
+    "Evan",    "5", "52", "CEIS","2018-03-14", "2018-03-14",
+    "Evan",    "5", "51", "IS","2018-06-01", "2018-09-30",
+    
+    "Fiona",   "6", "61", "IS","2017-09-11", "2019-03-31",
+    "Fiona",   "6", "62", "CEIS","2020-04-05", "2020-04-05"
+  ) %>% 
+  mutate(
+    across(
+      c("date_start", "date_end")
+      ,~as.Date(.)
+    )
+  )
+ds0
+
+ds1 <- 
+  ds0 %>% 
+  mutate(
+    name = factor(name) %>% fct_rev()
+    ,focal_date_start = as.Date("2017-01-01")
+    ,focal_date_end = as.Date("2017-12-31")
+  ) %>% 
+  group_by(person_id) %>% 
+  mutate(
+    first_ceis = case_when(
+      date_start == min(date_start) & event_type == "CEIS" ~ TRUE, TRUE ~ FALSE
+    ),
+    first_event = case_when(
+      date_start == min(date_start)  ~ TRUE, TRUE ~ FALSE
+    )
+    ,lookback_window_start = date_start[which(first_event==TRUE)]-( (365*2)+1)
+    ,lookback_window_end = date_start[which(first_event==TRUE)]- 1
+    ,ceis_window_start = date_start[which(first_event==TRUE)]
+    ,ceis_window_end = date_start[which(first_event==TRUE)]+ ( (365*1))
+    ,outcome_window_start = ceis_window_end + (1)
+    ,outcome_window_end = ceis_window_end + ( (365*2)+1)
+  ) %>% 
+  ungroup()
+ds1
+
+window_linewidth = 4
+g1 <-
+  ds1 %>% 
+  # filter(person_id %in% c(1:5)) %>% 
+  ggplot(aes(x=date_start, y = name))+
+  
+  geom_point(shape = 21, color = "black", fill = "tomato", size = 3, data = . %>% filter(event_type == "CEIS"))+
+  geom_rect(aes(xmin=as.Date("2017-01-01"),xmax=as.Date("2017-12-31")), ymin=-Inf, ymax=Inf,fill = "grey50" , color = "black", alpha = .1, data = . %>% slice(1))+ # focal window
+  geom_segment(aes(xend=date_end, yend=name), linewidth = window_linewidth-2.5, color="black",alpha = .5, data = . %>% filter(event_type == "IS"))+
+  geom_segment(aes(x=lookback_window_start,xend = lookback_window_end, yend=name), linewidth = window_linewidth, alpha = .1, data = . %>% filter(first_event), color = "red")+ 
+  geom_segment(aes(x=ceis_window_start,xend = ceis_window_end, yend=name), linewidth = window_linewidth, alpha = .1, data = . %>% filter(first_event), color = "blue")+
+  geom_segment(aes(x=outcome_window_start,xend = outcome_window_end, yend=name), linewidth = window_linewidth, alpha = .1, data = . %>% filter(first_event), color = "green")+
+  annotate("text",x = as.Date("2017-01-01"), y = "Anna" , label = "FOCAL window", hjust =-.3, vjust = -3)+
+  annotate("text",x = as.Date("2015-03-14"), y = "Anna" , label = "LOOKBACK window: 2 years preceding first event in Focal window", hjust =0, vjust = .4, size =2.5)+
+  annotate("text",x = as.Date("2017-03-14"), y = "Anna" , label = "INTERVENTION window: 1 year following first Intervention", hjust =0, vjust = -1.2, size =2.5)+
+  annotate("text",x = as.Date("2018-03-15"), y = "Anna" , label = "OUTCOME window: 2 years following end of Intervention window", hjust =0, vjust = 2, size =2.5)+
+  annotate("text",x = as.Date("2019-01-01"), y = "Boris" , label = "Income Support", hjust =0, vjust = -1.2, size =2.5)+
+ 
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y")+
+  labs(
+    title = "A set of artifical cases to illustrate cohort inclusion criteria and operationalization of outcomes"
+    ,x = NULL, y = NULL
+    )
+g1
+ggsave("cohort-spec.png",plot=g1, width = 12, height = 4)
+  
+```
+
+```{r}
+# ds0 %>% View() #
+# ds0 %>% glimpse()
+explore::describe_all(ds0)
+# labelled::look_for(ds0)
+# tableone::CreateTableOne(data = ds0)
+ds0 %>% select(-id,-weight,-date) %>% tableone::CreateTableOne(data=.)
+```
+
