@@ -1,0 +1,385 @@
+---
+title: "Model B"
+subtitle: "Effect of Intervention on Financial Recovery after the first Income Support"
+author: "Andriy Koval"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: litera
+    highlight-style: nord
+    embed-resources: true
+    standalone: true
+    monofont: consolas
+    code-line-numbers: true
+    df-print: paged
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+This script estimates NIA coefficients using multiple time points: the one before IS and all time points AFTER the exit from the first IS spell. Uses intervention-specific balancing weights estimated at `is_timeline == -1L` time point.
+
+
+<!--  Set the working directory to the repository's base directory; this assumes the report is nested inside of two directories.-->
+
+```{r}
+#| code-summary: Reconciles working directory between execution modes
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd())
+library(knitr)
+opts_knit$set(root.dir='../../') # keep this chunk isolated  
+```
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  # out.width  = "650px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 6, # inches
+  fig.height   = 4, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+  ,cache = TRUE
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+read_chunk("./analysis/8-model-B/model-B.R") #This allows knitr to call chunks tagged in the underlying *.R file.
+```
+
+
+# Environment
+
+This section reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+```{r}
+#| label: declare-globals-hidden
+#| code-summary: Values used throughout the report the must NOT show up in report.
+#| echo: false
+#| results: hide
+#| message: false 
+#| code-fold: false
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+# Context
+
+Please see `EDA-tax_year` for detailed description of all relevant tables. Here, we providing a brief summary as a reminder.
+
+-   Derivatives of `ds_tax_year`:
+
+    -   `ds0` - verbatim copy of `ds_tax_year`, one row = one year of tax data
+
+    -   `ds1` - adds filters for suspicious values/outliers of the outcomes
+
+    -   `ds2` - adds new convenience variables, added covariates from `ds_covars`
+
+    -   `ds3` - drops cases with suspicious values (convenient for models and graphs)
+
+    -   `ds3_long` - `ds3` pivoted longer with respect to **timeline variables** (years to IS, tax year, age) and **outcome variables** (total earnings, total income, and their logs)
+
+    -   `ds4` - specific to the chosen outcome (in this case, `earnings_total`). Labels and tidies the levels of factor variables.
+
+    -   `ds5` - prepares data for the model of a particular type (e.g. A, B, etc., however we specify it).
+
+```{r}
+#| label: load-data
+#| code-summary: Load data rectangles to be used in the report
+#| warning: false
+#| cache: true
+#| results: markup
+#| echo: true
+#| code-fold: true
+```
+
+```{r}
+#| label: tweak-data-0
+#| code-summary: Creates data state `ds5B`, prepared for the use by Model B (the year before IS and all years after IS).
+#| echo: true
+#| results: hide
+#| message: false
+#| cache: true
+#| code-fold: true
+```
+
+```{r}
+#| label: tweak-data-1
+#| code-summary: Creates form `ds1`. Adds filters for questionable values of the outcome
+#| echo: true
+#| results: hide
+#| message: false
+#| cache: true
+#| code-fold: true
+```
+
+# Data
+
+To recollect the structure of longitudinal data, examine a single case:
+
+```{r results='show', message=FALSE, echo=T, class.source="fold-hide" }
+#| code-summary: View for one person in `ds4`
+#| results: hold
+#| code-fold: true
+ds4 %>% 
+  filter(person_oid == sample_of_interest1) %>% 
+  select(1:2, earnings_total, timeline_is, waveF, outcome_before) %>% 
+  mask_ids()
+```
+
+For the purposes of the current model (`model-B`), which evaluates change between multiple time points ( the year before IS and all years after IS), we filter the data set to keep only relevant time points.
+
+```{r results='show', message=FALSE, echo=T, class.source="fold-hide" }
+#| code-summary: View for the same person in `ds5B`
+#| results: hold
+#| code-fold: true
+ds5B %>% 
+  filter(person_oid == sample_of_interest1) %>% 
+  select(1:2, earnings_total, timeline_is, waveF, waveL, outcome_before) %>% 
+  mask_ids()
+```
+
+```{r}
+#| code-summary: a person who did NOT have a given intervention, `career_planning`
+
+ds5B %>%
+ keep_random_id(seed=45) %>%
+ mask_ids() %>%
+ select(all_of(c(design,outcomes,intervention[1], covariates[1:2]))) %>%
+ print()
+```
+
+```{r}
+#| code-summary: a person who did have a given intervention
+ds5B %>%
+ keep_random_id(seed=4) %>%
+ mask_ids() %>%
+ select(all_of(c(design,outcomes,intervention[1], covariates[1:2]))) %>%
+ print()
+```
+
+We measure **INTERVENTION** as the
+
+> number of events before the END of the first IS spell
+
+Note, that currently we do not limit a look-back window, which means we do not know **when exactly** the intervention took place: *before* the person started Income Support or *after* they exited from the program. This is important to remember when interpreting model results.
+
+# Variables
+
+We organize our rectangle into the following groups of variables: design, outcomes, covariates, and interventions. This section reviews their distributional properties
+
+## Design
+
+```{r}
+#| label: inspect-design
+#| code-summary: Summarize design variables
+```
+
+<!-- ## Outcomes -->
+
+<!-- ```{r} -->
+
+<!-- #| label: inspect-outcomes -->
+
+<!-- #| code-summary: Summarize outcome variables -->
+
+<!-- ``` -->
+
+<!-- ## Covariates -->
+
+<!-- ```{r} -->
+
+<!-- #| label: inspect-covariates -->
+
+<!-- #| code-summary: Summarize covariates variables -->
+
+<!-- ``` -->
+
+<!-- ## Interventions -->
+
+<!-- ```{r} -->
+
+<!-- #| label: inspect-intervention -->
+
+<!-- #| code-summary: Summarize intervention variables -->
+
+<!-- ``` -->
+
+<!-- ## Reference group -->
+
+<!-- ```{r} -->
+
+<!-- #| label:  empirical-reference-group -->
+
+<!-- #| code-summary: Derive an empirical reference group -->
+
+<!-- ``` -->
+
+<!-- Note that the size of the empirical reference group is quite small ( n = 4) and maybe misleading about where the "centre of gravity" is in this manifold of descrete covariates.  -->
+
+<!-- # Demographics -->
+
+<!-- ```{r} -->
+
+<!-- #| label: sex-marital-children -->
+
+<!-- #| code-summary: Explore groups prevalent in sex-marital-children variables -->
+
+<!-- #| fig.width: 10 -->
+
+<!-- #| fig.height: 7 -->
+
+<!-- #| out.width: 1000 px -->
+
+<!-- d <- -->
+
+<!--   ds5B %>% -->
+
+<!--   filter(waveL==0) %>%  -->
+
+<!--   group_by(sex2, dependent2, marital2) %>% -->
+
+<!--   summarize( -->
+
+<!--     person_count = n_distinct(person_oid) -->
+
+<!--     ,earnings_median = median(earnings_total, na.rm = T) -->
+
+<!--     ,age_median = median(age_in_seq, na.rm = T) -->
+
+<!--     # ,earnings_mean = mean(earnings_total, na.rm = T) -->
+
+<!--     # ,age_mean = mean(age_in_years, na.rm = T) -->
+
+<!--     ,.groups = "drop" -->
+
+<!--   ) %>% -->
+
+<!--   mutate( -->
+
+<!--     total_count = sum(person_count) -->
+
+<!--     ,person_prop = person_count/total_count -->
+
+<!--     ,person_pct = scales::percent(person_prop, accuracy = .1) -->
+
+<!--   ) %>% -->
+
+<!--   # filter(waveL==1) %>% -->
+
+<!--   # filter(!sex2=="Unknown") %>% -->
+
+<!--   # filter(!marital2=="(Missing)") %>% -->
+
+<!--   select(everything()) -->
+
+<!-- # d %>% print_all() -->
+
+<!-- g <- -->
+
+<!--   d %>% -->
+
+<!--   ggplot(aes(y=person_count,x=sex2, fill=dependent2))+ -->
+
+<!--   geom_col(position = position_dodge())+ -->
+
+<!--   geom_label(aes(label = person_pct))+ -->
+
+<!--   facet_wrap(c("marital2"))+ -->
+
+<!--   scale_y_continuous(breaks = seq(0,10000,1000), labels = scales::comma_format())+ -->
+
+<!--   labs( -->
+
+<!--     title = "Size of the group (sex-marital-dependents) as percent from total" -->
+
+<!--     ,subtitle = "Groups (bars) are mutually exclusive and exhausive:" -->
+
+<!--   ) -->
+
+<!-- g -->
+
+<!-- ``` -->
+
+# Session Information {#session-info}
+
+For the sake of documentation and reproducibility, the current report was rendered in the following environment. Click the line below to expand.
+
+<details>
+
+<summary>Packages used</summary>
+
+Packages used in current report
+
+```{r}
+#| label: session-info
+#| echo: false
+#| code-fold: true
+if( requireNamespace("devtools", quietly = TRUE) ) {
+  devtools::session_info()
+} else {
+  sessionInfo()
+}
+```
+
+</details>
+
+```{r}
+#| label: session-duration
+#| echo: false
+#| code-fold: true
+report_render_duration_in_seconds <- round(as.numeric(difftime(Sys.time(), report_render_start_time, units="secs")))
+```
+
+Report rendered by `r Sys.info()["user"]` at `r strftime(Sys.time(), "%Y-%m-%d, %H:%M %z")` in `r report_render_duration_in_seconds` seconds.
