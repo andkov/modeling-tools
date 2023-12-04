@@ -139,7 +139,6 @@ quick_save <- function(g,name,...){
 
 ```
 
-
 # Definitions and Specifications
 
 ## Terminology operationalization
@@ -336,4 +335,3 @@ explore::describe_all(ds0)
 # tableone::CreateTableOne(data = ds0)
 ds0 %>% select(-id,-weight,-date) %>% tableone::CreateTableOne(data=.)
 ```
-
