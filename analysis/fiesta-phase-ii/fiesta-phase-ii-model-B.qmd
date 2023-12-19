@@ -89,6 +89,8 @@ requireNamespace("testit"   )# For asserting conditions meet expected patterns.
 #| results: hide
 #| message: false
 #| code-fold: true
+
+base::source("../../scripts/common-functions.R")
 ```
 
 ```{r}
@@ -179,12 +181,54 @@ nia_null <-
   mutate(
     shifted = FALSE
   ) %>% 
-  bind_rows(nia_null_shift)
-  
+  bind_rows(nia_null_shift) %>% 
+  mutate(
+    y_hat = y_hat/1000
+    ,ci_lower = ci_lower/1000
+    ,ci_upper = ci_upper/1000
+    ,se = se/1000
+    ,tx = case_when(
+      shifted == TRUE ~ "NET"
+      ,TRUE ~ as.character(tx)
+    )
+    ,ci_lower = case_when(
+      tx == "NET" ~ NA,
+      TRUE ~ ci_lower
+    )
+    ,ci_upper = case_when(
+      tx == "NET" ~ NA,
+      TRUE ~ ci_upper
+    )
+    ,y_hat_label = case_when(
+      tx == "NET"  & waveL == 0L ~ NA,
+      TRUE ~ y_hat
+    )
+  ) %>% 
+  group_by(intervention, waveL) %>% 
+  arrange(intervention, waveL, tx) %>% 
+  mutate(
+    y_hat_net = y_hat[which(tx=="NET")] - y_hat[which(tx=="FALSE")] 
+    # ,y_hat_net_y_position = min(y_hat[which(tx== "FALSE")],y_hat[which(tx == "TRUE")]) + (y_hat_net/2)
+    ,y_hat_net_y_position = min(y_hat,na.rm = T) + abs((y_hat_net/2))
+  ) %>% 
+  ungroup() %>% 
+  mutate( 
+    # y_hat_net = case_when(is.na(y_hat_label) ~ NA, TRUE ~ y_hat_net)
+    y_hat_net = case_when(waveL==0L ~ NA, TRUE ~ y_hat_net)
+    ,intervention_display = intervention %>% stringr::str_replace_all("_"," ") %>%  stringr::str_to_title()
+  )   
+
+
 # verify
-nia_null %>% filter(intervention == "career_planning")
+nia_null %>% 
+  # filter(waveL < 3) %>% 
+  filter(waveL < 3) %>% 
+  # filter(intervention == "career_planning")
+  filter(intervention == "labour_market_info")
+ 
   
 ```
+
 
 What's inside this *analysis rectangle*?
 
@@ -240,16 +284,24 @@ Important Caveats
 
 
 ## Main Effect - Null Model
-
 ```{r}
+font_size_regular <- baseSize - 7
+font_size_net     <- baseSize - 4
 g1 <- 
   nia_null %>% 
+  filter(waveL < 3) %>%
+  # here, because otherwise uses all waves 
+  group_by(intervention) %>% 
   mutate(
-    y_hat = y_hat/1000
-    ,ci_lower = ci_lower/1000
-    ,ci_upper = ci_upper/1000
-    ,se = se/1000
-    ) %>% 
+      outcome_n_y_position = max(ci_upper,na.rm=T) + .4
+      ,outcome_n_y_position = case_when(
+        tx == "TRUE" ~ outcome_n_y_position + .9
+        ,TRUE ~ outcome_n_y_position
+      )
+  ) %>%
+  ungroup() %>% 
+  # filter(intervention == "career_planning") %>%
+  # filter(intervention == "labour_market_info") %>%
   ggplot(aes(x=waveL, y = y_hat, color = tx))+
   geom_point()+
   # geom_rect()
@@ -257,17 +309,28 @@ g1 <-
   geom_linerange(aes(ymin=ci_lower, ymax=ci_upper),linewidth =2, alpha = .3)+
   geom_line()+
   # geom_ribbon()
-   ggrepel::geom_text_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
-  facet_wrap("intervention", scales = "free_y")+
-  scale_color_manual(values = c("TRUE"=abcol[["sunset"]], "FALSE"=abcol[["sky"]]))+
+  ggrepel::geom_text_repel(aes(label = scales::comma(y_hat_label, accuracy = .1)), size = font_size_regular)+
+  facet_wrap("intervention_display", scales = "free_y")+
+  
+  # geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position, alpha = abs(y_hat_net)), size =baseSize-2, color = "black")+
+  geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position), size =baseSize-2, color = "black", alpha = .15)+
+  geom_text(aes(label = scales::comma(outcome_n), y = outcome_n_y_position),data = . %>% filter(tx!="NET") )+
+  scale_color_manual(values = c("TRUE"=abcol[["sunset"]], "FALSE"=abcol[["sky"]], "NET" = "grey30"))+
+  scale_x_continuous(breaks = c(0:6), minor_breaks = c(0:6), expand = expansion(add = c(.4,.4)))+
+  scale_y_continuous(expand = expansion(add = c(0,1)), breaks = seq(0,100,5))+
   labs(
     title = "Main effect of the intervention on the reported Total Earnings"
     ,subtitle = "Balanced on all known covariates and other interventions"
     ,y = "Total Earnings (thousandds)"
-    ,x = "Year relative to spell of Income Support"
+    ,x = "Year relative to the first spell of Income Support \n 0 - before starting | 1 - one year after leaving | 2 - two years after leaving"
     ,color = "Intervention\npresent"
-  ) 
-g1 %>% quick_save("main-effect",w=16,h=9)
+    # ,caption = "Wave = 0 - year before starting IS | Wave = 1 - year after exiting IS"
+  ) +
+  theme(
+    legend.position = c(.85,.15)
+  )
+g1 %>% quick_save("main-effect-3-waves",w=16,h=9)
+
 ```
 
 ## Marginal Means - Full Model
