@@ -267,7 +267,7 @@ nia_null
 # work_foundation     = c(0)
 # assessment_snd      = c(0)
 # assessment_ea       = c(0)
-nia_full
+nia_full0
 ```
 
 # Analysis
@@ -329,9 +329,238 @@ g1 <-
   theme(
     legend.position = c(.85,.15)
   )
-g1 %>% quick_save("main-effect-3-waves",w=16,h=9)
-
+g1 %>% print()
+g1 %>% quick_save("main-effect-5-waves",w=16,h=9)
 ```
+
+
+## SCSS Only
+
+```{r}
+font_size_regular <- baseSize - 7
+font_size_net     <- baseSize - 4
+g1 <- 
+  nia_null %>% 
+  filter(waveL < 6) %>%
+  # filter(!intervention %in% c("work_foundations","training_for_work")) %>% 
+  filter(intervention %in% c("career_planning","job_placement","exposure_course")) %>% 
+  # here, because otherwise uses all waves 
+  group_by(intervention) %>% 
+  mutate(
+      outcome_n_y_position = max(ci_upper,na.rm=T) + .4
+      ,outcome_n_y_position = case_when(
+        tx == "TRUE" ~ outcome_n_y_position + .9
+        ,TRUE ~ outcome_n_y_position
+      )   
+      ,txF = factor(tx,
+                    levels = c("TRUE","NET","FALSE")
+                    ,labels = c("Intervention", "Intervention\nadjusted for\ninitial difference","Control")
+                    )
+      
+  ) %>%
+  ungroup() %>% 
+  # filter(intervention == "career_planning") %>%
+  # filter(intervention == "labour_market_info") %>%
+  ggplot(aes(x=waveL, y = y_hat, color = txF))+
+  geom_point(aes(shape=txF))+
+  # geom_point(data = . %>% filter(tx!="NET"))+
+  # geom_rect()
+  # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
+  geom_line(data=. %>% filter(tx=="NET"), size=3, alpha=0)+
+  geom_line(data=. %>% filter(tx=="NET"),size=.3, alpha=.5)+
+  geom_linerange(aes(ymin=ci_lower, ymax=ci_upper),linewidth =2, alpha = .3)+
+  geom_line(data=. %>% filter(txF=="Intervention"), size=3, alpha=.1)+
+  geom_line(data=. %>% filter(txF=="Intervention"))+
+  geom_line(data=. %>% filter(txF=="Control"), size=3, alpha=.1)+
+  geom_line(data=. %>% filter(txF=="Control"))+
+  # geom_ribbon()
+  ggrepel::geom_text_repel(aes(label = scales::comma(y_hat_label, accuracy = .1)), size = font_size_regular,show.legend = FALSE)+
+  # geom_ribbon()
+  facet_wrap("intervention_display", scales = "free_y")+
+    geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position), size =baseSize-2, color = "black", alpha = .1)+
+  geom_text(aes(label = scales::comma(outcome_n), y = outcome_n_y_position),data = . %>% filter(tx!="NET") ,show.legend = FALSE, alpha = .3)+
+  scale_color_manual(values = c("Intervention"=abcol[["sunset"]], "Control"=abcol[["sky"]],"Intervention\nadjusted for\ninitial difference"=abcol[["stone"]]))+
+  scale_shape_manual(values = c("Intervention\nadjusted for\ninitial difference"=21, "Intervention"=16, "Control"=19))+
+  scale_x_continuous(breaks = c(0:6), minor_breaks = c(0:6), expand = expansion(add = c(.4,.4)))+
+  scale_y_continuous(expand = expansion(add = c(0,1)), breaks = seq(0,100,5))+
+  labs(
+    title = "Main effect of the intervention on the reported Total Earnings"
+    ,subtitle = "Balanced on and controlling for all known covariates and other interventions. Estimated NET IMPACT of the intervention (in thousand dollars, adjusted for inflation at 2022) shown in large grey digits"
+    ,y = "Total Earnings \n(thousands dollars, adjusted for 2022)"
+    ,x = "Year relative to the first spell of Income Support \n 0 - before starting | 1 - one year after leaving | 2 - two years after leaving | etc"
+    ,color = "Comparison\ngroup"
+    ,shape = "Comparison\ngroup"
+    ,fill = "Comparison\ngroup"
+    # ,caption = "Wave = 0 - year before starting IS | Wave = 1 - year after exiting IS"
+  ) +
+     theme(strip.text.x = element_text(size = 15))+
+    # guides(alpha = "none")
+ guides(shape = guide_legend(override.aes = list(size = 3)))
+# g1 %>% print()
+g1 %>% quick_save("main-effect-5-waves-main-3",w=16,h=4)
+```
+
+## Zoom
+
+```{r}
+font_size_regular <- baseSize - 7
+font_size_net     <- baseSize - 4
+target_tx <- "self_assessment"
+g2 <- 
+  nia_null %>% 
+  filter(waveL < 6) %>%
+  # filter(!intervention %in% c("work_foundations","training_for_work")) %>% 
+  # filter(intervention %in% c("career_planning","job_placement","exposure_course")) %>% 
+    filter(intervention %in% c(target_tx)) %>%
+  # here, because otherwise uses all waves 
+  group_by(intervention) %>% 
+  mutate(
+      outcome_n_y_position = max(ci_upper,na.rm=T) + .4
+      ,outcome_n_y_position = case_when(
+        tx == "TRUE" ~ outcome_n_y_position + .9
+        ,TRUE ~ outcome_n_y_position
+      )   
+      ,txF = factor(tx,
+                    levels = c("TRUE","NET","FALSE")
+                    ,labels = c("Intervention", "Intervention\nadjusted for\ninitial difference","Control")
+                    )
+      
+  ) %>%
+  ungroup() %>% 
+  # filter(intervention == "career_planning") %>%
+  # filter(intervention == "labour_market_info") %>%
+  ggplot(aes(x=waveL, y = y_hat, color = txF))+
+  geom_point(aes(shape=txF))+
+  # geom_point(data = . %>% filter(tx!="NET"))+
+  # geom_rect()
+  # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
+  geom_line(data=. %>% filter(tx=="NET"), size=3, alpha=0)+
+  geom_line(data=. %>% filter(tx=="NET"),size=.3, alpha=.5)+
+  geom_linerange(aes(ymin=ci_lower, ymax=ci_upper),linewidth =2, alpha = .3)+
+  geom_line(data=. %>% filter(txF=="Intervention"), size=3, alpha=.1)+
+  geom_line(data=. %>% filter(txF=="Intervention"))+
+  geom_line(data=. %>% filter(txF=="Control"), size=3, alpha=.1)+
+  geom_line(data=. %>% filter(txF=="Control"))+
+  # geom_ribbon()
+  ggrepel::geom_text_repel(aes(label = scales::comma(y_hat_label, accuracy = .1)), size = font_size_regular,show.legend = FALSE)+
+  # geom_ribbon()
+  facet_wrap("intervention_display", scales = "free_y")+
+    geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position), size =baseSize-2, color = "black", alpha = .1)+
+  # geom_text(aes(label = scales::comma(outcome_n), y = outcome_n_y_position),data = . %>% filter(tx!="NET") ,show.legend = FALSE, alpha = .3)+
+  scale_color_manual(values = c("Intervention"=abcol[["sunset"]], "Control"=abcol[["sky"]],"Intervention\nadjusted for\ninitial difference"=abcol[["stone"]]))+
+  scale_shape_manual(values = c("Intervention\nadjusted for\ninitial difference"=21, "Intervention"=16, "Control"=19))+
+  scale_x_continuous(breaks = c(0:6), minor_breaks = c(0:6), expand = expansion(add = c(.4,.4)))+
+  scale_y_continuous(expand = expansion(add = c(0,1)), breaks = seq(0,100,5))+
+  labs(
+    title = "Main effect of the intervention on the reported Total Earnings"
+    ,subtitle = "Balanced on and controlling for all known covariates and other interventions\nEstimated NET IMPACT of the intervention shown in large grey digits"
+    ,y = "Total Earnings \n(thousands dollars, adjusted for 2022)"
+    ,x = "Year relative to the first spell of Income Support \n 0 - before starting | 1 - one year after leaving | 2 - two years after leaving | etc"
+    ,color = "Comparison\ngroup"
+    ,shape = "Comparison\ngroup"
+    ,fill = "Comparison\ngroup"
+    # ,caption = "Wave = 0 - year before starting IS | Wave = 1 - year after exiting IS"
+  ) +
+     theme(strip.text.x = element_text(size = 15))+
+    # guides(alpha = "none")
+ guides(shape = guide_legend(override.aes = list(size = 3)))
+# g1 %>% print()
+file_name <- paste0("zoom-main-effect-5-",target_tx)
+g2 %>% quick_save(file_name,w=8,h=5)
+```
+
+
+
+
+
+
+## Net Summary
+
+```{r}
+# demonstration of treatment effect for the reference group
+
+nia_null %>% 
+  # filter(waveL < 3) %>% 
+  filter(waveL < 3) %>% 
+  # filter(intervention == "career_planning")
+  filter(intervention == "labour_market_info")
+ 
+  
+dg1 <- 
+  nia_null %>% 
+  filter(waveL < 3) %>% 
+  filter(intervention == "career_planning")
+  # filter(intervention == "labour_market_info") %>%
+  
+
+dg1 <- 
+  ds %>% 
+  filter(var_name %in% c("tx")) %>% 
+  mutate(
+    impact_direction = case_when(
+      estimate >0L ~ "positive",
+      estimate <=0L ~ "negative"
+    )
+    ,sign_at_05 = p_value <= .05
+  ) 
+dg1
+
+g1 <- 
+  dg1 %>% 
+  ggplot(aes(y =intervention, shape = value_level_display))+
+  # Reference
+  geom_point(
+    aes(x = intercept)
+    ,data = . %>% filter(value_level == FALSE)
+    # ,shape = 21
+  )+
+  # Intervention
+  geom_point(
+    aes(x=estimate+intercept, fill = sign_at_05)
+    # ,data = . %>% filter(value_level == TRUE)
+    ,data = . %>% filter(value_level_display == "Yes Intervention")
+    ,shape = 21
+    ,size = 2
+  )+
+  geom_segment(
+    aes(x=intercept+estimate, xend = intercept, yend = intervention)
+  )+
+  geom_text(aes(label = scales::comma(estimate,1) ,x=intercept+estimate, color = impact_direction, alpha = sign_at_05)
+            ,size = 4, nudge_y = .2)+
+  # geom_text(aes(label = scales::comma(intercept,1),x=intercept), data = . %>% filter(value_level=="FALSE")
+  geom_text(aes(label = scales::comma(intercept,1),x=intercept), data = . %>% filter(value_level_display=="No Intervention")
+            ,size = 2.5, alpha = .5, color = "grey40",nudge_y=-.15)+
+  facet_wrap(facets = "outcome", nrow=1)
+g1
+g2 <- 
+  g1 + 
+  scale_color_manual(values = c("positive" = "blue", "negative" = "red"))+
+  scale_fill_manual(values = c("TRUE" = "black", "FALSE" = "white"))+
+  # scale_shape_manual(values = c("TRUE"=21, "FALSE"=124))+
+  scale_shape_manual(values = c("Yes Intervention"=21, "No Intervention"=124))+
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = .2))+
+  scale_x_continuous(
+    breaks = seq(10000,30000,5000)
+    ,labels = scales::comma_format()
+    # ,limits = c(14000,26000)
+    ,expand =  expansion(mult = c(0.2,0.2))
+  )+
+  guides(alpha = F)+
+  labs(
+    shape = ""
+    ,color = "Direction of impact"
+    ,fill = "Significant at .05"
+    ,x = "Change in the amount reported to CRA, in 2022 dollars"
+    ,title = "Net impact of intervention in the year after the first Income Support spell"
+    # ,subtitle  = ""
+  )
+g2
+dg1
+g2 %>% quick_save("1",w=11,h=5)
+```
+
+
+
 
 ## Marginal Means - Full Model
 
