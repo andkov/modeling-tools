@@ -36,6 +36,28 @@ base::source("./scripts/common-functions.R") # project-level
 prints_folder <- paste0("./analysis/phase-3-results/unbalanced/")
 if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
+baseSize <- 10
+ggplot2::theme_set(
+  ggplot2::theme_bw(
+  )+
+    theme(
+      strip.background = element_rect(fill="grey95", color = NA)
+      ,panel.grid = element_line(color = "grey95")
+      ,panel.border = element_rect(color = "grey80")
+      ,axis.ticks = element_blank()
+      ,text=element_text(size=baseSize)
+    )
+)
+
+# corporate colors
+abcol <- c(
+  "stone"     = "#5f6a72" # stone   - grey
+  ,"dusk"     = "#d40072" # dusk    - magenta
+  ,"sunset"   = "#ff7900" # sunset  - brown
+  ,"pasture"  = "#77b800" # pasture - green
+  ,"sky"      = "#00aad2" # sky     - blue
+  ,"prairie"  = "#edb700" # prairie - yellow
+)
 # ---- declare-functions -------------------------------------------------------
 
 
