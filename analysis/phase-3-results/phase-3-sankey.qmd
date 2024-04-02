@@ -1,0 +1,560 @@
+---
+title: "FIESTA Phase 3 Results"
+author: 
+  - Andriy Koval
+format:
+  html:
+    embed-resources: true
+    self-contained: true
+    page-layout: full
+    toc: true
+    toc-location: right
+    theme: simplex
+    highlight-style: github
+    colde-line-numbers: true
+    code_folding: show
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+Presents the results of Phase 3 of the FIESTA research project
+
+# Definitions
+
+> Research Question
+
+# Environment
+
+> Reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| echo: false
+#| code-fold: true
+ rm(list = ls(all.names = TRUE)) 
+if(exists("clear_memory")){
+  if(clear_memory){
+    rm(list = ls(all.names = TRUE)) # Clear the memory of variables from previous run.
+  }
+}
+```
+
+```{r}
+#| echo: false
+#| code-fold: true
+#| warning: false
+library(knitr)
+opts_knit$set(root.dir='../../')  #Don't combine this call with any 
+```
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+#| warning: false
+#| code-overflow: wrap
+library(dplyr) # data wrangling
+library(readr)
+library(tidyr)
+library(cowplot)
+library(ggalluvial)
+library(scales)
+# -- 2.Import only certain functions of a package into the search path.
+import::from("magrittr", "%>%")
+# -- 3. Verify these packages are available on the machine, but their functions need to be qualified: http://r-pkgs.had.co.nz/namespace.html#search-path
+requireNamespace("DBI"         ) # database
+requireNamespace("odbc"        ) # database
+requireNamespace("readr"    )# data import/export
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository 
+#| echo: true
+#| results: hide
+#| message: false
+#| warning: false
+#| code-fold: true
+base::source("./scripts/common-functions.R") # project-level
+base::source("./scripts/operational-functions.R") # project-level
+
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+# printed figures will go here:
+# prints_folder <- paste0("./analysis/phase-3-results/prints/")
+# if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
+
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+
+# visual style applied to all graphs
+baseSize <- 10
+ggplot2::theme_set(
+  ggplot2::theme_bw(
+  )+
+    theme(
+      strip.background = element_rect(fill="grey95", color = NA)
+      ,panel.grid = element_line(color = "grey95")
+      ,panel.border = element_rect(color = "grey80")
+      ,axis.ticks = element_blank()
+      ,text=element_text(size=baseSize)
+    )
+)
+
+# corporate colors
+abcol <- c(
+  "stone"     = "#5f6a72" # stone   - grey
+  ,"dusk"     = "#d40072" # dusk    - magenta
+  ,"sunset"   = "#ff7900" # sunset  - brown
+  ,"pasture"  = "#77b800" # pasture - green
+  ,"sky"      = "#00aad2" # sky     - blue
+  ,"prairie"  = "#edb700" # prairie - yellow
+)
+
+(prints_folder <- paste0("./prints/")) # local
+if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
+
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false 
+#| code-fold: true
+```
+
+# Data
+
+Bring in the results of the Phase 3 modeling
+
+```{r }
+#| label: load-data
+#| code-summary: Define SQL query to send to the database
+#| warning: false
+#| cache: true
+#| code-fold: true
+#| code-overflow: wrap
+
+
+wk_freq_fold1  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-fold1.csv")
+wk_order_fold1 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-fold1.csv")
+
+wk_freq_fold0  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-intervention.csv")
+wk_order_fold0 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-intervention.csv")
+
+ds_unbalanced <- readr::read_csv("./analysis/phase-3-results/data/2024-03-14/unbalanced-outcome-table.csv")
+ds_null       <- readr::read_csv("./analysis/phase-3-results/data/2024-03-14/model-solution/nia-effects-null.csv")
+
+source_folder <-"./analysis/phase-3-results/data/2024-03-14/model-solution"
+file_path <- list.files(source_folder,pattern = ".csv",full.names = T)
+# file_name <-  list.files(source_folder,pattern = ".csv",full.names = F) %>% stringr::str_remove(".csv") %>% stringr::str_remove("nia-effects-")
+
+ls_input <- list()
+for(i in seq_along(file_path)){
+  # i <- 1
+  name_i <- file_path[i] %>% basename()%>% stringr::str_remove(".csv") %>% stringr::str_remove("nia-effects-")
+  if(name_i != "null"){
+    ls_input[[name_i]] <- readr::read_csv(file_path[i]) %>% 
+    pivot_longer(cols = name_i, values_to = "level", names_to = "predictor")
+  }
+}
+```
+
+```{r}
+#| label: tweak-data-0
+
+# ls_input
+ds_input <- 
+  ls_input %>% 
+  bind_rows()
+
+
+ds0 <- 
+  ds_input %>% 
+  bind_rows(
+    ds_null %>% 
+      mutate(
+        predictor = "None"
+      )
+    
+  )
+
+ds0
+ds_unbalanced
+```
+
+```{r}
+#| label: tweak-data-1
+
+ds0_shift <-
+  ds0 %>% 
+  # filter(intervention == "career_planning", predictor == "addictions", level == "No AD") %>% # dev
+  # filter(intervention == "career_planning", predictor == "None") %>% # dev
+  group_by(intervention, predictor, level) %>% 
+  mutate(
+    before_false_value = y_hat[which(waveF == "Before" & tx == FALSE)]
+    ,before_true_value = y_hat[which(waveF == "Before" & tx == TRUE)]
+    ,nia_shift =  before_true_value -before_false_value # how much TRUE is higher than FALSE
+    # ,
+  ) %>% 
+  ungroup() %>% 
+  filter(tx == TRUE) %>% 
+  mutate(
+    y_hat = y_hat - nia_shift
+    ,ci_lower = ci_lower - nia_shift
+    ,ci_upper = ci_upper - nia_shift
+    ,shifted = TRUE
+  )  %>% 
+  select(-c("before_false_value","before_true_value","nia_shift"))
+
+
+ds1 <- 
+  ds0 %>% 
+  mutate(
+    shifted = FALSE
+  ) %>% 
+  bind_rows(ds0_shift) %>% 
+  mutate(
+    y_hat = y_hat/1000
+    ,ci_lower = ci_lower/1000
+    ,ci_upper = ci_upper/1000
+    ,se = se/1000
+    ,tx = case_when(
+      shifted == TRUE ~ "NET"
+      ,TRUE ~ as.character(tx)
+    )
+    ,ci_lower = case_when(
+      tx == "NET" ~ NA,
+      TRUE ~ ci_lower
+    )
+    ,ci_upper = case_when(
+      tx == "NET" ~ NA,
+      TRUE ~ ci_upper
+    )
+    ,y_hat_label = case_when(
+      tx == "NET"  & waveL == 0L ~ NA,
+      TRUE ~ y_hat
+    )
+  ) %>% 
+  group_by(intervention, predictor, level, waveL) %>% 
+  arrange(intervention, predictor, level, waveL, tx) %>% 
+  mutate(
+    y_hat_net = y_hat[which(tx=="NET")] - y_hat[which(tx=="FALSE")] 
+    # ,y_hat_net_y_position = min(y_hat[which(tx== "FALSE")],y_hat[which(tx == "TRUE")]) + (y_hat_net/2)
+    ,y_hat_net_y_position = min(y_hat,na.rm = T) + abs((y_hat_net/2))
+  ) %>% 
+  ungroup() %>% 
+  mutate( 
+    # y_hat_net = case_when(is.na(y_hat_label) ~ NA, TRUE ~ y_hat_net)
+    y_hat_net = case_when(waveL==0L ~ NA, TRUE ~ y_hat_net)
+    ,intervention_display = intervention %>% stringr::str_replace_all("_"," ") %>%  stringr::str_to_title()
+    ,predictor_display = predictor %>% stringr::str_replace_all("_"," ") %>%  stringr::str_to_title()
+    ,level_display = case_when(
+      level == "No AD" ~ "No Addiction"
+      ,level == "With AD" ~ "With Addiction"
+      ,level == "No CR" ~ "No Criminal Record"
+      ,level == "With CR" ~ "With Criminal Record"
+      ,level == "married" ~ "Married"
+      ,level == "single" ~ "Single"
+      ,level == "No MH" ~ "No Mental Health Issues"
+      ,level == "With MH" ~ "With Mental Health Issues"
+      ,level == "No PH" ~ "No Physical Health Issues"
+      ,level == "With PH" ~ "With Physical Health Issues"
+      ,TRUE ~ level
+    )
+  )  
+```
+
+# Main Effect - Null Model
+
+```{r}
+font_size_regular <- baseSize - 7
+font_size_net     <- baseSize - 4
+g1 <- 
+  ds1 %>% 
+  filter(predictor == "None") %>% 
+  filter(waveL < 3) %>%
+  # here, because otherwise uses all waves 
+  group_by(intervention, predictor, level) %>% 
+  mutate(
+      outcome_n_y_position = max(ci_upper,na.rm=T) + .4
+      ,outcome_n_y_position = case_when(
+        tx == "TRUE" ~ outcome_n_y_position + .9
+        ,TRUE ~ outcome_n_y_position
+      )
+  ) %>%
+  ungroup() %>% 
+  # filter(intervention == "career_planning") %>%
+  # filter(intervention == "labour_market_info") %>%
+  ggplot(aes(x=waveL, y = y_hat, color = tx))+
+  geom_point()+
+  # geom_rect()
+  # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
+  geom_linerange(aes(ymin=ci_lower, ymax=ci_upper),linewidth =2, alpha = .3)+
+  geom_line()+
+  # geom_ribbon()
+  ggrepel::geom_text_repel(aes(label = scales::comma(y_hat_label, accuracy = .1)), size = font_size_regular)+
+  facet_wrap("intervention_display", scales = "free_y")+
+  
+  # geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position, alpha = abs(y_hat_net)), size =baseSize-2, color = "black")+
+  geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position), size =baseSize-2, color = "black", alpha = .15)+
+  geom_text(aes(label = scales::comma(outcome_n), y = outcome_n_y_position),data = . %>% filter(tx!="NET") )+
+  scale_color_manual(values = c("TRUE"=abcol[["sunset"]], "FALSE"=abcol[["sky"]], "NET" = "grey30"))+
+  scale_x_continuous(breaks = c(0:6), minor_breaks = c(0:6), expand = expansion(add = c(.4,.4)))+
+  scale_y_continuous(expand = expansion(add = c(0,1)), breaks = seq(0,100,5))+
+  labs(
+    title = "Main effect of the intervention on the reported Total Earnings"
+    ,subtitle = "Balanced on all known covariates and other interventions"
+    ,y = "Total Earnings (thousandds)"
+    ,x = "Year relative to the first spell of Income Support \n 0 - before starting | 1 - one year after leaving | 2 - two years after leaving"
+    ,color = "Intervention\npresent"
+    # ,caption = "Wave = 0 - year before starting IS | Wave = 1 - year after exiting IS"
+  ) +
+  theme(
+    legend.position = c(.85,.15)
+  )
+g1 %>% print()
+# g1 %>% quick_save("main-effect-5-waves",w=16,h=9)
+```
+
+```{r}
+font_size_regular <- baseSize - 7
+font_size_net     <- baseSize - 4
+
+interventions <- ds1 %>% pull(intervention_display) %>% unique() %>% print()
+predictors <- ds1 %>% pull(predictor_display) %>% unique() %>% setdiff("None") %>%  print()
+
+intervention_i <- "Career Planning"
+predictor_i <- "Addictions"
+
+for(intervention_i in interventions){
+  for(predictor_i in predictors){
+  if(intervention_i != predictor_i){
+    main_title <- paste0("Main effect of ", intervention_i, " on the reported Total Earnings moderated by ", predictor_i)
+file_name <- paste0(intervention_i, " with ", predictor_i)
+  
+g2 <- 
+  ds1 %>% 
+  filter(intervention_display == intervention_i) %>% 
+  filter(predictor_display %in% predictor_i) %>% # print_all() %>% 
+  filter(waveL < 3) %>%
+  # here, because otherwise uses all waves 
+  group_by(intervention, predictor, level) %>% 
+  mutate(
+      outcome_n_y_position = max(ci_upper,na.rm=T) + .4
+      ,outcome_n_y_position = case_when(
+        tx == "TRUE" ~ outcome_n_y_position + .9
+        ,TRUE ~ outcome_n_y_position
+      )
+  ) %>%
+  ungroup() %>% 
+  # filter(intervention == "career_planning") %>%
+  # filter(intervention == "labour_market_info") %>%
+  ggplot(aes(x=waveL, y = y_hat, color = tx))+
+  geom_point()+
+  # geom_rect()
+  # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
+  geom_linerange(aes(ymin=ci_lower, ymax=ci_upper),linewidth =2, alpha = .3)+
+  geom_line()+
+  # geom_ribbon()
+  ggrepel::geom_text_repel(aes(label = scales::comma(y_hat_label, accuracy = .1)), size = font_size_regular)+
+  facet_wrap(facets = c("level_display"), scales = "fixed")+
+  
+  # geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position, alpha = abs(y_hat_net)), size =baseSize-2, color = "black")+
+  geom_text(aes(label = scales::comma(y_hat_net,accuracy = .1), y=y_hat_net_y_position), size =baseSize-2, color = "black", alpha = .15)+
+  geom_text(aes(label = scales::comma(outcome_n), y = outcome_n_y_position),data = . %>% filter(tx!="NET") )+
+  scale_color_manual(values = c("TRUE"=abcol[["sunset"]], "FALSE"=abcol[["sky"]], "NET" = "grey30"))+
+  scale_x_continuous(breaks = c(0:6), minor_breaks = c(0:6), expand = expansion(add = c(.4,.4)))+
+  scale_y_continuous(expand = expansion(add = c(0,1)), breaks = seq(0,100,5))+
+  labs(
+    title = main_title
+    ,subtitle = "Balanced on all known covariates and other interventions"
+    ,y = "Total Earnings (thousandds)"
+    ,x = "Year relative to the first spell of Income Support \n 0 - before starting | 1 - one year after leaving | 2 - two years after leaving"
+    ,color = "Intervention\npresent"
+    # ,caption = "Wave = 0 - year before starting IS | Wave = 1 - year after exiting IS"
+  ) +
+  theme(
+    # legend.position = c(.85,.15)
+  )+
+  guides(
+    color = guide_legend(override.aes = list(size = 2))
+  )
+# g2 %>% print()
+
+g2 %>% quick_save(file_name,w=8,h=4.5)
+  }  
+
+  }
+}
+
+```
+
+```{r}
+ds0 %>% 
+  filter(
+    predictor == "None"
+  ) %>% 
+  mutate(y_hat = y_hat/1000) %>% 
+  ggplot(aes(x=waveL, y = y_hat, color = tx))+
+  geom_point()+
+  geom_line()+
+   ggrepel::geom_text_repel(aes(label = scales::comma(y_hat, accuracy = .1)))+
+  facet_wrap("intervention")+
+  labs(
+    title = "Main effect"
+  )
+
+```
+
+```{r}
+#| label: tweak-data-0
+#| code-summary: Create state `ds0` - basic formatting
+#| cache: true
+#| code-fold: true
+
+fiesta_n <- 
+  ds_unbalanced %>% 
+  filter(waveL==0L) %>% 
+  summarize(fiesta_total = sum(sample_size)) %>% 
+  pull(fiesta_total) %>% as.integer()
+
+fiesta_n_no_ceis <- 
+  ds_unbalanced %>% 
+  filter(waveL==0L) %>% 
+  filter(wk_combo == "__ + __ + __ + __") %>% 
+  summarize(fiesta_no_ceis = sum(sample_size)) %>% 
+  pull(fiesta_no_ceis) %>% as.integer()
+
+fiesta_n_with_ceis <- 
+  ds_unbalanced %>% 
+  filter(waveL==0L) %>% 
+  filter(wk_combo != "__ + __ + __ + __") %>% 
+  summarize(fiesta_with_ceis = sum(sample_size)) %>% 
+ pull(fiesta_with_ceis) %>% as.integer()
+
+```
+
+# Workshop Sequence
+
+```{r}
+d0 <-
+  wk_order_fold1 %>% 
+  mutate(
+     wk1 = forcats::fct_na_value_to_level(wk1,"None")
+     ,wk2 = forcats::fct_na_value_to_level(wk2,"None")
+     ,wk3 = forcats::fct_na_value_to_level(wk3,"None")
+  )
+# stratum_labels <- 
+#   
+  d0 %>% 
+  group_by(wk1) %>% 
+  summarize(count = sum(person_count)) %>% 
+  ungroup() %>% 
+  mutate(
+    prop = count/sum(count)
+    ,pct = percent(prop, accuracy = 1)
+    ,label = paste0(wk1," (", comma(count),",",pct,")")
+  ) %>% 
+  print()
+
+  d0 %>% 
+  group_by(wk2) %>% 
+  summarize(count = sum(person_count)) %>% 
+  ungroup() %>% 
+  mutate(
+    total = sum(count)
+  ) %>% 
+  print()
+
+combo_colors <- c(
+  "Career Planning" = "red"
+  ,"Exposure Course" = "blue"
+  ,"Job Placement" = "green"
+  ,"None" = "grey"
+)
+g0 <- 
+  d0 %>% 
+  arrange(wk2) %>% 
+  ungroup() %>% 
+  ggplot(
+    aes(
+      axis1  = wk1
+      ,axis2 = wk2
+      ,axis3 = wk3
+      ,y     = person_count    
+      # ,fill = wk2
+      # , color = wk1
+      )
+      
+  ) +
+  geom_alluvium(aes(fill = wk2), stat = "flow") +
+  geom_stratum()+
+  # geom_stratum(aes(fill=wk1),alpha = .5, width = 1/3) +
+  # geom_flow(aes(fill = wk2),aes.flow = "forward")+
+  # scale_fill_manual(values = combo_colors)+
+  geom_text(stat = "stratum",aes(label = after_stat(stratum))) +
+  # geom_text(stat = "stratum",label = c("1","2","3","4","5","6","7", "8","9"))+#,"10"#,"11", "12","13","14")) +
+  # geom_text(stat = "stratum",label = c("1","2","3","4","5","6","7", "8","9","10"))+##,"11", "12","13","14")) +
+  scale_x_discrete(limits = c("First", "Second"),
+                   expand = c(0.15, 0.05)) +
+  scale_y_continuous(labels = comma_format())+
+  # theme_void()+
+  guides(fill=guide_legend(ncol =1))+
+  labs(
+    fill = "Workshop"
+    ,title = "Sequence of CEIS workshop in FIESTA sample"
+    ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
+    ,y = "Number of clients"
+  )
+g0
+# g0 %>% quick_save("fiesta_3_sankey-0", w=16, h = 9)
+```
+
+```{r}
+d1 <-
+  wk_order_fold0 %>% 
+  filter(!wk1 %in% c("Career Planning","Exposure Course","Job Placement")) 
+
+g1 <- 
+  d1 %>% 
+  ungroup() %>% 
+  ggplot(
+    aes(
+      axis1  = wk1
+      ,axis2 = wk2
+      ,axis3 = wk3
+      ,y     = person_count    )
+  ) +
+  geom_alluvium(aes(fill = wk1)) +
+  # geom_stratum(aes(fill = wk1)) +
+  geom_text(stat = "stratum",
+            aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("First", "Second","Third"),
+                   expand = c(0.15, 0.05)) +
+  # theme_void()+
+  guides(fill=guide_legend(ncol =1))+
+  labs(
+    fill = "Workshop"
+    ,title = "Sequence of CEIS workshop in FIESTA sample"
+    ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
+  )
+g1
+g1 %>% quick_save("fiesta_3_sankey-1", w=16, h = 9)
+```
