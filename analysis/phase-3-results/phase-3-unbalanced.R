@@ -69,19 +69,91 @@ ds0 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-14/unbalanced-ou
 # this chunk is not sourced by the annotation layer, use a scratch pad
 ds0 %>% 
   filter(waveL==0L) %>% 
-  select(wk_combo, sample_size) %>% 
+  select(wk_combo, sample_size, earnings_mean, earnings_median,ntile20, ntile80) %>% 
   arrange(desc(sample_size))
+
 # ---- tweak-data-1 --------------------------------------------------------------
 
+ds_ref <- 
+  ds0 %>% 
+  filter(
+    wk_combo == "__ + __ + __ + __"
+  ) %>% 
+  select(waveL, ref_median = earnings_median, ref80 = ntile80)
+
+ds1 <- 
+  ds0 %>% 
+  left_join(ds_ref, by = "waveL")
+
+# General
+# - consider dropping the mean
+# geom_text() with ymax = Inf and vjust = 1.1
+# ---- g2 --------------------------------------------------------------
+
+g2 <- 
+  ds1 %>% 
+  filter(waveL < 3L) %>% 
+  mutate(
+    tx_count = case_when(
+      wk_combo %in% c(
+        "__ + __ + __ + __"   
+        ,"__ + cp + __ + __"  
+        ,"wk + __ + __ + __"  
+        ,"__ + __ + __ + jp"  
+        ,"__ + __ + ec + __"  
+        ,"__ + cp + __ + jp"  
+        ,"wk + cp + __ + __"  
+        ,"wk + __ + __ + jp"  
+        ,"__ + __ + ec + jp"
+      ) ~ TRUE, TRUE ~ FALSE
+    ),
+    sample_size_pretty = sprintf("%.1f",sample_size/1000)
+  ) %>% 
+  filter(tx_count) %>%
+  ggplot(aes(x=waveL, group = wk_combo))+
+  geom_ribbon(aes(ymin=ntile80, ymax=ntile90), fill = "#2c7bb6",alpha = .99)+
+  geom_ribbon(aes(ymin=ntile70, ymax=ntile80), fill = "#abd9e9",alpha = .99)+
+  geom_ribbon(aes(ymin=ntile60, ymax=ntile70), fill = "#ffffbf",alpha = .99)+
+  geom_ribbon(aes(ymin=ntile50, ymax=ntile60), fill = "#fdae61",alpha = .99)+
+  geom_ribbon(aes(ymin=ntile40, ymax=ntile50), fill = "#d7191c",alpha = .99)+
+  geom_hline(yintercept = 0, color = "black", size = 1)+
+  geom_line(aes(y=ref_median), size = 1.1, linetype = "22", color = "grey70")+
+  geom_line(aes(y=ref80), size = 1.1, linetype = "42", color = "grey30")+
+  # geom_text(aes(label=scales::comma(sample_size), y=Inf), vjust = 1.2)+
+  geom_text(aes(label=sample_size_pretty, y=Inf), vjust = 1.2)+
+  facet_wrap(facets = "wk_combo")+
+  scale_y_continuous(labels = scales::comma_format(scale = .001, suffix = "K", prefix = "$"))+
+  # scale_y_continuous(labels = scales::comma_format(scale = .001, prefix = "$"))+
+  scale_x_continuous(breaks = seq(0,10,1))+
+  theme(
+    strip.text = element_text(size = 15)
+  )+
+  labs(
+    title = "Point estimates of the unbalanced intervention groups"
+    ,subtitle = "Means in black, medians in blue"
+    ,x = "Year relative to the first Income Support spell"
+    ,y = "Total earnings in 2022 dollars"
+    ,color = "Workshop\nCombination"
+    ,fill = "Workshop\nCombination"
+  )
+g2 
+g2 %>% quick_save("test2",w=9, h=9)
+
+# ---- g1 --------------------------------------------------------------
+
+# 1. Repeat the median line of the null category in each facet
+# 2. Use geom_ribbon( with )
 
 g1 <- 
   ds0 %>% 
   ggplot(aes(x=waveL, y = earnings_mean, group = wk_combo))+
+  geom_ribbon(aes(ymin=ntile40, ymax=ntile60), fill = "green",alpha = .3)+
+  geom_ribbon(aes(ymin=ntile80, ymax=ntile90), fill = "blue",alpha = .3)+
   geom_point()+
   geom_line()+
-  
   geom_point(aes(y= earnings_median), color = "blue")+
   geom_line(aes(y = earnings_median), color = "blue")+
+  # geom_line(aes(y = ntile40), color = "red")+
   facet_wrap(facets = "wk_combo")+
   scale_y_continuous(labels = scales::comma_format())+
   scale_x_continuous(breaks = seq(0,10,1))+
@@ -96,8 +168,9 @@ g1 <-
     ,color = "Workshop\nCombination"
     ,fill = "Workshop\nCombination"
   )
-g1 %>% quick_save("1-raw-means-facet",w=9, h=7)
-g1 %>% print()
+g1 
+
+
 
 
 
