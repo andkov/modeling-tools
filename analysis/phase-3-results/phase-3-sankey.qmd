@@ -22,13 +22,18 @@ editor_options:
 ---
 
 
-Examines the sequence of workshops undertaken by the research population of the FIESTA Project, those who received Income Support for the first time in 2014 - 2019 fiscal years.
+Examines the sequence of workshops undertaken by the research population of the FIESTA Project
+
 
 # Definitions
 
-> Research Question - What is a typical sequence of engaging CEIS Workshops around the time of engaging Income Support program?
->
-> Window of Observation - from 12 months prior to the start of Income Support to the end
+> **FIESTA Inclusion Criteria** - Albertans who received Income Support for the first time in 2014 - 2019 fiscal years.
+
+
+> **Research Question** - What is a typical sequence of engaging CEIS Workshops around the time of engaging Income Support program?
+
+
+> **Window of Observation** - from 12 months prior to the start of Income Support to the end
 
 # Environment
 
@@ -147,23 +152,24 @@ if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
 # Data
 
-Bring in the results of the Phase 3 modeling
 
 ```{r }
 #| label: load-data
-#| code-summary: Define SQL query to send to the database
+#| code-summary: Bring in results of Phase 3 modeling
 #| warning: false
 #| cache: true
 #| code-fold: true
 #| code-overflow: wrap
 
-
-# wk_freq_fold1  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-fold1.csv")
-wk_order_fold1 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-fold1.csv")
-
-# wk_freq_fold0  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-intervention.csv")
+# Workshop(Other) is broken down into more granular categories 
+wk_freq_fold0  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-intervention.csv")
 wk_order_fold0 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-intervention.csv")
 
+# Highest granularity of Intervention
+wk_freq_fold1  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-fold1.csv")
+wk_order_fold1 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-fold1.csv")
+
+# Sample size of Intervention occurrence and observed outcomes within profiles
 ds_unbalanced <- readr::read_csv("./analysis/phase-3-results/data/2024-03-14/unbalanced-outcome-table.csv")
 
 ```
@@ -195,6 +201,57 @@ fiesta_n_with_ceis <-
  pull(fiesta_with_ceis) %>% as.integer()
 
 ```
+
+# Context
+
+```{r}
+d1 <- 
+  ds_unbalanced %>% 
+  filter(waveL==0L) %>% 
+  # select(2:4) %>% 
+  mutate(
+    wk_profile = case_when(
+      wk_combo == "__ + __ + __ + __" ~ "No CEIS workshop",
+      TRUE ~ "At least one\nCEIS workshop"
+    )
+  ) %>% 
+  group_by(wk_profile) %>% 
+  summarize(
+    n = sum(sample_size)
+    ,.groups = "drop"
+  ) %>% 
+  mutate(
+    prop = n/sum(n)
+    ,pct = percent(prop)
+  )
+d1 
+
+d1 %>% 
+  ggplot(aes(x=1, y =n ,  label = pct, fill = wk_profile))+
+  geom_col(position = "stack")+
+  geom_text(position = position_stack(vjust = .5))+
+  scale_x_continuous(breaks = NULL)+
+  scale_y_continuous(labels = comma_format())+
+  coord_flip()+
+  scale_fill_manual(values = c( as.vector(c(abcol["sunset"],abcol["sky"]))))+
+  # scale_fill_manual(values = c(abcol["sky"], abcol["sunset"]))+
+  labs(
+    x = NULL
+    ,y = NULL
+    ,title = "Number of clients selected into the FIESTA research population (First Income Support in 2014-2019 FY + known eranings before and after IS)"
+    ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
+    ,fill = NULL
+  )+
+  theme(
+    legend.position = "bottom"
+  )+
+  guides(
+    fill = guide_legend(reverse=TRUE)
+  )
+
+c(abcol["dusk"],abcol["sky"])
+```
+
 
 # Workshop Sequence
 
@@ -286,12 +343,12 @@ g0 <-
   ungroup() %>% 
   ggplot(
     aes(
-      axis1  = wk1
-      ,axis2 = wk2
+      # axis1  = wk1
+       axis2 = wk2
       ,axis3 = wk3
       ,y     = person_count    )
   ) +
-  geom_alluvium(aes(fill = wk1)) +
+  geom_alluvium(aes(fill = wk2)) +
   # geom_stratum(aes(fill = wk1)) +
   geom_text(stat = "stratum",
             aes(label = after_stat(stratum))) +
@@ -305,5 +362,5 @@ g0 <-
     ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
   )
 g0
-g0 %>% quick_save("fiesta_3_sankey-0", w=16, h = 9)
+g0 %>% quick_save("fiesta_3_sankey-0-3", w=16, h = 9)
 ```
