@@ -1,6 +1,6 @@
 ---
 title: "FIESTA Phase 3 Results"
-subtitle: "Typical Sequence of Workshops"
+subtitle: "Typical Sequence of CEIS Workshops"
 author: 
   - Andriy Koval
 format:
@@ -16,22 +16,19 @@ format:
     monofont: consolas
     code-line-numbers: true
     df-print: paged
+    out.width: 900px
 editor: visual
 editor_options: 
   chunk_output_type: console
 ---
 
-
 Examines the sequence of workshops undertaken by the research population of the FIESTA Project
-
 
 # Definitions
 
 > **FIESTA Inclusion Criteria** - Albertans who received Income Support for the first time in 2014 - 2019 fiscal years.
 
-
 > **Research Question** - What is a typical sequence of engaging CEIS Workshops around the time of engaging Income Support program?
-
 
 > **Window of Observation** - from 12 months prior to the start of Income Support to the end
 
@@ -51,12 +48,18 @@ if(exists("clear_memory")){
 ```
 
 ```{r}
+#| label: set_options
 #| echo: false
 #| code-fold: true
 #| warning: false
 library(knitr)
 opts_knit$set(root.dir='../../')  #Don't combine this call with any 
+# NOTE: set wd to source file location while working within QMD
+options(width=100) # number of characters to display in the output (dflt = 80)
 ```
+
+
+
 
 ```{r}
 #| label: load-packages
@@ -105,13 +108,6 @@ base::source("./scripts/operational-functions.R") # project-level
 # prints_folder <- paste0("./analysis/phase-3-results/prints/")
 # if(!file.exists(prints_folder)){dir.create(file.path(prints_folder))}
 
-#| label: declare-globals
-#| code-summary: Values used throughout the report.
-#| echo: true
-#| results: hide
-#| message: false 
-#| code-fold: true
-
 # visual style applied to all graphs
 baseSize <- 10
 ggplot2::theme_set(
@@ -124,7 +120,7 @@ ggplot2::theme_set(
       ,axis.ticks = element_blank()
       ,text=element_text(size=baseSize)
     )
-)
+) # set common theme for all graphs
 
 # corporate colors
 abcol <- c(
@@ -136,9 +132,43 @@ abcol <- c(
   ,"prairie"  = "#edb700" # prairie - yellow
 )
 
-(prints_folder <- paste0("./prints-sankey/")) # local
+(prints_folder <- paste0("./analysis/phase-3-results/prints-sankey/")) # local
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
+fold0_colors <- c(
+  "Career Planning"               = "#1b9e77"
+  ,"Exposure Course"              = "#7570b3"
+  ,"Job Placement"                = "#d95f02"
+  ,"None"                  = "grey50"
+  ,"Workshop"              = "#e5d8bd"
+  
+  ,"Cover Letters"                = "#8dd3c7"
+  ,"Interview Skills"             = "#bebada"
+  ,"Job Search"                   = "#fb8072"
+  ,"Labour Market Information"    = "#80b1d3"
+  ,"Resume Writing"               = "#fdb462"
+  ,"Self Assessment"              = "#b3de69"
+)
+
+intervention_matrix <- tibble::tribble(
+  ~program_class1     , ~fold0                    ,~fold1             , ~fold2,
+  "Assessment"        , "Employability"                 ,"EA"               ,"EA",
+  "Assessment"        , "Needs Identification"          ,"EA"               ,"EA",
+  "Assessment"        , "Service Needs Determination"   ,"EA"               ,"EA",
+  "Career Information", "Exposure Course"               ,"Exposure Course"  ,"Exposure Course",
+  "Career Information", "Job Placement"                 ,"Job Placement"    ,"Job Placement",
+  "Career Information", "Career Planning"               ,"Career Planning"  ,"Workshop",
+  "Career Information", "Job Search"                    ,"Workshop"         ,"Workshop",
+  "Career Information", "Resume Writing"                ,"Workshop"         ,"Workshop",
+  "Career Information", "Cover Letters"                 ,"Workshop"         ,"Workshop",
+  "Career Information", "Interview Skills"              ,"Workshop"         ,"Workshop",
+  "Career Information", "Labour Market Information"     ,"Workshop"         ,"Workshop",
+  "Career Information", "Self Assessment"               ,"Workshop"         ,"Workshop",
+  "Career Information", "Workshop(Other)"               ,"Workshop"         ,"Workshop",
+  "Training for Work" , "Training for Work"             ,"Training for Work","Training for Work",
+  "Work Foundations"  , "Work Foundations"              ,"Work Foundations" ,"Work Foundations",
+)
+# intervention_matrix %>% neat()
 ```
 
 ```{r}
@@ -152,7 +182,6 @@ if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
 # Data
 
-
 ```{r }
 #| label: load-data
 #| code-summary: Bring in results of Phase 3 modeling
@@ -163,7 +192,11 @@ if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
 # Workshop(Other) is broken down into more granular categories 
 wk_freq_fold0  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-intervention.csv")
-wk_order_fold0 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-intervention.csv")
+wk_order_fold0 <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/alluvial-intervention.csv") %>% 
+  mutate_at( # to align with fold1
+    .vars = c("wk1","wk2","wk3")
+    ,.funs = ~stringr::str_remove(.,"\\(Other\\)")
+  )
 
 # Highest granularity of Intervention
 wk_freq_fold1  <- readr::read_csv("./analysis/phase-3-results/data/2024-03-13/freq-fold1.csv")
@@ -202,17 +235,31 @@ fiesta_n_with_ceis <-
 
 ```
 
+`r scales::comma(fiesta_n)` - Number of clients who had their first Income Support in 2014-19 FY **and** whose *Total Earnings* were recovered from T1 tax files for at least two time points (in the years immediately before and after their IS spell)
+
+`r scales::comma(fiesta_n_no_ceis)` - Number of clients who did not take any CEIS workshops about the time of their first Income Support (from 12 months prior to the start to the end of the IS spell). However, they may have taken non-CEIS intervention (e.g. Work Foundations, Training for Work) or some employability assessment.
+
+`r scales::comma(fiesta_n_with_ceis)` - Number of clients with at least one CEIS workshop about the time of their first Income Support spell.
+
 # Context
 
 ```{r}
-d1 <- 
+#| label: context-1
+#| code-summary: FIESTA sample size
+#| cache: false
+#| code-fold: true
+#| fig-width: 9
+#| fig-height: 2.5
+
+
+d <- 
   ds_unbalanced %>% 
   filter(waveL==0L) %>% 
   # select(2:4) %>% 
   mutate(
     wk_profile = case_when(
       wk_combo == "__ + __ + __ + __" ~ "No CEIS workshop",
-      TRUE ~ "At least one\nCEIS workshop"
+      TRUE ~ "At least one CEIS workshop"
     )
   ) %>% 
   group_by(wk_profile) %>% 
@@ -224,9 +271,10 @@ d1 <-
     prop = n/sum(n)
     ,pct = percent(prop)
   )
-d1 
 
-d1 %>% 
+
+g <- 
+  d %>% 
   ggplot(aes(x=1, y =n ,  label = pct, fill = wk_profile))+
   geom_col(position = "stack")+
   geom_text(position = position_stack(vjust = .5))+
@@ -234,12 +282,11 @@ d1 %>%
   scale_y_continuous(labels = comma_format())+
   coord_flip()+
   scale_fill_manual(values = c( as.vector(c(abcol["sunset"],abcol["sky"]))))+
-  # scale_fill_manual(values = c(abcol["sky"], abcol["sunset"]))+
   labs(
     x = NULL
     ,y = NULL
-    ,title = "Number of clients selected into the FIESTA research population (First Income Support in 2014-2019 FY + known eranings before and after IS)"
-    ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
+    ,title = "FIESTA research population (first Income Support in 2014-2019 FY + known eranings before and after IS)"
+    ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | Without any CEIS workshop between 12 months prior and the end of IS: ",comma(fiesta_n_no_ceis), " |  With at least one CEIS WK: ", comma(fiesta_n_with_ceis) )
     ,fill = NULL
   )+
   theme(
@@ -248,14 +295,33 @@ d1 %>%
   guides(
     fill = guide_legend(reverse=TRUE)
   )
+g %>% quick_save("contex-1",w=9,h=2.5)
+g
+```
 
-c(abcol["dusk"],abcol["sky"])
+Current analysis phase (FIESTA-3) focuses on estimating the impact of specific CEIS workshops, some of which engage fewer clients than others. To maintain sufficient sample size for estimating the net impact, we resorted to distinguishing only 4 categories of workshops: Career Planing, Exposure Course, Job Placement and Workshop (Other). We refer to this granularity as `fold0`. The last category, *Workshop (Other)* (or just *Workshop* for brevity) includes all other CEIS workshops (e.g. Resume Writing, Cover Letters, Interview Skills, etc). We preserve this granularity as `fold1` and use it in selective exploratory graphs of this report.
+
+```{r}
+#| label: context-2
+#| code-summary: Granularity of the Intervention
+#| cache: false
+#| code-fold: true
+#| fig-width: 9
+#| fig-height: 2.5
+#| df-print: responsive
+
+intervention_matrix %>% filter(program_class1=="Career Information") %>% select(fold0,fold1) %>% gt::gt()
+
 ```
 
 
-# Workshop Sequence
+# Fold 1 - Table
 
 ```{r}
+#| code-summary: Prepare data table
+#| code-fold: true
+#| cache: true 
+
 d1 <-
   wk_order_fold1 %>% 
   mutate( # explicit NA and factors
@@ -263,9 +329,16 @@ d1 <-
      ,wk2 = forcats::fct_na_value_to_level(wk2,"None")
      ,wk3 = forcats::fct_na_value_to_level(wk3,"None")
   )
-# stratum_labels <- 
-#   
-  d1 %>% 
+```
+
+::: panel-tabset
+## First
+
+```{r}
+#| code-fold: true
+#| cache: true
+
+d1 %>% 
   group_by(wk1) %>% 
   summarize(count = sum(person_count)) %>% 
   ungroup() %>% 
@@ -275,9 +348,16 @@ d1 <-
     ,pct = percent(prop, accuracy = 1)
     ,label = paste0(wk1," (", comma(count),",",pct,")")
   ) %>% 
-  print()
+  neat()
+```
 
-  d1 %>% 
+## Second
+
+```{r}
+#| code-fold: true
+#| cache: true
+
+d1 %>% 
   group_by(wk2) %>% 
   summarize(count = sum(person_count) ) %>% 
   ungroup() %>% 
@@ -287,14 +367,60 @@ d1 <-
     ,pct = percent(prop, accuracy = 1)
     ,label = paste0(wk2," (", comma(count),",",pct,")")
   ) %>% 
-  print()
+  mutate(
+    total_wk2 = total - count[which(wk2=="None")]
+    ,total_wk2 = case_when(!wk2=="None"~total_wk2)
+    ,prop_wk2 = count/total_wk2
+    ,pct_wk2 = percent(prop_wk2, accuracy =1)
+    ,label_wk2 = paste0(wk2," (", comma(count),",",pct_wk2,")")
+  ) %>% 
+  select(-c("prop","prop_wk2")) %>% 
+   neat() 
+```
 
-combo_colors <- c(
-  "Career Planning" = "red"
-  ,"Exposure Course" = "blue"
-  ,"Job Placement" = "green"
-  ,"None" = "grey"
-)
+## Third
+
+```{r}
+#| code-fold: true
+#| cache: true
+
+d1 %>% 
+  group_by(wk3) %>% 
+  summarize(count = sum(person_count) ) %>% 
+  ungroup() %>% 
+  mutate(
+    total = sum(count)
+    ,prop = count/sum(count)
+    ,pct = percent(prop, accuracy = 1)
+    ,label = paste0(wk3," (", comma(count),",",pct,")")
+  ) %>% 
+  mutate(
+    total_wk3 = total - count[which(wk3=="None")]
+    ,total_wk3 = case_when(!wk3=="None"~total_wk3)
+    ,prop_wk3 = count/total_wk3
+    ,pct_wk3 = percent(prop_wk3, accuracy =1)
+    ,label_wk3 = paste0(wk3," (", comma(count),",",pct_wk3,")")
+  ) %>% 
+  select(-c("prop","prop_wk3")) %>% 
+   neat() 
+
+```
+:::
+
+# Fold 1 - Graph
+
+::: panel-tabset
+## First
+
+```{r}
+#| label: fold1-table
+#| code-fold: true
+#| warning: false
+#| fig-width: 12
+#| fig-height: 7
+#| out.width: "1200px"
+#| cache: false
+
 g1 <- 
   d1 %>% 
   arrange(wk2) %>% 
@@ -305,55 +431,97 @@ g1 <-
       ,axis2 = wk2
       ,axis3 = wk3
       ,y     = person_count    
-      # ,fill = wk2
-      # , color = wk1
+      ,fill = wk1
+      
       )
       
   ) +
-  geom_alluvium(aes(fill = wk2), stat = "flow") +
-  geom_stratum()+
+  geom_alluvium( stat = "flow") +
+  geom_stratum(stat ="stratum")+
   # geom_stratum(aes(fill=wk1),alpha = .5, width = 1/3) +
   # geom_flow(aes(fill = wk2),aes.flow = "forward")+
   # scale_fill_manual(values = combo_colors)+
-  geom_text(stat = "stratum",aes(label = after_stat(stratum))) +
+  geom_text(stat = "stratum",aes(label = after_stat(stratum)), size = baseSize-7) +
   # geom_text(stat = "stratum",label = c("1","2","3","4","5","6","7", "8","9"))+#,"10"#,"11", "12","13","14")) +
   # geom_text(stat = "stratum",label = c("1","2","3","4","5","6","7", "8","9","10"))+##,"11", "12","13","14")) +
-  scale_x_discrete(limits = c("First", "Second"),
+  scale_x_discrete(limits = c("First", "Second", "Third"),
                    expand = c(0.15, 0.05)) +
   scale_y_continuous(labels = comma_format())+
   # theme_void()+
+  scale_fill_manual(values = fold0_colors)+
   guides(fill=guide_legend(ncol =1))+
   labs(
     fill = "Workshop"
     ,title = "Sequence of CEIS workshop in FIESTA sample"
     ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
     ,y = "Number of clients"
+    ,x = "The order of the CEIS workshop ( 12 months prior to start - end of IS) "
+  )+
+  theme(
+    text = element_text(size = baseSize+5)
   )
 g1
-g1 %>% quick_save("fiesta_3_sankey-1", w=16, h = 9)
 ```
 
+## Second
+
+```{r }
+#| code-fold: true
+#| warning: false
+#| cache: false
+#| fig-width: 12
+#| fig-height: 7
+
+g1 %+% aes(fill=wk2) %+%labs(fill="Workshop")
+```
+
+## Third
+
+```{r fig.width=9, fig.height=5}
+#| code-fold: true
+#| warning: false
+#| cache: false
+#| fig-width: 12
+#| fig-height: 7
+
+g1 %+% aes(fill=wk3)%+%labs(fill="Workshop")
+```
+:::
+
+
+# Fold 0
+
+::: panel-tabset
+## First
+
 ```{r}
+#| code-fold: true
+#| warning: false
+#| cache: true
 d0 <-
   wk_order_fold0 %>% 
-  filter(!wk1 %in% c("Career Planning","Exposure Course","Job Placement")) 
+  filter(!wk1 %in% c("Career Planning","Exposure Course","Job Placement")) %>% 
+  filter(!is.na(wk2), !is.na(wk3))
 
 g0 <- 
   d0 %>% 
   ungroup() %>% 
   ggplot(
     aes(
-      # axis1  = wk1
-       axis2 = wk2
+      axis1  = wk1
+      ,axis2 = wk2
       ,axis3 = wk3
-      ,y     = person_count    )
+      ,y     = person_count    
+      ,fill = wk1
+      )
   ) +
-  geom_alluvium(aes(fill = wk2)) +
-  # geom_stratum(aes(fill = wk1)) +
+  geom_alluvium(stat = "flow") +
+  geom_stratum() +
   geom_text(stat = "stratum",
             aes(label = after_stat(stratum))) +
   scale_x_discrete(limits = c("First", "Second","Third"),
                    expand = c(0.15, 0.05)) +
+  scale_fill_manual(values = fold0_colors)+
   # theme_void()+
   guides(fill=guide_legend(ncol =1))+
   labs(
@@ -362,5 +530,30 @@ g0 <-
     ,subtitle = paste0("Total: ",scales::comma(fiesta_n), " | With at least one CEIS workshop: ",comma(fiesta_n_with_ceis), " | Without any CEIS: ", comma(fiesta_n_no_ceis) )
   )
 g0
+```
+
+## Second
+
+```{r}
+#| code-fold: true
+#| warning: false
+#| cache: true
+
+g0 %+% aes(fill= wk2)
+```
+
+## Third
+
+```{r}
+#| code-fold: true
+#| warning: false
+#| cache: true
+
+g0 %+% aes(fill= wk3)
+```
+:::
+
+```{r}
+# see https://ggplot2.tidyverse.org/reference/gg-add.html
 g0 %>% quick_save("fiesta_3_sankey-0-3", w=16, h = 9)
 ```
