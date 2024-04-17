@@ -4,15 +4,18 @@ author:
   - Andriy Koval
 format:
   html:
-    embed-resources: true
-    self-contained: true
     page-layout: full
     toc: true
     toc-location: right
-    theme: simplex
-    highlight-style: github
-    colde-line-numbers: true
-    code_folding: show
+    code-fold: show
+    theme: litera
+    highlight-style: nord
+    embed-resources: true
+    standalone: true
+    monofont: consolas
+    code-line-numbers: true
+    df-print: paged
+    out-width: "900px"
 editor: visual
 editor_options: 
   chunk_output_type: console
