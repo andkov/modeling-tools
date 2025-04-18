@@ -22,8 +22,8 @@ base::source("./scripts/common-functions.R") # project-level
 prints_folder <- paste0("./analysis/nia-4-effects/prints/")
 if (!fs::dir_exists(prints_folder)) { fs::dir_create(prints_folder) }
 
-# path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
-path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
+path_data_input <- "./analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
+# path_data_input <- "../sda-fiesta/analysis/nia-4-effects/osi/model-solution/nia-3-cra-effects-full.csv"
 
 
 # ---- declare-functions -------------------------------------------------------
