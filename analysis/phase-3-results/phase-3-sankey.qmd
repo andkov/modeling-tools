@@ -16,7 +16,7 @@ format:
     monofont: consolas
     code-line-numbers: true
     df-print: paged
-    out.width: 900px
+    out-width: "900px"
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -318,6 +318,7 @@ intervention_matrix %>% filter(program_class1=="Career Information") %>% select(
 # Fold 1 - Table
 
 ```{r}
+#| label: fold1-table0
 #| code-summary: Prepare data table
 #| code-fold: true
 #| cache: true 
@@ -335,6 +336,7 @@ d1 <-
 ## First
 
 ```{r}
+#| label: fold1-table1
 #| code-fold: true
 #| cache: true
 
@@ -348,12 +350,14 @@ d1 %>%
     ,pct = percent(prop, accuracy = 1)
     ,label = paste0(wk1," (", comma(count),",",pct,")")
   ) %>% 
-  neat()
+  # neat() %>% 
+  print()
 ```
 
 ## Second
 
 ```{r}
+#| label: fold1-table2
 #| code-fold: true
 #| cache: true
 
@@ -375,12 +379,14 @@ d1 %>%
     ,label_wk2 = paste0(wk2," (", comma(count),",",pct_wk2,")")
   ) %>% 
   select(-c("prop","prop_wk2")) %>% 
-   neat() 
+   # neat() %>% 
+  print()
 ```
 
 ## Third
 
 ```{r}
+#| label: fold1-table3
 #| code-fold: true
 #| cache: true
 
@@ -402,7 +408,8 @@ d1 %>%
     ,label_wk3 = paste0(wk3," (", comma(count),",",pct_wk3,")")
   ) %>% 
   select(-c("prop","prop_wk3")) %>% 
-   neat() 
+   neat() %>% 
+  print()
 
 ```
 :::
