@@ -342,8 +342,8 @@ font_size_net     <- baseSize - 4
 g1 <- 
   nia_null %>% 
   filter(waveL < 6) %>%
-  # filter(!intervention %in% c("work_foundations","training_for_work")) %>% 
-  filter(intervention %in% c("career_planning","job_placement","exposure_course")) %>% 
+  filter(!intervention %in% c("work_foundations","training_for_work")) %>%
+  # filter(intervention %in% c("career_planning","job_placement","exposure_course")) %>% 
   # here, because otherwise uses all waves 
   group_by(intervention) %>% 
   mutate(
@@ -362,7 +362,7 @@ g1 <-
   # filter(intervention == "career_planning") %>%
   # filter(intervention == "labour_market_info") %>%
   ggplot(aes(x=waveL, y = y_hat, color = txF))+
-  geom_point(aes(shape=txF))+
+  geom_point(aes(shape=txF),  size = 2.5)+
   # geom_point(data = . %>% filter(tx!="NET"))+
   # geom_rect()
   # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
@@ -397,7 +397,8 @@ g1 <-
     # guides(alpha = "none")
  guides(shape = guide_legend(override.aes = list(size = 3)))
 # g1 %>% print()
-g1 %>% quick_save("main-effect-5-waves-main-3",w=16,h=4)
+# g1 %>% quick_save("main-effect-5-waves-main-3",w=16,h=4)
+g1 %>% quick_save("main-effect-5-waves-all",w=16,h=10)
 ```
 
 ## Zoom
@@ -405,7 +406,15 @@ g1 %>% quick_save("main-effect-5-waves-main-3",w=16,h=4)
 ```{r}
 font_size_regular <- baseSize - 7
 font_size_net     <- baseSize - 4
-target_tx <- "self_assessment"
+target_tx <- "career_planning"
+# target_tx <- "cover_letters"
+# target_tx <- "exposure_course"
+# target_tx <- "interview_skills"
+# target_tx <- "job_placement"
+# target_tx <- "job_search"
+# target_tx <- "labour_market_info"
+# target_tx <- "resume_writing"
+# target_tx <- "self_assessment"
 g2 <- 
   nia_null %>% 
   filter(waveL < 6) %>%
@@ -430,7 +439,7 @@ g2 <-
   # filter(intervention == "career_planning") %>%
   # filter(intervention == "labour_market_info") %>%
   ggplot(aes(x=waveL, y = y_hat, color = txF))+
-  geom_point(aes(shape=txF))+
+  geom_point(aes(shape=txF), size = 3)+
   # geom_point(data = . %>% filter(tx!="NET"))+
   # geom_rect()
   # geom_pointrange(aes(ymin=ci_lower, ymax=ci_upper))+
