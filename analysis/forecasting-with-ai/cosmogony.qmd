@@ -143,6 +143,13 @@ We trace one individual across all six datasets to illustrate the transformation
 
 Suppose, you observe the following time series, representing the count of active cases for each month:
 ```{r}
+#| label: load-data-panel
+#| code-summary: Create `ds_panel`
+#| warning: false
+#| code-fold: true
+#| cache: true
+
+
 n_months <- length(month_seq)
 base <- 5000
 trend <- seq(0, 2000, length.out = n_months)
@@ -165,9 +172,33 @@ ds_panel %>% head()
 At each time interval (here: a month), individuals can be classified into one of three categories: NEW, CLOSED, and RETURNED cases. This trichotomy includes an important special case: when an episode begins and ends within the same month, the individual is simultaneously counted as both a NEW and an CLOSED. This detail is crucial when reconstructing the total caseload from its component events, as it affects the net change dynamics within that interval.
 
 ```{r}
+#| label: load-data-panel-components
+#| code-summary: Create `ds_components`  
+#| warning: false
+#| code-fold: true
+#| cache: true
+#
 library(tidyverse)
 library(scales)
 library(patchwork)
+
+ds_components <- ds_panel %>%
+  mutate(
+    # Simulate NEW with a base level + random monthly spikes
+    NEW = round(400 + 100 * sin(2 * pi * (1:n_months) / 6) + rnorm(n_months, 0, 50)),
+    
+    # Simulate CLOSED to occasionally flourish (e.g. after COVID)
+    CLOSED = round(300 + ifelse(
+      year_month %in% seq(as.Date("2022-01-01"), as.Date("2022-06-01"), by = "month"),
+      800 + rnorm(n_months, 0, 100),
+      200 + rnorm(n_months, 0, 50)
+    )),
+    
+    # RETURNED is the balancing category to ensure sum matches event_count
+    RETURNED = pmax(0, event_count - NEW - CLOSED)
+  ) %>%
+  pivot_longer(cols = c("NEW", "RETURNED", "CLOSED"),
+               names_to = "category", values_to = "count")
 
 # --- Collect y-values from both datasets ---
 y_vals <- c(ds_panel$event_count, ds_components$count)
@@ -240,162 +271,95 @@ Let us simulate a dataset named `ds_episode` representing episodes of financial 
 #| code-fold: true
 #| cache: true
 # set your root to Project Directory when developing chunks live in .qmd
-
-library(dplyr)
-library(tidyr)
-library(lubridate)
-library(purrr)
-
-set.seed(123)
-
-# ---- Define Constants ----
-n_people <- 5000
-client_codes <- c(11, 14, 45, 92)
-code_map <- tibble(
-  client_type_code = client_codes,
-  pc2 = c("ETW", "ETW", "BFE", "AISH"),
-  program_group = c("IS", "IS", "IS", "AISH")
-)
-episode_durations <- 1:36
-duration_weights <- rev(episode_durations) / sum(episode_durations) # shorter episodes more likely
-start_pool <- seq(as.Date("2014-01-01"), as.Date("2024-12-01"), by = "month")
-max_end_date <- as.Date("2025-04-30")
-
-# ---- Generate People and Episode Counts ----
-people <- tibble(
-  person_oid = 1000001:(1000000 + n_people),
-  n_episodes = sample(1:5, n_people, replace = TRUE, prob = c(0.5, 0.25, 0.15, 0.07, 0.03))
-)
-
-# ---- Episode Generator Function ----
-generate_episodes <- function(person_oid, n_episodes) {
-  # Generate client_type_code sequence (non-decreasing)
-  codes <- sample(client_codes, n_episodes, replace = TRUE) %>% sort()
-  start_date <- sample(start_pool, 1)
-  
-  episodes <- vector("list", length = 0)
-  
-  for (code in codes) {
-    duration <- sample(episode_durations, 1, prob = duration_weights)
-    end_date <- start_date %m+% months(duration - 1)
-    
-    if (end_date > max_end_date) break
-    
-    episodes[[length(episodes) + 1]] <- tibble(
-      person_oid = person_oid,
-      date_start = start_date,
-      date_end = end_date,
-      client_type_code = code
-    )
-    
-    start_date <- end_date %m+% months(1) # ensure no overlap
-  }
-  
-  bind_rows(episodes)
-}
-
-# ---- Simulate All Episodes ----
-ds_episode <- people %>%
-  mutate(data = map2(person_oid, n_episodes, generate_episodes)) %>%
-  select(data) %>%
-  unnest(data) %>%
-  left_join(code_map, by = "client_type_code") %>%
-  arrange(person_oid, date_start) 
-
-# ---- Preview ----
-glimpse(ds_episode)
-
-```
-
-## Tweak 0
-
-```{r}
-#| label: tweak-data-0
-#| code-summary: Organize data into `ds0` form. Cleaning up names, optimize some data types.
-#| code-fold: true
-#| cache: true
-#| results: hide
-
-ds_episode %>% keep_random_id()
-```
-
-```{r}
-# ---- load-packages -----------------------------------------------------------
+# ---- setup -------------------------------------------------------------------
 library(tidyverse)
 library(lubridate)
-library(janitor)
-library(glue)
-library(ggplot2)
-library(scales)
-library(fabletools)
-```
 
+# ---- simulation parameters ---------------------------------------------------
+n_people <- 5000
+min_episodes <- 1
+max_episodes <- 5
+episode_duration_dist <- function(n) round(rexp(n, rate = 1/8) + 1) # skewed to short durations
 
+start_window <- as.Date("2014-01-01")
+end_window <- as.Date("2025-04-30")
 
-```{r}
-# ---- declare-globals ---------------------------------------------------------
-set.seed(2025)
-target_window_opens  <- as.Date("2014-01-01")
-target_window_closes <- as.Date("2025-04-01")
-month_seq <- seq.Date(target_window_opens, target_window_closes, by = "month")
-```
+client_code_order <- c(11, 14, 45, 92)
+client_code_labels <- c("ETW", "ETW", "BFE", "AISH")
+program_groups <- c("IS", "IS", "IS", "AISH")
+names(client_code_labels) <- client_code_order
+names(program_groups) <- client_code_order
 
-## 1. Simulate Total Caseload Time Series (`ds_panel`)
-
-```{r}
-# ---- simulate-ds_panel -------------------------------------------------------
-n_months <- length(month_seq)
-base <- 5000
-trend <- seq(0, 2000, length.out = n_months)
-seasonality <- sin(2 * pi * (1:n_months) / 12) * 200
-covid <- ifelse(month_seq >= as.Date("2020-03-01") & month_seq <= as.Date("2022-01-01"), -800, 0)
-noise <- rnorm(n_months, 0, 100)
-
-ds_panel <- tibble(
-  year_month = month_seq,
-  event_count = round(base + trend + seasonality + covid + noise)
-)
-
-ds_panel %>% ggplot(aes(x = year_month, y = event_count)) +
-  geom_line() +
-  labs(title = "Simulated Caseload Time Series", y = "Total Active Caseload", x = NULL)
-```
-
-## 2. Simulate Raw Episodes (`ds_episode`)
-
-```{r}
-# ---- simulate-ds_episode -----------------------------------------------------
-n_people <- 1000
-people <- tibble(person_oid = 1001:(1000 + n_people))
-
-simulate_episodes <- function(id) {
-  n <- sample(1:4, 1)
-  tibble(
-    person_oid = id,
-    date_start = sample(month_seq, n),
-    duration = sample(2:24, n, replace = TRUE),
-    client_type_code = sample(c(11, 14, 17, 44, 45, 91), n, replace = TRUE)
-  ) %>%
-    mutate(
-      date_end = pmin(date_start %m+% months(duration - 1), target_window_closes),
-      pc2 = case_when(
-        client_type_code %in% c(11, 14, 17) ~ "ETW",
-        client_type_code %in% c(44, 45)     ~ "BFE",
-        client_type_code == 91             ~ "AISH"
-      ),
-      program_group = pc2
+# ---- helper function: generate episodes for one person -----------------------
+simulate_person_episodes <- function(person_id) {
+  n_episodes <- sample(min_episodes:max_episodes, 1, prob = rev(seq(min_episodes, max_episodes)))
+  possible_start <- start_window
+  person_episodes <- list()
+  
+  # Choose non-decreasing client_type_codes
+  client_codes <- sort(sample(client_code_order, n_episodes, replace = TRUE))
+  
+  for (i in seq_len(n_episodes)) {
+    # Draw episode duration in months, capped at 36
+    duration_months <- min(episode_duration_dist(1), 36)
+    
+    # Ensure start date is valid
+    max_start <- floor_date(end_window %m-% months(duration_months - 1), unit = "month")
+    if (possible_start > max_start) break
+    
+    date_start <- sample(seq(possible_start, max_start, by = "month"), 1)
+    date_end <- date_start %m+% months(duration_months - 1)
+    
+    client_type_code <- client_codes[i]
+    pc2 <- client_code_labels[as.character(client_type_code)]
+    program_group <- program_groups[as.character(client_type_code)]
+    
+    person_episodes[[i]] <- tibble(
+      person_oid = person_id,
+      date_start,
+      date_end,
+      client_type_code,
+      pc2,
+      program_group
     )
+    
+    # Update next possible start:
+    if (i < n_episodes) {
+      # At least 2-month gap if same client_type_code, else allow adjacent
+      buffer_months <- if (i < n_episodes && client_codes[i] == client_codes[i + 1]) 2 else 0
+      possible_start <- date_end %m+% months(buffer_months + 1)
+    }
+  }
+  
+  bind_rows(person_episodes)
 }
 
-ds_episode <- map_dfr(people$person_oid, simulate_episodes)
+# ---- simulate all episodes ---------------------------------------------------
+set.seed(123) # for reproducibility
 
-# show example
-ds_episode %>% filter(person_oid == min(person_oid))
+ds_episode <- map_dfr(1:n_people, simulate_person_episodes)
+
+ds_episode <- ds_episode %>%
+  mutate(
+    duration_months = pmax(interval(date_start, date_end) %/% months(1) + 1, 1)
+  )
+
+# ---- inspect result ----------------------------------------------------------
+glimpse(ds_episode)
+ds_episode %>% count(client_type_code, pc2, program_group)
+
 ```
 
-## 3. Expand to Person-Month Panel (`ds_event`)
+# 3. Events in Episodes (`ds_event`)
+
+Now we make an important transition to event-grain table, in which each row represents a **person-month** and has a set of indicators flagging events of interest: START/NEW , EXIT/CLOSED,  or STAY/RETURN. 
 
 ```{r}
+#| label: tweak-data-1-event
+#| code-summary: Load data objects 
+#| warning: false
+#| code-fold: true
+#| cache: true
 # ---- expand-to-ds_event ------------------------------------------------------
 expand_episode <- function(ep) {
   tibble(
@@ -407,10 +371,10 @@ expand_episode <- function(ep) {
   )
 }
 
-ds_event <- ds_episode %>% 
+ds_event <- ds_episode %>% filter(person_oid == oneid  ) %>% print() %>% 
   group_split(row_number()) %>% 
   map_dfr(expand_episode) %>%
-  group_by(person_oid) %>%
+  group_by(person_oid, date_start, date_end, client_type_code) %>%
   arrange(person_oid, month) %>%
   mutate(
     spell_id = cumsum(month != lag(month, default = first(month)) + months(1)),
@@ -420,12 +384,16 @@ ds_event <- ds_episode %>%
   ungroup() %>%
   mutate(
     event_type = case_when(
+      flag_start & flag_end ~ "START-EXIT",
       flag_start ~ "START",
       flag_end   ~ "EXIT",
       TRUE       ~ "STAY"
     ))
 
-ds_event %>% filter(person_oid == min(person_oid))
+ds_event %>% keep_random_id()
+oneid <- ds_episode %>% filter(duration_months==1L) %>% keep_random_id() %>% pull(person_oid) %>% unique()
+ds_event %>% filter(person_oid == oneid  )
+ds_episode %>% filter(person_oid == oneid)
 ```
 
 ## 4. Aggregate Events Monthly (`ds_event_count`)
