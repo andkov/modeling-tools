@@ -1,0 +1,176 @@
+---
+title: "Scene Setup for Longitudinal Modeling"
+format: html
+execute:
+  freeze: auto
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# ---- load-packages -----------------------------------------------------------
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(glue)
+library(ggplot2)
+library(scales)
+library(fabletools)
+```
+
+## Overview
+
+This document simulates and processes the longitudinal structure required for event forecasting. We create six core tables from scratch:
+
+1. `ds_panel` — Monthly caseload time series, inspirational target for `ds_caseload`
+2. `ds_episode` — Raw service episodes
+3. `ds_event` — Person-month panel
+4. `ds_event_count` — Monthly START, STAY, EXIT counts
+5. `ds_caseload` — Total monthly caseload by client type, immitates `ds_panel`
+6. `ds_caseload_event` — Individual-level caseload contributions
+
+We trace one individual across all six datasets to illustrate the transformation.
+
+```{r}
+# ---- declare-globals ---------------------------------------------------------
+set.seed(2025)
+target_window_opens  <- as.Date("2014-01-01")
+target_window_closes <- as.Date("2025-04-01")
+month_seq <- seq.Date(target_window_opens, target_window_closes, by = "month")
+```
+
+## 1. Simulate Total Caseload Time Series (`ds_panel`)
+
+```{r}
+# ---- simulate-ds_panel -------------------------------------------------------
+n_months <- length(month_seq)
+base <- 5000
+trend <- seq(0, 2000, length.out = n_months)
+seasonality <- sin(2 * pi * (1:n_months) / 12) * 200
+covid <- ifelse(month_seq >= as.Date("2020-03-01") & month_seq <= as.Date("2022-01-01"), -800, 0)
+noise <- rnorm(n_months, 0, 100)
+
+ds_panel <- tibble(
+  year_month = month_seq,
+  event_count = round(base + trend + seasonality + covid + noise)
+)
+
+ds_panel %>% ggplot(aes(x = year_month, y = event_count)) +
+  geom_line() +
+  labs(title = "Simulated Caseload Time Series", y = "Total Active Caseload", x = NULL)
+```
+
+## 2. Simulate Raw Episodes (`ds_episode`)
+
+```{r}
+# ---- simulate-ds_episode -----------------------------------------------------
+n_people <- 1000
+people <- tibble(person_oid = 1001:(1000 + n_people))
+
+simulate_episodes <- function(id) {
+  n <- sample(1:4, 1)
+  tibble(
+    person_oid = id,
+    date_start = sample(month_seq, n),
+    duration = sample(2:24, n, replace = TRUE),
+    client_type_code = sample(c(11, 14, 17, 44, 45, 91), n, replace = TRUE)
+  ) %>%
+    mutate(
+      date_end = pmin(date_start %m+% months(duration - 1), target_window_closes),
+      pc2 = case_when(
+        client_type_code %in% c(11, 14, 17) ~ "ETW",
+        client_type_code %in% c(44, 45)     ~ "BFE",
+        client_type_code == 91             ~ "AISH"
+      ),
+      program_group = pc2
+    )
+}
+
+ds_episode <- map_dfr(people$person_oid, simulate_episodes)
+
+# show example
+ds_episode %>% filter(person_oid == min(person_oid))
+```
+
+## 3. Expand to Person-Month Panel (`ds_event`)
+
+```{r}
+# ---- expand-to-ds_event ------------------------------------------------------
+expand_episode <- function(ep) {
+  tibble(
+    person_oid = ep$person_oid,
+    month = seq.Date(ep$date_start, ep$date_end, by = "month"),
+    client_type_code = ep$client_type_code,
+    pc2 = ep$pc2,
+    program_group = ep$program_group
+  )
+}
+
+ds_event <- ds_episode %>% 
+  group_split(row_number()) %>% 
+  map_dfr(expand_episode) %>%
+  group_by(person_oid) %>%
+  arrange(person_oid, month) %>%
+  mutate(
+    spell_id = cumsum(month != lag(month, default = first(month)) + months(1)),
+    flag_start = month == min(month),
+    flag_end   = month == max(month)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    event_type = case_when(
+      flag_start ~ "START",
+      flag_end   ~ "EXIT",
+      TRUE       ~ "STAY"
+    ))
+
+ds_event %>% filter(person_oid == min(person_oid))
+```
+
+## 4. Aggregate Events Monthly (`ds_event_count`)
+
+```{r}
+# ---- aggregate-event-counts --------------------------------------------------
+ds_event_count <- ds_event %>%
+  count(month, client_type_code, event_type, name = "count")
+
+ds_event_count %>% filter(client_type_code == 11)
+```
+
+## 5. Compute Monthly Caseload (`ds_caseload`)
+
+```{r}
+# ---- compute-caseload --------------------------------------------------------
+ds_caseload_event <- ds_event %>%
+  distinct(month, person_oid, client_type_code)
+
+ds_caseload <- ds_caseload_event %>%
+  count(month, client_type_code, name = "caseload")
+
+# Match total to panel
+ds_compare <- ds_caseload %>%
+  group_by(month) %>%
+  summarize(total = sum(caseload)) %>%
+  left_join(ds_panel, by = c("month" = "year_month"))
+
+ggplot(ds_compare, aes(x = month)) +
+  geom_line(aes(y = total, color = "Simulated Caseload")) +
+  geom_line(aes(y = event_count, color = "Target Panel")) +
+  labs(title = "Comparison of Simulated and Target Caseload", y = "Individuals", color = "Source")
+```
+
+## 6. View Full Journey for One Individual
+
+```{r}
+# ---- show-journey-individual -------------------------------------------------
+id_focus <- min(ds_event$person_oid)
+
+ds_episode %>% filter(person_oid == id_focus)
+ds_event %>% filter(person_oid == id_focus)
+ds_event_count %>% filter(client_type_code %in% ds_episode$client_type_code[ds_episode$person_oid == id_focus])
+ds_caseload_event %>% filter(person_oid == id_focus)
+```
+
+## Summary
+
+We now have a full suite of longitudinal data from monthly counts to person-month panels. The structure is suitable for modeling active caseload or discrete events (START, STAY, EXIT) and enables easy testing of different forecasting approaches.

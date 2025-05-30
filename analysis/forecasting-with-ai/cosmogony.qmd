@@ -1,0 +1,508 @@
+---
+title: "Forecasting Cosmogony"
+subtitle: "Terminology, Geneology, Simulation"
+author: "SDA"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-location: right
+    code-fold: show
+    theme: yeti
+    highlight-style: breeze
+    colde-line-numbers: true
+    self-contained: true
+    embed-resources: true
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| code-summary: Reconciles working directory between execution modes
+#| echo: false
+#| results: hide
+#| message: false 
+#| warning: false
+cat("Working directory: ", getwd())
+library(knitr)
+opts_knit$set(root.dir='../../') # keep this chunk isolated  
+```
+
+```{r}
+#| label: set_options
+#| code-summary: report-wide formatting options
+#| echo: false
+#| results: hide
+#| message: false 
+cat("Working directory: ", getwd()) # turn on to test the location
+report_render_start_time <- Sys.time()
+# set options shared by all chunks
+opts_chunk$set(
+  results      = 'show',
+  message      = FALSE,
+  warning      = FALSE,
+  comment      = NA,
+  tidy         = FALSE,
+  # dpi        = 400, # dots per inch,
+  out.width  = "960px", # pixels, this affects only the markdown, not the underlying png file.  The height will be scaled appropriately.
+  fig.width    = 6, # inches
+  fig.height   = 4, # inches
+  fig.path     = 'figure-png-iso/' # where figures are stored
+  
+)
+echo_chunks    <- FALSE #Toggle for debugging.
+message_chunks <- FALSE #Toggle for debugging.
+options(width=100) # number of characters to display in the output (dflt = 80)
+ggplot2::theme_set(ggplot2::theme_bw()) # common theme for all graphs
+# read_chunk("./analysis/fs-dynamics/1-scribe.R") #This allows knitr to call
+```
+
+# Environment
+
+> Reviews the components of the working environment of the report. Non-technical readers are welcomed to skip. Come back if you need to understand the origins of custom functions, scripts, or data objects.
+
+```{r}
+#| label: load-packages
+#| code-summary: Packages used in the current report
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(glue)
+library(ggplot2)
+library(scales)
+library(fabletools)
+```
+
+```{r}
+#| label: load-sources
+#| code-summary: Collection of custom functions used in current repository
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+base::source("./scripts/common-functions.R") # project-level
+base::source("./scripts/operational-functions.R") # project-level
+```
+
+```{r}
+#| label: declare-globals
+#| code-summary: Values used throughout the report.
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+set.seed(2025)
+target_window_opens  <- as.Date("2014-01-01")
+target_window_closes <- as.Date("2025-04-01")
+month_seq <- seq.Date(target_window_opens, target_window_closes, by = "month")
+
+```
+
+```{r}
+#| label: declare-functions
+#| code-summary: Custom functions defined for use in this report.
+#| echo: true
+#| results: hide
+#| message: false
+#| code-fold: true
+
+keep_random_id <- function(d, idvar="person_oid", n = 1, seed=Sys.time()){
+  # browser()
+  set.seed(seed)
+  all_unique_ids <- d %>%
+    pull(!!rlang::sym(idvar)) %>%
+    unique()
+  a_random_id <- sample(all_unique_ids, size = n)
+  d_out <- d %>% filter(!!rlang::sym(idvar)%in%a_random_id)
+  return(d_out)
+}
+
+```
+
+Please review the [Definition of Terms](#definition-of-terms) to refresh memory on key concepts and names.
+
+# Overview
+
+This document simulates and processes the longitudinal structure required for event forecasting. We create six core tables from scratch:
+
+1.  `ds_panel` — Monthly caseload time series, inspirational target for `ds_caseload`
+2.  `ds_episode` — Raw service episodes
+3.  `ds_event` — Person-month panel
+4.  `ds_event_count` — Monthly START, STAY, EXIT counts
+5.  `ds_caseload` — Total monthly caseload by client type, imitates `ds_panel`
+6.  `ds_caseload_event` — Individual-level caseload contributions
+
+We trace one individual across all six datasets to illustrate the transformation.
+
+# 1. Caseload Time Series (`ds_panel`)
+
+Suppose, you observe the following time series, representing the count of active cases for each month:
+```{r}
+#| label: load-data-panel
+#| code-summary: Create `ds_panel`
+#| warning: false
+#| code-fold: true
+#| cache: true
+
+
+n_months <- length(month_seq)
+base <- 5000
+trend <- seq(0, 2000, length.out = n_months)
+seasonality <- sin(2 * pi * (1:n_months) / 12) * 200
+covid <- ifelse(month_seq >= as.Date("2020-03-01") & month_seq <= as.Date("2022-01-01"), -800, 0)
+noise <- rnorm(n_months, 0, 100)
+
+ds_panel <- tibble(
+  year_month = month_seq,
+  event_count = round(base + trend + seasonality + covid + noise)
+)
+
+ds_panel %>% ggplot(aes(x = year_month, y = event_count)) +
+  geom_line() +
+  labs(title = "Simulated Caseload Time Series", y = "Total Active Caseload", x = NULL)
+
+ds_panel %>% head() 
+```
+
+At each time interval (here: a month), individuals can be classified into one of three categories: NEW, CLOSED, and RETURNED cases. This trichotomy includes an important special case: when an episode begins and ends within the same month, the individual is simultaneously counted as both a NEW and an CLOSED. This detail is crucial when reconstructing the total caseload from its component events, as it affects the net change dynamics within that interval.
+
+```{r}
+#| label: load-data-panel-components
+#| code-summary: Create `ds_components`  
+#| warning: false
+#| code-fold: true
+#| cache: true
+#
+library(tidyverse)
+library(scales)
+library(patchwork)
+
+ds_components <- ds_panel %>%
+  mutate(
+    # Simulate NEW with a base level + random monthly spikes
+    NEW = round(400 + 100 * sin(2 * pi * (1:n_months) / 6) + rnorm(n_months, 0, 50)),
+    
+    # Simulate CLOSED to occasionally flourish (e.g. after COVID)
+    CLOSED = round(300 + ifelse(
+      year_month %in% seq(as.Date("2022-01-01"), as.Date("2022-06-01"), by = "month"),
+      800 + rnorm(n_months, 0, 100),
+      200 + rnorm(n_months, 0, 50)
+    )),
+    
+    # RETURNED is the balancing category to ensure sum matches event_count
+    RETURNED = pmax(0, event_count - NEW - CLOSED)
+  ) %>%
+  pivot_longer(cols = c("NEW", "RETURNED", "CLOSED"),
+               names_to = "category", values_to = "count")
+
+# --- Collect y-values from both datasets ---
+y_vals <- c(ds_panel$event_count, ds_components$count)
+
+# --- Compute dynamic zoom limits across both sources ---
+y_min <- min(y_vals)
+# y_min <- 3200
+y_max <- max(y_vals)
+zoom_margin <- 0.05 * (y_max - y_min)
+
+zoom_limits <- c(
+  floor(y_min - zoom_margin),
+  ceiling(y_max + zoom_margin)
+)
+
+# --- Plot 1: Total Caseload ---
+p1 <- ds_panel %>%
+  ggplot(aes(x = year_month, y = event_count)) +
+  geom_line(color = "steelblue", size = 1) +
+  coord_cartesian(ylim = zoom_limits) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Total Active Caseload Over Time",
+    y = "Caseload Count", x = NULL
+  ) +
+  theme_minimal(base_size = 13)
+
+# --- Plot 2: Decomposition ---
+p2 <- ds_components %>%
+  ggplot(aes(x = year_month, y = count, fill = category)) +
+  geom_area(alpha = 0.9, color = "white", size = 0.2) +
+  scale_fill_manual(values = c("NEW" = "#1b9e77", "RETURNED" = "#7570b3", "CLOSED" = "#d95f02")) +
+  coord_cartesian(ylim = zoom_limits) +
+  scale_y_continuous(labels = comma) +
+  labs(
+    title = "Decomposition: NEW, RETURNED, and CLOSED Cases",
+    y = "Caseload Count", x = NULL, fill = "Category"
+  ) +
+  theme_minimal(base_size = 13)
+
+# --- Display Side-by-Side ---
+p1 / p2
+```
+
+If we are interested in counting events (NEW, CLOSED, RETURN) associated with period of time we **MUST** be summarizing an episode-grain table. This we generate next. 
+
+
+# 2. Episodes of Service
+
+Let us simulate a dataset named `ds_episode` representing episodes of financial support (FS) for individuals from January 2014 to April 2025. Each row should describe a unique uninterrupted episode of service use by a specific individual.
+
+**Required columns:** - `person_oid`: Unique identifier for an individual\
+- `date_start`: Episode start date (between 2014-01-01 and 2024-12-01)\
+- `date_end`: Episode end date (no later than 2025-04-30, must be ≥ `date_start`)\
+- `client_type_code`: Must be one of the following integers: 11, 14, 45, 92\
+- `pc2`: A string classification matching the `client_type_code`: - 11, 14 → "ETW" - 45 → "BFE" - 92 → "AISH" - `program_group`: Should be "IS" for ETW/BFE, and "AISH" for AISH
+
+**Constraints:** - Simulate \~5,000 individuals with 1 to 5 episodes each (most having 1–2)\
+- Episode durations should range from 1 to 36 months, skewed toward shorter durations\
+- Episodes must fall within the target window (2014-01-01 to 2025-04-30)\
+- A person's `client_type_code` values across multiple episodes must follow a **non-decreasing sequence** in the order: `11 → 14 → 45 → 92`\
+- There should be no overlapping episodes for any individual
+- Episodes of service of the same type (client type code) are separated by at least 2 months
+- Episodes of service of different types (client type code) could be adjacent to each other
+
+```{r }
+#| label: load-data-episode
+#| code-summary: Load data objects 
+#| warning: false
+#| code-fold: true
+#| cache: true
+# set your root to Project Directory when developing chunks live in .qmd
+# ---- setup -------------------------------------------------------------------
+library(tidyverse)
+library(lubridate)
+
+# ---- simulation parameters ---------------------------------------------------
+n_people <- 5000
+min_episodes <- 1
+max_episodes <- 5
+episode_duration_dist <- function(n) round(rexp(n, rate = 1/8) + 1) # skewed to short durations
+
+start_window <- as.Date("2014-01-01")
+end_window <- as.Date("2025-04-30")
+
+client_code_order <- c(11, 14, 45, 92)
+client_code_labels <- c("ETW", "ETW", "BFE", "AISH")
+program_groups <- c("IS", "IS", "IS", "AISH")
+names(client_code_labels) <- client_code_order
+names(program_groups) <- client_code_order
+
+# ---- helper function: generate episodes for one person -----------------------
+simulate_person_episodes <- function(person_id) {
+  n_episodes <- sample(min_episodes:max_episodes, 1, prob = rev(seq(min_episodes, max_episodes)))
+  possible_start <- start_window
+  person_episodes <- list()
+  
+  # Choose non-decreasing client_type_codes
+  client_codes <- sort(sample(client_code_order, n_episodes, replace = TRUE))
+  
+  for (i in seq_len(n_episodes)) {
+    # Draw episode duration in months, capped at 36
+    duration_months <- min(episode_duration_dist(1), 36)
+    
+    # Ensure start date is valid
+    max_start <- floor_date(end_window %m-% months(duration_months - 1), unit = "month")
+    if (possible_start > max_start) break
+    
+    date_start <- sample(seq(possible_start, max_start, by = "month"), 1)
+    date_end <- date_start %m+% months(duration_months - 1)
+    
+    client_type_code <- client_codes[i]
+    pc2 <- client_code_labels[as.character(client_type_code)]
+    program_group <- program_groups[as.character(client_type_code)]
+    
+    person_episodes[[i]] <- tibble(
+      person_oid = person_id,
+      date_start,
+      date_end,
+      client_type_code,
+      pc2,
+      program_group
+    )
+    
+    # Update next possible start:
+    if (i < n_episodes) {
+      # At least 2-month gap if same client_type_code, else allow adjacent
+      buffer_months <- if (i < n_episodes && client_codes[i] == client_codes[i + 1]) 2 else 0
+      possible_start <- date_end %m+% months(buffer_months + 1)
+    }
+  }
+  
+  bind_rows(person_episodes)
+}
+
+# ---- simulate all episodes ---------------------------------------------------
+set.seed(123) # for reproducibility
+
+ds_episode <- map_dfr(1:n_people, simulate_person_episodes)
+
+ds_episode <- ds_episode %>%
+  mutate(
+    duration_months = pmax(interval(date_start, date_end) %/% months(1) + 1, 1)
+  )
+
+# ---- inspect result ----------------------------------------------------------
+glimpse(ds_episode)
+ds_episode %>% count(client_type_code, pc2, program_group)
+
+```
+
+# 3. Events in Episodes (`ds_event`)
+
+Now we make an important transition to event-grain table, in which each row represents a **person-month** and has a set of indicators flagging events of interest: START/NEW , EXIT/CLOSED,  or STAY/RETURN. 
+
+```{r}
+#| label: tweak-data-1-event
+#| code-summary: Load data objects 
+#| warning: false
+#| code-fold: true
+#| cache: true
+# ---- expand-to-ds_event ------------------------------------------------------
+expand_episode <- function(ep) {
+  tibble(
+    person_oid = ep$person_oid,
+    month = seq.Date(ep$date_start, ep$date_end, by = "month"),
+    client_type_code = ep$client_type_code,
+    pc2 = ep$pc2,
+    program_group = ep$program_group
+  )
+}
+
+ds_event <- ds_episode %>% filter(person_oid == oneid  ) %>% print() %>% 
+  group_split(row_number()) %>% 
+  map_dfr(expand_episode) %>%
+  group_by(person_oid, date_start, date_end, client_type_code) %>%
+  arrange(person_oid, month) %>%
+  mutate(
+    spell_id = cumsum(month != lag(month, default = first(month)) + months(1)),
+    flag_start = month == min(month),
+    flag_end   = month == max(month)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    event_type = case_when(
+      flag_start & flag_end ~ "START-EXIT",
+      flag_start ~ "START",
+      flag_end   ~ "EXIT",
+      TRUE       ~ "STAY"
+    ))
+
+ds_event %>% keep_random_id()
+oneid <- ds_episode %>% filter(duration_months==1L) %>% keep_random_id() %>% pull(person_oid) %>% unique()
+ds_event %>% filter(person_oid == oneid  )
+ds_episode %>% filter(person_oid == oneid)
+```
+
+## 4. Aggregate Events Monthly (`ds_event_count`)
+
+```{r}
+# ---- aggregate-event-counts --------------------------------------------------
+ds_event_count <- ds_event %>%
+  count(month, client_type_code, event_type, name = "count")
+
+ds_event_count %>% filter(client_type_code == 11)
+```
+
+## 5. Compute Monthly Caseload (`ds_caseload`)
+
+```{r}
+# ---- compute-caseload --------------------------------------------------------
+ds_caseload_event <- ds_event %>%
+  distinct(month, person_oid, client_type_code)
+
+ds_caseload <- ds_caseload_event %>%
+  count(month, client_type_code, name = "caseload")
+
+# Match total to panel
+ds_compare <- ds_caseload %>%
+  group_by(month) %>%
+  summarize(total = sum(caseload)) %>%
+  left_join(ds_panel, by = c("month" = "year_month"))
+
+ggplot(ds_compare, aes(x = month)) +
+  geom_line(aes(y = total, color = "Simulated Caseload")) +
+  geom_line(aes(y = event_count, color = "Target Panel")) +
+  labs(title = "Comparison of Simulated and Target Caseload", y = "Individuals", color = "Source")
+```
+
+## 6. View Full Journey for One Individual
+
+```{r}
+# ---- show-journey-individual -------------------------------------------------
+id_focus <- min(ds_event$person_oid)
+
+ds_episode %>% filter(person_oid == id_focus)
+ds_event %>% filter(person_oid == id_focus)
+ds_event_count %>% filter(client_type_code %in% ds_episode$client_type_code[ds_episode$person_oid == id_focus])
+ds_caseload_event %>% filter(person_oid == id_focus)
+```
+
+## Summary
+
+We now have a full suite of longitudinal data from monthly counts to person-month panels. The structure is suitable for modeling active caseload or discrete events (START, STAY, EXIT) and enables easy testing of different forecasting approaches.
+f
+
+# **Definition of Terms**
+
+The history of relationships between people and programs is organized into *episodes of service.* Services can be of three broad types: financial assistance (FS), training (TR), and assessment (AS). ***In this analysis we focus on episodes of financial support***, which have certain unique features:
+
+-   The smallest unit of time is one month
+
+-   A FS event begins on the first day of the month and ends on the last day of the month (as opposed to TR an AS events which can take place any day of the month).
+
+-   Client can receive only on type of support at a time (client_type_code)
+
+-   Episodes of service of the same type (client type code) are separated by at least 2 months
+
+-   Episodes of service of different types (client type code) could be adjacent to each other
+
+We define two type of service episodes:
+
+-   **SPELL** – A non-interrupted period of service use, separated from other SPELLs by at least two consecutive months of non-use.
+
+-   **SPELL_BIT** – A non-interrupted period of service use, separated from other SPELL_BITs by at least two consecutive months of non-use *or* by a change in client type or household role. In other words, a change in client type or household role terminate the SPELL_BIT. 
+
+SPELL_BITs make up SPELLs. In many cases, a SPELL consists of a single SPELL_BIT.
+
+> In this universe we focus on `SPELL_BIT` because the meaning of such events as START, EXIT, and STAY (aka NEW, CLOSED, RETURNED in Evan's nomenclature) is easier to interpret and equate across programs. 
+
+Episodes of Financial Support can be decomposed into constituent events:
+
+-   **START** – The first day of the month in which the service in this episode is received.
+
+-   **EXIT** – The last day of the month in which the service ins this episode is received.
+
+-   **STAY** – Any month within the SPELL_BIT that is not a START or EXIT.
+
+These are also known, or could be conceptualized as as **NEW**, **CLOSED**, and **RETURNED**  cases (in Evan's nomenclature). 
+
+-    **CASELOAD** - By default, refers to the number of active cases in a given month. It can be broken down into the sum of NEW, CLOSED, and RETURNED cases.
+
+## Forecasting Mechanics: Foundational Concepts
+
+| Term                        | Definition |
+|----------------------------|------------|
+| **Forecasting**            | The process of making predictions about future values of a variable based on patterns in historical data. |
+| **Time Series**            | A sequence of data points collected or recorded at successive time intervals (e.g., monthly caseloads). |
+| **Observable Universe**    | The period of time for which we have usable, structured data — our empirical window into the system. In this case: **January 2000 to May 2025**. |
+| **Latest Month**           | The most recent month for which we have reliable and finalized data. It marks the endpoint of the observable universe — **May 2025**. |
+| **Current Month**          | The calendar month immediately following the latest month — the first point to be forecasted and not yet observed — **June 2025**. |
+| **Training Period**        | A fixed historical window used to fit the forecasting model. Defined here as the **10 years preceding the start of the testing period** (i.e., **Dec 2013 to Nov 2023**). |
+| **Testing Period**         | A **six-month** holdout segment ending with the latest month. Used to evaluate forecast accuracy. Here: **Dec 2023 to May 2025**. |
+| **Forecast Period**        | A **12-month** future horizon beginning with the current month — the range over which forecasts are generated. Here: **June 2025 to May 2026**. |
+| **Null Model**             | A minimal benchmark forecasting model that assumes the value in the **latest month** will continue unchanged into the **current month**. Useful as a reference to judge the value added by more complex models. |
+| **Model A**                | A forecasting model of class **ARIMA** with **no exogenous predictors**, relying solely on autoregressive (AR), differencing (I), and moving average (MA) components. Subindexed as *Model A1, A2, ..., An* to indicate different ARIMA configurations. |
+| **Model B**                | A forecasting model of class **ARIMA with exogenous predictors** (**ARIMAX**), which includes both ARIMA components and **external regressors** such as unemployment rate, policy variables, or population trends. Subindexed as *Model B<i>.<j>*, where *i* specifies the ARIMA configuration (corresponding to a Model A<i>), and *j* indexes the choice of external predictor sets. |
+| **Forecast Error**         | A measure of misfit between predicted and actual values during the **testing period**. Expressed in raw metric units (e.g., number of clients). |
+| **Overestimation Penalty** | A specific form of forecast error incurred when predictions are **too high**. This may lead to over-allocation of resources. |
+| **Underestimation Penalty**| A specific form of forecast error incurred when predictions are **too low**. This may lead to insufficient resource planning or budget overruns. |
+| **Cost of Decision**       | The **difference in forecast error** between a candidate model and the null model, over a given time horizon (often the current or next month). It answers the counterfactual question: *If I had chosen Model A instead of the null model, how much better (or worse) would I have done?* |
+| **Cost of Decision Trajectory** | A **time series** showing the cost of decision values at every point in time where a complete training period and valid testing month exist. It reveals how a candidate model would have performed relative to the null model **if it had been selected at each historical decision point**. |
+| **Signal**                 | A consistent, meaningful pattern in the time series (e.g., seasonal trends, long-term growth). |
+| **Noise**                  | Random or irregular fluctuations that do not follow a clear pattern. |
+| **Seasonality**            | Regular variation in data at fixed intervals (e.g., yearly cycles in service use). |
+| **Trend**                  | The general direction in which the data is moving over time (upward, downward, or flat). |
+| **Structural Change**      | A shift in the data-generating process — e.g., policy reform, economic shocks — that alters underlying dynamics. |

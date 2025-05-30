@@ -1,0 +1,110 @@
+---
+title: "ARIMA Forecasting with Simulated Data"
+format: html
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup}
+library(tidyverse)
+library(lubridate)
+library(tsibble)
+library(fable)
+library(feasts)
+```
+
+## 1. Simulate Data
+
+```{r}
+set.seed(123)
+
+target_window_opens  <- as.Date("2014-01-01")
+target_window_closes <- as.Date("2025-04-30")
+
+ds_panel <- tibble(
+  year_month = seq(from = target_window_opens, to = target_window_closes, by = "1 month")
+) %>%
+  mutate(
+    month_num = row_number(),
+    seasonal = 100 + 20 * sin(2 * pi * month(year_month) / 12),
+    trend = 1.2 * month_num,
+    covid_effect = case_when(
+      year_month >= as.Date("2020-03-01") & year_month <= as.Date("2021-03-01") ~ -80,
+      year_month > as.Date("2021-03-01") & year_month <= as.Date("2022-12-01") ~ -40,
+      TRUE ~ 0
+    ),
+    noise = rnorm(n(), mean = 0, sd = 10),
+    event_count = round(pmax(0, trend + seasonal + covid_effect + noise))
+  ) %>%
+  select(year_month, event_count)
+```
+
+## 2. Summary
+
+```{r}
+# Documentation-like summary
+ds_panel_summary <- "ds_panel – simulated panel of monthly event counts from `r target_window_opens` to `r target_window_closes`, designed to mimic realistic time series behavior for service usage. Incorporates seasonal patterns, long-term trend, and a COVID-era disruption (March 2020 to December 2021) to support learning and experimentation with forecasting techniques."
+cat(ds_panel_summary)
+```
+
+## 3. Visualize Time Series
+
+```{r}
+# Plot to inspect
+
+ggplot(ds_panel, aes(x = year_month, y = event_count)) +
+  geom_line(color = "steelblue") +
+  labs(title = "Simulated Monthly Event Counts", x = "Date", y = "Event Count") +
+  theme_minimal()
+```
+
+## 4. Convert to Time Series Object
+
+```{r}
+ds_ts <- ds_panel %>% as_tsibble(index = year_month)
+```
+
+## 5. Train-Test Split
+
+```{r}
+train_ts <- ds_ts %>% filter(year_month < as.Date("2024-05-01"))
+test_ts  <- ds_ts %>% filter(year_month >= as.Date("2024-05-01"))
+```
+
+## 6. Fit ARIMA Model
+
+```{r}
+fit_arima <- train_ts %>% model(ARIMA = ARIMA(event_count))
+report(fit_arima)
+```
+
+## 7. Forecasting
+
+```{r}
+fc_arima <- fit_arima %>% forecast(h = "12 months")
+```
+
+## 8. Visualize Forecast vs Actual
+
+```{r}
+fc_arima %>%
+  autoplot(train_ts, level = NULL) +
+  autolayer(test_ts, event_count, color = "red") +
+  labs(
+    title = "ARIMA Forecast vs. Actuals",
+    subtitle = "Red points are actual values from the holdout set",
+    y = "Event Count", x = NULL
+  )
+```
+
+## 9. Forecast Accuracy
+
+```{r}
+accuracy(fc_arima, test_ts)
+```
+
