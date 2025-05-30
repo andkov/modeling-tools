@@ -18,7 +18,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-This report presents the results of the Phase II of the FIESTA project. 
+This report presents the results of the Phase II of the FIESTA project.
 
 ```{r}
 #| label: set_options
@@ -229,7 +229,6 @@ nia_null %>%
   
 ```
 
-
 What's inside this *analysis rectangle*?
 
 ```{r}
@@ -274,16 +273,16 @@ nia_full
 
 Important Caveats
 
-1. We operationalize "receiving intervention" as having at least one target program event within 1 year prior to the start of the Income Support spell or before its end. 
+1.  We operationalize "receiving intervention" as having at least one target program event within 1 year prior to the start of the Income Support spell or before its end.
 
-2. We entered other intervention into the effect estimation model and fixed the levels to `0` when estimating marginal means. This means that model predictions isolate the influence of the target intervention from the rest.   
+2.  We entered other intervention into the effect estimation model and fixed the levels to `0` when estimating marginal means. This means that model predictions isolate the influence of the target intervention from the rest.
 
-3. Four demographic variables (`sex2`, `marital2`, `dependent2`, and `age_in_years`) are used to calculate the predicted values for specific levels of interest. The levels of other predictors (`education4`,`disability2`, `ethnicity`,`immigration`, `region7`, `spell_duration_cat`,`years_between_waves_cat`, and `fy_is_start`) are fixed at the level derived from a empirical center (most commonly occurring combination of levels on all covariates)
+3.  Four demographic variables (`sex2`, `marital2`, `dependent2`, and `age_in_years`) are used to calculate the predicted values for specific levels of interest. The levels of other predictors (`education4`,`disability2`, `ethnicity`,`immigration`, `region7`, `spell_duration_cat`,`years_between_waves_cat`, and `fy_is_start`) are fixed at the level derived from a empirical center (most commonly occurring combination of levels on all covariates)
 
-4. The Full model is double-robust: we use the same set of predictors in the group balancing model, as in the effect estimation model
+4.  The Full model is double-robust: we use the same set of predictors in the group balancing model, as in the effect estimation model
 
+## Main Effect - Null Model - Trajectory
 
-## Main Effect - Null Model
 ```{r}
 font_size_regular <- baseSize - 7
 font_size_net     <- baseSize - 4
@@ -332,6 +331,30 @@ g1 <-
 g1 %>% quick_save("main-effect-3-waves",w=16,h=9)
 
 ```
+
+## Main Effect - Null Model - Summary
+
+```{r}
+d1 <- 
+  nia_null %>% 
+  # filter(waveL < 3) %>% 
+  filter(waveL < 3) %>% 
+  filter(intervention == "career_planning")
+  # filter(intervention == "labour_market_info")
+
+d1 %>% 
+  select(waveL, tx, intervention, y_hat, y_hat_net)
+ 
+g1 <- 
+  d1 %>% 
+  ggplot(aes(x=waveL, y = intervention_display))+
+  geom_point()+
+  geom_line()+
+  facet_wrap(facets = "")
+  
+```
+
+
 
 ## Marginal Means - Full Model
 
