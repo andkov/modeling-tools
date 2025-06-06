@@ -361,19 +361,25 @@ Now we make an important transition to event-grain table, in which each row repr
 #| code-fold: true
 #| cache: true
 # ---- expand-to-ds_event ------------------------------------------------------
-expand_episode <- function(ep) {
+expand_episode <- function(ep, episode_number) {
   tibble(
     person_oid = ep$person_oid,
     month = seq.Date(ep$date_start, ep$date_end, by = "month"),
     client_type_code = ep$client_type_code,
     pc2 = ep$pc2,
-    program_group = ep$program_group
+    program_group = ep$program_group,
+    date_start = ep$date_start,
+    date_end = ep$date_end,
+    episode_number = episode_number
   )
 }
 
-ds_event <- ds_episode %>% filter(person_oid == oneid  ) %>% print() %>% 
-  group_split(row_number()) %>% 
-  map_dfr(expand_episode) %>%
+oneid <- 1994
+ds_event <- ds_episode %>%
+  filter(person_oid == oneid) %>%
+  mutate(row_id = row_number()) %>%
+  group_split(row_id) %>%
+  map2_dfr(.x = ., .y = seq_along(.), .f = expand_episode) %>%
   group_by(person_oid, date_start, date_end, client_type_code) %>%
   arrange(person_oid, month) %>%
   mutate(
@@ -389,6 +395,36 @@ ds_event <- ds_episode %>% filter(person_oid == oneid  ) %>% print() %>%
       flag_end   ~ "EXIT",
       TRUE       ~ "STAY"
     ))
+
+# expand_episode <- function(ep) {
+#   tibble(
+#     person_oid = ep$person_oid,
+#     month = seq.Date(ep$date_start, ep$date_end, by = "month"),
+#     client_type_code = ep$client_type_code,
+#     pc2 = ep$pc2,
+#     program_group = ep$program_group
+#     ,episode_number = 1
+#   )
+# }
+# oneid <- 1994
+# ds_event <- ds_episode %>% filter(person_oid == oneid  ) %>% print() %>% 
+#   group_split(row_number()) %>% 
+#   map_dfr(expand_episode) %>% print() %>% 
+#   group_by(person_oid, date_start, date_end, client_type_code) %>%
+#   arrange(person_oid, month) %>%
+#   mutate(
+#     spell_id = cumsum(month != lag(month, default = first(month)) + months(1)),
+#     flag_start = month == min(month),
+#     flag_end   = month == max(month)
+#   ) %>%
+#   ungroup() %>%
+#   mutate(
+#     event_type = case_when(
+#       flag_start & flag_end ~ "START-EXIT",
+#       flag_start ~ "START",
+#       flag_end   ~ "EXIT",
+#       TRUE       ~ "STAY"
+#     ))
 
 ds_event %>% keep_random_id()
 oneid <- ds_episode %>% filter(duration_months==1L) %>% keep_random_id() %>% pull(person_oid) %>% unique()
